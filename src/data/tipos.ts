@@ -107,6 +107,16 @@ export interface ItemValor {
   detalle: string;
 }
 
+export type IdItemChecklist = 'puntualidad' | 'uniforme' | 'peinado' | 'maquillaje' | 'agua' | 'pagos';
+
+export interface ChecklistEntrenamiento {
+  _fuente: string;
+  titulo: string;
+  presentacion: string;
+  requisitos: string[];
+  items: { id: IdItemChecklist; titulo: string; detalle: string }[];
+}
+
 export interface Valores {
   inscripcion: { monto: number; detalle: string };
   vestimenta: ItemValor[];
@@ -160,6 +170,7 @@ export interface Contenido {
   _notaEquipos: string;
   horarios: DiaHorario[];
   _notaHorarios: string;
+  checklistEntrenamiento: ChecklistEntrenamiento;
   valores: Valores;
   promociones: Promocion[];
   _notaPromociones: string;

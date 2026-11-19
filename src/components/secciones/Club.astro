@@ -104,11 +104,16 @@ const corrienteHitos = [
 
   .club__titulo {
     font-size: clamp(3.5rem, 8vw, 8rem);
-    line-height: 0.86;
+    line-height: 1;
   }
 
+  /* Panel blanco: más luz sobre el amarillo y mejor lectura del texto largo. */
   .club__historia {
     max-width: 38rem;
+    padding: var(--esp-5);
+    background: var(--blanco);
+    border-left: 8px solid var(--negro);
+    box-shadow: var(--sombra-dura);
     font-size: var(--t-md);
     line-height: 1.6;
   }

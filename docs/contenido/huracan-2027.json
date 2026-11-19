@@ -77,50 +77,77 @@
   "_notaPagoMensualidad": "Novice, Prep e International se pagan los primeros 5 días de cada mes.",
   "equipos": [
     { "nombre": "Huracán Baby Storm", "programa": "recreativo", "categoria": "Tiny recreativo", "genero": "mixto", "edadMin": 3, "edadMax": 6, "rango": "Niños y niñas desde los 3 a los 6 años" },
-    { "nombre": "Huracán Spirit", "programa": "recreativo", "categoria": "Formativo", "genero": "mixto", "edadMin": 7, "edadMax": null, "rango": "Desde los 7 años y sin límite de edad" },
+    { "nombre": "Huracán Team Parent", "programa": "recreativo", "categoria": "Recreativo", "genero": "mixto", "edadMin": 18, "edadMax": null, "rango": "Apoderados y parientes de familia" },
+    { "nombre": "Huracán Spirit", "programa": "recreativo", "categoria": "Recreativo formativo", "genero": "mixto", "edadMin": 7, "edadMax": null, "rango": "Desde los 7 años y sin límite de edad" },
     { "nombre": "Huracán Pink Ladies", "programa": "novice", "categoria": "Tiny nivel 1", "genero": "damas", "edadMin": 4, "edadMax": 6, "rango": "Niñas desde los 4 a los 6 años cumplidos el 2027" },
     { "nombre": "Huracán Rockstar", "programa": "novice", "categoria": "Mini coed nivel 1", "genero": "mixto", "edadMin": 7, "edadMax": 9, "rango": "Niños y niñas desde los 7 a los 9 años cumplidos el 2027" },
-    { "nombre": "Huracán Blackout", "programa": "novice", "categoria": "Youth coed nivel 1", "genero": "mixto", "edadMin": 9, "edadMax": 12, "rango": "Niños y niñas desde los 9 a los 12 años cumplidos el 2027" },
-    { "nombre": "Huracán Power Electric", "programa": "novice", "categoria": "Junior coed nivel 1", "genero": "mixto", "edadMin": 9, "edadMax": 15, "rango": "Niños y niñas desde los 9 a los 15 años cumplidos el 2027" },
-    { "nombre": "Huracán Runway Diva", "programa": "novice", "categoria": "Senior nivel 1", "genero": "damas", "edadMin": 15, "edadMax": 19, "rango": "Damas de 15 a 19 años cumplidos el 2027" },
+    { "nombre": "Huracán Xplotion", "programa": "novice", "categoria": "Youth coed nivel 1", "genero": "mixto", "edadMin": 9, "edadMax": 12, "rango": "Niños y niñas desde los 9 a los 12 años cumplidos el 2027" },
+    { "nombre": "Huracán Blackout", "programa": "novice", "categoria": "Junior coed nivel 1", "genero": "mixto", "edadMin": 9, "edadMax": 15, "rango": "Niños y niñas desde los 9 a los 15 años cumplidos el 2027" },
+    { "nombre": "Huracán Runway Diva", "programa": "novice", "categoria": "Senior nivel 1", "genero": "damas", "edadMin": 12, "edadMax": 19, "rango": "Damas de 12 a 19 años cumplidos el 2027" },
     { "nombre": "Huracán Ice Bullets", "programa": "novice", "categoria": "Open coed nivel 2", "genero": "mixto", "edadMin": 15, "edadMax": null, "rango": "Damas y varones desde los 15 años y sin límite de edad" },
-    { "nombre": "Huracán Xtreme Force", "programa": "prep", "categoria": "Youth coed nivel 1.1", "genero": "mixto", "edadMin": 9, "edadMax": 12, "rango": "Niños y niñas desde los 9 a los 12 años cumplidos el 2027" },
-    { "nombre": "Huracán Super Mafia", "programa": "prep", "categoria": "Junior coed nivel 2.2", "genero": "mixto", "edadMin": 9, "edadMax": 15, "rango": "Niños y niñas desde los 9 a los 15 años cumplidos el 2027" },
-    { "nombre": "Huracán Super Models", "programa": "prep", "categoria": "Senior coed nivel 1.1", "genero": "mixto", "edadMin": 15, "edadMax": 19, "rango": "Damas y varones de 15 a 19 años cumplidos el 2027" },
-    { "nombre": "Huracán Lady Jags", "programa": "prep", "categoria": "Open nivel 3.2", "genero": "damas", "edadMin": 15, "edadMax": null, "rango": "Damas desde los 15 años y sin límite de edad" },
-    { "nombre": "Huracán Velocity Lightning", "programa": "international", "categoria": "Open coed nivel 3", "genero": "mixto", "edadMin": 15, "edadMax": null, "rango": "Damas y varones desde los 15 años y sin límite de edad" },
-    { "nombre": "Huracán Five Elite", "programa": "international", "categoria": "Open coed nivel 4", "genero": "mixto", "edadMin": 15, "edadMax": null, "rango": "Damas y varones desde los 15 años y sin límite de edad" }
+    { "nombre": "Huracán Xtreme Force", "programa": "prep", "categoria": "Youth prep 1.1", "genero": "mixto", "edadMin": 8, "edadMax": 12, "rango": "Niños y niñas desde los 8 a los 12 años cumplidos el 2027" },
+    { "nombre": "Huracán Power Electric", "programa": "prep", "categoria": "Junior prep 1.1", "genero": "mixto", "edadMin": 9, "edadMax": 15, "rango": "Niños y niñas desde los 9 a los 15 años cumplidos el 2027" },
+    { "nombre": "Huracán Super Mafia", "programa": "prep", "categoria": "Junior prep 2.2", "genero": "mixto", "edadMin": 9, "edadMax": 15, "rango": "Niños y niñas desde los 9 a los 15 años cumplidos el 2027" },
+    { "nombre": "Huracán Super Models", "programa": "prep", "categoria": "Senior prep 1.1", "genero": "mixto", "edadMin": 12, "edadMax": 19, "rango": "Damas y varones de 12 a 19 años cumplidos el 2027" },
+    { "nombre": "Huracán Lady Jags", "programa": "prep", "categoria": "Open prep 3.2", "genero": "damas", "edadMin": 15, "edadMax": null, "rango": "Damas desde los 15 años y sin límite de edad" },
+    { "nombre": "Huracán Velocity Lightning", "programa": "international", "categoria": "Open coed elite 3", "genero": "mixto", "edadMin": 15, "edadMax": null, "rango": "Damas y varones desde los 15 años y sin límite de edad" },
+    { "nombre": "Huracán Five Elite", "programa": "international", "categoria": "Open coed elite 4", "genero": "mixto", "edadMin": 15, "edadMax": null, "rango": "Damas y varones desde los 15 años y sin límite de edad" }
   ],
   "_notaEquipos": "Categorías y niveles tentativos 2027. La edad es la que cumple la deportista durante 2027.",
   "horarios": [
     { "dia": "Lunes", "bloques": [
       { "inicio": "16:45", "fin": "18:00", "texto": "Clase extra flyer · gimnasia", "tipo": "extra" },
-      { "inicio": "18:00", "fin": "20:00", "texto": "Super Mafia · Power Electric", "tipo": "equipo" },
+      { "inicio": "18:00", "fin": "20:00", "texto": "Super Mafia · Power Electric · Blackout", "tipo": "equipo" },
       { "inicio": "20:00", "fin": "22:00", "texto": "Super Models · Lady Jags", "tipo": "equipo" } ] },
     { "dia": "Martes", "bloques": [
       { "inicio": "15:00", "fin": "16:30", "texto": "Clase de gimnasia nivel 1 · iniciación", "tipo": "gimnasia" },
-      { "inicio": "16:30", "fin": "18:00", "texto": "Clase de gimnasia nivel 1 · intermedio y avanzado", "tipo": "gimnasia" } ] },
+      { "inicio": "16:30", "fin": "18:00", "texto": "Clase de gimnasia nivel 1 · intermedio y avanzado (diciembre a marzo)", "tipo": "gimnasia" } ] },
     { "dia": "Miércoles", "bloques": [
       { "inicio": "16:45", "fin": "18:00", "texto": "Clase extra flyer · gimnasia", "tipo": "extra" },
-      { "inicio": "18:00", "fin": "20:00", "texto": "Xtreme Force · Blackout", "tipo": "equipo" },
+      { "inicio": "18:00", "fin": "20:00", "texto": "Xtreme Force · Xplotion", "tipo": "equipo" },
       { "inicio": "20:00", "fin": "22:00", "texto": "Velocity Lightning · Ice Bullets", "tipo": "equipo" } ] },
     { "dia": "Jueves", "bloques": [
       { "inicio": "15:00", "fin": "16:30", "texto": "Clase de gimnasia nivel 1 · iniciación", "tipo": "gimnasia" },
-      { "inicio": "16:30", "fin": "18:00", "texto": "Clase de gimnasia nivel 1 · intermedio y avanzado", "tipo": "gimnasia" } ] },
+      { "inicio": "16:30", "fin": "18:00", "texto": "Clase de gimnasia nivel 1 · intermedio y avanzado (diciembre a marzo)", "tipo": "gimnasia" } ] },
     { "dia": "Viernes", "bloques": [
       { "inicio": "16:45", "fin": "18:00", "texto": "Clase extra flyer · gimnasia", "tipo": "extra" },
       { "inicio": "18:00", "fin": "19:00", "texto": "Pink Ladies · Baby Storm", "tipo": "equipo" },
       { "inicio": "18:00", "fin": "20:00", "texto": "Rockstar", "tipo": "equipo" },
       { "inicio": "20:00", "fin": "22:00", "texto": "Velocity Lightning · Ice Bullets", "tipo": "equipo" } ] },
     { "dia": "Sábado", "bloques": [
-      { "inicio": "08:00", "fin": "10:00", "texto": "Super Mafia · Power Electric", "tipo": "equipo" },
-      { "inicio": "10:00", "fin": "12:00", "texto": "Xtreme Force · Blackout", "tipo": "equipo" },
+      { "inicio": "08:00", "fin": "10:00", "texto": "Super Mafia · Power Electric · Blackout", "tipo": "equipo" },
+      { "inicio": "10:00", "fin": "12:00", "texto": "Xtreme Force · Xplotion", "tipo": "equipo" },
       { "inicio": "12:00", "fin": "14:00", "texto": "Super Models · Rockstar", "tipo": "equipo" },
       { "inicio": "12:00", "fin": "13:00", "texto": "Pink Ladies", "tipo": "equipo" },
       { "inicio": "14:00", "fin": "16:00", "texto": "Lady Jags", "tipo": "equipo" },
       { "inicio": "16:00", "fin": "18:00", "texto": "Five Elite", "tipo": "equipo" } ] }
   ],
-  "_notaHorarios": "Horarios tentativos. Las clases de gimnasia por nivel son de diciembre a marzo. Feriados e interferiados de semana se entrena normal. Verificar con el PDF la asignación de Pink Ladies del viernes (la diagramación del PDF es ambigua).",
+  "_notaHorarios": "Horarios tentativos. Las clases de gimnasia por nivel son de diciembre a marzo. Feriados e interferiados de semana se entrena normal.",
+  "checklistEntrenamiento": {
+    "_fuente": "Pieza «Checklist para tu próximo entrenamiento» enviada por el club (imagen, nov. 2026). La pieza dice «2026»; se omite el año hasta confirmar la ropa 2027.",
+    "titulo": "Checklist para tu próximo entrenamiento",
+    "presentacion": "Recuerda que es obligatoria tu presentación personal en cada práctica:",
+    "requisitos": [
+      "Zapatillas negras sin suela ni líneas blancas (suela baja)",
+      "Calceta 3/4 negra",
+      "Ropa oficial de entrenamiento Huracán All Stars; si aún no llega tu ropa, usa ropa negra",
+      "Ropa de abrigo Huracán All Stars",
+      "Polera institucional de Huracán All Stars",
+      "Sin pulseras, aros, cadenas, joyas, etc.",
+      "Uñas cortas",
+      "Cabello tomado, cola alta",
+      "Cinta de entrenamiento",
+      "Extensión de pelo"
+    ],
+    "items": [
+      { "id": "puntualidad", "titulo": "Puntualidad", "detalle": "Llegar 10 minutos antes" },
+      { "id": "uniforme", "titulo": "Uniforme", "detalle": "Ropa de entrenamiento oficial" },
+      { "id": "peinado", "titulo": "Bien peinados", "detalle": "Cola alta con tu cinta" },
+      { "id": "maquillaje", "titulo": "Maquillaje", "detalle": "Labios rojos, rubor" },
+      { "id": "agua", "titulo": "Botella de agua", "detalle": "Llena, para evitar salir de la zona de entrenamiento" },
+      { "id": "pagos", "titulo": "Pagos al día", "detalle": "Evita suspensiones" }
+    ]
+  },
   "valores": {
     "inscripcion": { "monto": 15000, "detalle": "Equivale a la matrícula del año e incluye una polera de entrenamiento. Para alumnos nuevos y antiguos. Pago al momento de inscribirse." },
     "vestimenta": [

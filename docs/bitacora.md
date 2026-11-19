@@ -219,3 +219,18 @@ Consolidado al cierre de la etapa 1 (detalle por bloque más abajo):
 - **Defectos transversales encontrados por la revisión y corregidos en todo el sitio:** el `.soplo` pisaba el `skewX` de tarjetas inclinadas (bloques 5 y 7), y `overflow: hidden` en secciones rompía los reveals ligados al scroll (`animation-timeline: view()`); se pasó a `overflow: clip`.
 - **Cómo se trabajó:** los subagentes `constructor-ui` y `revisor-diseno` de `.claude/agents/` no estaban registrados como tipos de agente en esta sesión; se usaron agentes genéricos que leían y seguían sus instrucciones (el revisor sin editar archivos).
 - **Sin `git push` ni merge a `main`.** Todo vive en la rama local `etapa-1`.
+
+## Ajustes tras la revisión del club (19-11-2026)
+
+- **Tipografía:** los títulos (`.disp`) pasan de Barlow Condensed a **Anton** (peso único 400, cursiva sintetizada como en las piezas del club). Interlineado de títulos subido (~0,86 → 1,0) para que no se corten las tildes. Respaldo: Impact (métricas de `Anton Fallback` estimadas; CLS medido 0,003–0,014 entre 320 y 1920 px).
+- **Equipos (16, antes 14):** reemplazados según la pieza «Equipos tentativos 2027». Se agrega Team Parent y Xplotion; Power Electric pasa de Novice a Prep; Blackout pasa a Junior coed nivel 1; categorías de Prep e International con la nomenclatura de la pieza.
+- **Horarios:** reemplazados según la pieza «Horarios tentativos». Se resuelve la ambigüedad de Pink Ladies del viernes (18:00 a 19:00, junto a Baby Storm). Se agrega Blackout (lunes y sábado) y Xplotion (miércoles y sábado).
+- **Checklist de entrenamiento:** nueva sección `07` (`checklistEntrenamiento` en el JSON, desde la pieza enviada por el club). Renumeradas Valores (08), Staff (09), Viajes (10) y Cierre (11). La pieza dice «2026»: se omite el año en los ítems de ropa hasta confirmar la de 2027. Los rótulos «Uniformad@», «Bien peinad@» y «Puntulaidad» se escribieron «Uniforme», «Bien peinados» y «Puntualidad».
+- **Cierre:** «Súmate al huracán» pasa a «Sé parte de Huracán».
+- **Más blanco en las secciones amarillas:** panel blanco en la historia del club y en la bajada del cierre; fondo blanco en los botones de edad, bloques «clase extra» y gimnasia de horarios, tarjetas de coaches, chips de asistentes y botón de reglamento.
+
+### Datos por confirmar con el club (nuevos)
+
+- **Edad de Team Parent:** la pieza dice «apoderados y parientes»; en el buscador se fijó 18 años o más (supuesto).
+- **Conflictos entre piezas del club:** Xtreme Force 8–12 años (pieza de equipos) frente a 9–12 (diapositiva); Runway Diva 12–19 años (pieza) frente a 15–19 (diapositiva); Super Models «damas y varones» (diapositiva) frente a mixto. Se usó la pieza «Equipos tentativos 2027».
+- `docs/contenido/huracan-2027.json` se modificó por pedido explícito del dueño del proyecto; `informativo-2027.txt` no se tocó y ya no coincide con equipos y horarios.

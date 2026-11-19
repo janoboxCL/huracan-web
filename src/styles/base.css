@@ -1,6 +1,6 @@
 /* Base global: reinicio mínimo, tipografía y accesibilidad. */
 
-/* Fuentes de respaldo con métricas ajustadas a Barlow y Barlow Condensed (medidas
+/* Fuentes de respaldo con métricas ajustadas a Barlow (medidas
    contra Arial y Arial Narrow): el cambio a la webfont casi no reflota el texto (CLS).
    Escala (size-adjust) medida sobre texto real; ascent/descent salen de la tabla hhea
    de las fuentes (1000 / -200 de 1000 unidades) divididos por el size-adjust. */
@@ -24,14 +24,15 @@
   line-gap-override: 0%;
 }
 
+/* Anton solo existe en peso 400 y recto; la cursiva de marca se sintetiza (como en las piezas
+   del club). Respaldo: Impact, de proporciones muy cercanas. */
 @font-face {
-  font-family: 'Barlow Condensed Fallback';
+  font-family: 'Anton Fallback';
   font-style: italic;
-  font-weight: 800 900;
-  src: local('Arial Narrow Bold Italic'), local('ArialNarrow-BoldItalic');
-  size-adjust: 82%;
-  ascent-override: 122%;
-  descent-override: 24.4%;
+  src: local('Impact');
+  size-adjust: 100%;
+  ascent-override: 117%;
+  descent-override: 31%;
   line-gap-override: 0%;
 }
 
@@ -108,11 +109,11 @@ button {
   cursor: pointer;
 }
 
-/* Títulos de marca: Barlow Condensed cursiva, 800/900, mayúsculas. */
+/* Títulos de marca: Anton cursiva (peso único 400), mayúsculas. */
 .disp {
   font-family: var(--fuente-titulo);
   font-style: italic;
-  font-weight: 900;
+  font-weight: 400;
   text-transform: uppercase;
   line-height: var(--interlineado-titulo);
   letter-spacing: 0.005em;
