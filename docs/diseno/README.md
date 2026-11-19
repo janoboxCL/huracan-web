@@ -34,7 +34,7 @@ Las fotos vienen del PDF y rondan 1.100 px de ancho: suficientes para la maqueta
 9. **07 · Valores** (negro). "Sin letra **chica**". Tarjeta amarilla inclinada con la inscripción $15.000. Lista de valores. A la derecha, promociones como entradas: bloque negro con el descuento en amarillo + cuerpo amarillo.
 10. **08 · Staff** (amarillo, corte diagonal). "Staff" gigante en contorno de fondo. Tarjeta de Franco Pinto (head coach) y Mónica Cofré en negro; coaches en tarjetas de contorno negro. Fotos del staff: pendientes (no atribuir fotos sin confirmar quién es quién).
 11. **09 · Viajes** (foto `bg-playa`). "El viento **cruza fronteras**". 4 destinos como pasajes amarillos con línea punteada.
-12. **10 · Cierre** (amarillo, corte diagonal). Tornado grande girando al 25 %. "Súmate al huracán", botones negros (agenda y reglamento), recorte `cut-duo`.
+12. **10 · Cierre** (amarillo, corte diagonal). Tornado grande girando al 25 %. "Sé parte de Huracán", botones negros (agenda y reglamento), recorte `cut-duo`.
 13. **Footer** (negro): logo, lema, contacto, redes, enlaces de familias.
 
 ## Movimiento
