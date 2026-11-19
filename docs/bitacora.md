@@ -74,3 +74,23 @@ _(se completa bloque a bloque)_
 - **Capturas 1440 px:** `.revision/inicio-1440-sin-movimiento.png`, `.revision/inicio-1440-mov-00.png`, `.revision/inicio-1440-mov-01.png`
 
 ---
+
+## Bloque 5 · Cómo funciona
+
+- **Veredicto final:** Aprobado con cambios (1 ronda, sin Bloqueantes ni Importantes). Build y `astro check` sin errores. No hubo ronda de correcciones: solo hallazgos Menores.
+- **Verificado:** los 4 pasos, el resumen y la franja salen del JSON; `procesoActualDelPdf` y `_notaPago` NO se publican (0 coincidencias en `dist/index.html`, tampoco datos bancarios). Contraste AA independiente de la foto (todo el texto va sobre cajas negras).
+- **Pendientes (Menor):**
+  - La caja inclinada sobresale ~3 px del viewport en móvil (390 px); ampliar margen derecho a ~1 rem.
+  - «Pre-inscripción» se parte en dos líneas entre ~1100 y 1250 px; usar `clamp()` en el tamaño del título del paso.
+  - La caja negra tapa buena parte del sujeto de la foto a 1440 px; ajustar `object-position`.
+  - El botón «Agenda tu evaluación →» de la franja es un añadido (no está en la v2) y apunta a `#cierre`, provisorio.
+- **Decisiones de contenido a validar con el club:**
+  - Textos que no salen del JSON: «Nadie queda fuera.», «¿Partes desde cero?» y la etiqueta «04 · Cómo funciona» (de la maqueta).
+  - La franja usa `clasesExtrasNota` del JSON en vez del texto de la maqueta («Clases extras de flyer, gimnasia y preparación física…»); confirmar cuál prefiere el club.
+  - `sistema.resumen` (4 frases) se muestra bajo el título; la v2 no lo tenía.
+  - Definir si el flujo online mantiene el pago antes de la evaluación (hoy el PDF lo exige); no se publica hasta decidirlo.
+- **Marcadores `[así]`:** ninguno.
+- **Capturas 390 px:** `.revision/inicio-390-sin-movimiento.png`, `.revision/inicio-390-mov-00.png`, `.revision/inicio-390-mov-01.png`
+- **Capturas 1440 px:** `.revision/inicio-1440-sin-movimiento.png`, `.revision/inicio-1440-mov-00.png`, `.revision/inicio-1440-mov-01.png`
+
+---

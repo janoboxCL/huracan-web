@@ -1,0 +1,204 @@
+---
+/* 6 · 04 Cómo funciona: duotono amarillo (foto en grises con `multiply` sobre el
+   amarillo, parallax) + caja negra inclinada + 4 pasos + franja «¿Partes desde cero?».
+   Textos desde el JSON: `sistema` y `club.mensajeClave`. No se muestran las notas
+   internas del proceso de pago (`procesoActualDelPdf`, `_notaPago`). */
+import { Image } from 'astro:assets';
+import stunt from '../../assets/img/bg-stunt.jpg';
+import { contenido } from '../../data/contenido';
+import { enlaces } from '../../data/enlaces';
+import Boton from '../ui/Boton.astro';
+import Etiqueta from '../ui/Etiqueta.astro';
+
+const { sistema, club } = contenido;
+---
+
+<section class="funciona sobre-amarillo" id="como-funciona" aria-labelledby="funciona-titulo">
+  <div class="funciona__foto-caja" aria-hidden="true">
+    <Image
+      class="funciona__foto parallax"
+      src={stunt}
+      alt=""
+      widths={[640, 1120]}
+      sizes="100vw"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+
+  <div class="funciona__cuerpo contenedor">
+    <div class="funciona__caja soplo">
+      <Etiqueta variante="seccion" class="funciona__etiqueta">04 · Cómo funciona</Etiqueta>
+      <h2 id="funciona-titulo" class="disp funciona__titulo">
+        Nadie queda fuera.<br /><span>{club.mensajeClave}.</span>
+      </h2>
+      <p class="funciona__resumen">{sistema.resumen}</p>
+    </div>
+
+    <ol role="list" class="funciona__pasos">
+      {
+        sistema.pasos.map((p) => (
+          <li class="paso soplo">
+            <span class="disp paso__numero" aria-hidden="true">
+              {p.n}
+            </span>
+            <h3 class="disp paso__titulo">{p.titulo}</h3>
+            <p class="paso__texto">{p.texto}</p>
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="franja soplo">
+      <p class="disp franja__titulo">¿Partes desde cero?</p>
+      <p class="franja__texto">{sistema.clasesExtrasNota}</p>
+      <Boton href={enlaces.agenda} variante="amarillo">Agenda tu evaluación →</Boton>
+    </div>
+  </div>
+</section>
+
+<style>
+  .funciona {
+    position: relative;
+    isolation: isolate; /* el multiply de la foto se mezcla solo con el amarillo de la sección */
+    overflow: hidden;
+    background: var(--amarillo);
+    color: var(--negro);
+  }
+
+  .funciona__foto-caja {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  /* Más alta que la sección para que el parallax (±9 %) no deje bordes. */
+  .funciona :global(.funciona__foto) {
+    position: absolute;
+    left: 0;
+    top: -12%;
+    width: 100%;
+    height: 124%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.5) brightness(1.05);
+    mix-blend-mode: multiply;
+  }
+
+  .funciona__cuerpo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-6);
+    padding-block: var(--seccion-y);
+  }
+
+  /* Caja negra inclinada (el texto se inclina con ella) */
+  .funciona__caja {
+    align-self: flex-start;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-4);
+    max-width: 47.5rem;
+    padding: 1.75rem 1.5rem;
+    background: var(--negro);
+    color: var(--blanco);
+    transform: skewX(-6deg);
+    margin-inline: 0.5rem;
+  }
+
+  .funciona :global(.funciona__etiqueta) {
+    color: var(--amarillo);
+  }
+
+  .funciona__titulo {
+    font-size: clamp(3.25rem, 6.5vw, 6.25rem);
+    line-height: 0.88;
+  }
+
+  .funciona__titulo span {
+    color: var(--amarillo);
+  }
+
+  .funciona__resumen {
+    font-size: var(--t-base);
+    line-height: 1.55;
+    color: var(--texto-2);
+  }
+
+  /* Pasos */
+  .funciona__pasos {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--esp-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .paso {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-3);
+    min-width: 0;
+    padding: 1.625rem 1.5rem;
+    background: var(--negro);
+    color: var(--blanco);
+    border-bottom: 6px solid var(--amarillo);
+  }
+
+  .paso__numero {
+    font-size: 5.5rem;
+    line-height: 0.8;
+    color: var(--amarillo);
+  }
+
+  .paso__titulo {
+    font-size: 2.125rem;
+    overflow-wrap: anywhere;
+  }
+
+  .paso__texto {
+    font-size: var(--t-base);
+    line-height: 1.55;
+    color: var(--texto-2);
+  }
+
+  /* Franja */
+  .franja {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--esp-3) var(--esp-5);
+    padding: 1.375rem 1.625rem;
+    background: var(--negro);
+    color: var(--blanco);
+    border-left: 8px solid var(--amarillo);
+  }
+
+  .franja__titulo {
+    font-size: 1.875rem;
+    color: var(--amarillo);
+  }
+
+  .franja__texto {
+    flex: 1 1 22rem;
+    font-size: var(--t-base);
+    line-height: 1.5;
+  }
+
+  @media (min-width: 40rem) {
+    .funciona__caja {
+      padding: 1.75rem 2.125rem;
+    }
+
+    .funciona__pasos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .funciona__pasos {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+</style>
