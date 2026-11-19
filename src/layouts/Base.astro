@@ -7,6 +7,7 @@ import '../styles/base.css';
 import '../styles/movimiento.css';
 import imagenSocial from '../assets/img/bg-escenario.jpg';
 import { contenido, enlaceInstagram } from '../data/contenido';
+import ActivadorRevision from '../components/revision/ActivadorRevision.astro';
 
 interface Props {
   /** Título de la página. Sin valor, se usa el título del inicio. */
@@ -99,5 +100,6 @@ const datosEstructurados = {
       <slot />
     </main>
     <slot name="footer" />
+    <ActivadorRevision />
   </body>
 </html>

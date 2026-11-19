@@ -1,0 +1,7 @@
+# Variables para probar el modo revisión en local (npm run revision:local).
+# Copia este archivo como .dev.vars (ignorado por git).
+# Con el simulador (node scripts/revision-simulador.mjs) no se toca GitHub:
+GITHUB_API_URL=http://127.0.0.1:8789
+GITHUB_TOKEN=simulado
+GITHUB_REPO=janoboxCL/huracan-web
+REVISION_CLAVE=prueba

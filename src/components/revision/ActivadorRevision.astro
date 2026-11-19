@@ -1,0 +1,36 @@
+---
+/* Activador del modo revisión del cliente.
+   Pesa unas pocas líneas: solo si la URL trae ?revision=<clave> (o si ya se
+   activó antes en este navegador) descarga la interfaz de revisión
+   (src/revision/cliente.ts), que va en un archivo aparte. Para el público
+   general no carga nada más.
+   - ?revision=<clave>  activa el modo y recuerda la clave en este navegador.
+   - ?revision=salir    lo desactiva. */
+---
+
+<script>
+  const CLAVE = 'huracan-revision';
+  const parametros = new URLSearchParams(location.search);
+  const valor = parametros.get('revision');
+
+  let clave: string | null = null;
+  try {
+    if (valor === 'salir') localStorage.removeItem(CLAVE);
+    else if (valor) localStorage.setItem(CLAVE, valor);
+    clave = valor && valor !== 'salir' ? valor : localStorage.getItem(CLAVE);
+  } catch {
+    clave = valor && valor !== 'salir' ? valor : null;
+  }
+
+  // La clave no queda a la vista en la barra de direcciones ni en capturas.
+  if (valor !== null) {
+    parametros.delete('revision');
+    const consulta = parametros.toString();
+    history.replaceState(history.state, '', `${location.pathname}${consulta ? `?${consulta}` : ''}${location.hash}`);
+  }
+
+  if (clave) {
+    const activa = clave;
+    import('../../revision/cliente').then((m) => m.iniciar(activa));
+  }
+</script>

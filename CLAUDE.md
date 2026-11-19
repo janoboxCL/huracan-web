@@ -15,7 +15,7 @@ Idioma del proyecto: **español de Chile, registro profesional**. Textos, coment
 ## Stack
 
 - **Astro 5 + TypeScript** (salida estática). Componentes `.astro`; islas de JS mínimas solo donde hay interacción (buscador de equipos, agenda).
-- **Cloudflare Pages** (build `npm run build`, salida `dist`), con **Pages Functions** en `functions/` para todo lo que escribe datos (desde la etapa 3).
+- **Cloudflare Pages** (build `npm run build`, salida `dist`), con **Pages Functions** en `functions/` para todo lo que escribe datos (desde la etapa 3). Excepción ya activa: `functions/api/revision/` (modo revisión del cliente).
 - **Supabase** (Postgres + Auth + RLS + Storage) desde la etapa 2. **Resend** para correos desde el dominio del club (etapa 3).
 
 ## Estructura objetivo
@@ -70,6 +70,16 @@ Hay dos subagentes en `.claude/agents/`:
 - `npm run dev` · `npm run build` · `npm run preview`
 - `npm run capturas` → capturas en `.revision/` a 390, 820 y 1440 px, con y sin movimiento (requiere `npm run preview` corriendo).
 - `npx astro check` antes de cada commit.
+- `npm run revision:simulador` + `npm run revision:local` → modo revisión en local con GitHub simulado (`http://localhost:8788/?revision=prueba`, requiere `.dev.vars`; ver `.dev.vars.example`).
+
+## Modo revisión del cliente
+
+El cliente revisa el sitio real con `?revision=<clave>` y sus comentarios se guardan como **issues** con etiquetas `revision`, `ronda-N`, `seccion:*`, `tipo:*` y `prioridad:*` (detalle en `docs/revision-cliente.md`).
+
+- Al trabajar comentarios del cliente: un issue por cambio; al terminar, comentar en el issue **en lenguaje para el cliente** (él lee esas respuestas en el panel) y cerrarlo como completado. Para descartar, cerrar como «no planificado» con el motivo. `en-curso` y `pospuesto` son etiquetas.
+- Los issues `tipo:idea` no se implementan sin aprobación explícita.
+- Si se agrega o renombra una sección del inicio, actualizar `SECCIONES` en `src/data/revision.ts`.
+- Nueva ronda: subir `RONDA_ACTUAL` en `src/data/revision.ts`.
 
 ## Etapas
 

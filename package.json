@@ -13,7 +13,9 @@
     "preview": "astro preview",
     "check": "astro check",
     "astro": "astro",
-    "capturas": "node scripts/capturas.mjs"
+    "capturas": "node scripts/capturas.mjs",
+    "revision:simulador": "node scripts/revision-simulador.mjs",
+    "revision:local": "astro build && wrangler pages dev dist --port 8788"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.6",
@@ -23,6 +25,7 @@
     "@astrojs/check": "^0.9.12",
     "@types/node": "^22.20.5",
     "playwright": "^1.65.1",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wrangler": "^4.165.0"
   }
 }
