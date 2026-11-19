@@ -94,3 +94,19 @@ _(se completa bloque a bloque)_
 - **Capturas 1440 px:** `.revision/inicio-1440-sin-movimiento.png`, `.revision/inicio-1440-mov-00.png`, `.revision/inicio-1440-mov-01.png`
 
 ---
+
+## Bloque 6 · Temporada + Horarios
+
+- **Veredicto final:** Aprobado con cambios (1 ronda, sin Bloqueantes). Build y `astro check` sin errores. Revisor distinto al de los bloques 1-5 (contexto fresco).
+- **Corregido:** la corriente de viento cruzaba el título y la leyenda de Temporada a 1440 px (ahora el SVG va anclado bajo los meses; con movimiento reducido tampoco cruza); corte diagonal de Horarios espejado respecto de la v2 (corregido; se verificó que el de Equipos coincide con la v2 y no se tocó); alineación de etiquetas y hitos entre meses; pista «Desliza…» y `tabindex` del riel de Horarios solo cuando hay desborde.
+- **Verificado:** 13 meses del JSON (el JSON trae 13: nov 2026 a nov 2027); `[por confirmar]` visible en febrero y septiembre; `[confirmar mes]` ×2 y `[fecha por confirmar]` tal como vienen; la advertencia interna sobre Pink Ladies NO se publica; «Horarios tentativos.» sí. Sin scroll horizontal de página de 390 a 1920 px; los rieles desplazan por dentro con nombre accesible y foco visible.
+- **Pendientes (Menor):**
+  - La extracción del aviso «tentativos» depende del orden y del prefijo («Verificar…») de `_notaHorarios`; validar en `contenido.ts` o separar el pendiente interno en otro campo del JSON.
+  - Extras y gimnasia se distinguen solo por trazo sólido/discontinuo; valorar microetiqueta visible.
+  - Etiqueta «/// 06 · HORARIOS 2027» (la v2 dice «HORARIOS TENTATIVOS»); tamaños de título algo menores en móvil que la v2; «Tu semana Huracán» con salto de línea forzado.
+  - Las corrientes de Temporada se ven menos que en la maqueta (solo asoman bajo los meses).
+- **Datos pendientes del club:** mes del viaje a Orlando y de la evaluación final (febrero); fecha del showcase (septiembre); asignación de Pink Ladies del viernes (diagramación ambigua del PDF).
+- **Capturas 390 px:** `.revision/inicio-390-mov-10.png`, `.revision/inicio-390-mov-11.png`, `.revision/inicio-390-mov-12.png`
+- **Capturas 1440 px:** `.revision/inicio-1440-mov-08.png`, `.revision/inicio-1440-mov-09.png`, `.revision/inicio-1440-mov-10.png`
+
+---
