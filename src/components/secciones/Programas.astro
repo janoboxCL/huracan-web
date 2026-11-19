@@ -1,0 +1,291 @@
+---
+/* 4 · 02 Programas: foto oscura con velo y parallax + 4 tarjetas inclinadas
+   que alternan amarillo / negro. Todos los datos salen del JSON (`programas`). */
+import { Image } from 'astro:assets';
+import modelos from '../../assets/img/bg-models.jpg';
+import { contenido, formatearPesos } from '../../data/contenido';
+import Etiqueta from '../ui/Etiqueta.astro';
+
+const { programas } = contenido;
+
+/* Numeración 01–04 según el orden del JSON; la alternancia de color, por posición. */
+const tarjetas = programas.map((p, i) => ({
+  ...p,
+  numero: String(i + 1).padStart(2, '0'),
+  amarilla: i % 2 === 0,
+  precio: formatearPesos(p.mensualidad),
+}));
+---
+
+<section class="programas" id="programas" aria-labelledby="programas-titulo">
+  <div class="programas__foto-caja" aria-hidden="true">
+    <Image
+      class="programas__foto parallax"
+      src={modelos}
+      alt=""
+      widths={[640, 1120]}
+      sizes="100vw"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+  <div class="programas__velo" aria-hidden="true"></div>
+
+  <div class="programas__cuerpo contenedor">
+    <div class="programas__cabecera soplo">
+      <div class="programas__titulos">
+        <Etiqueta variante="seccion" class="programas__etiqueta">02 · Programas</Etiqueta>
+        <h2 id="programas-titulo" class="disp programas__titulo">
+          Sube de<br /><span>categoría</span>
+        </h2>
+      </div>
+      <p class="programas__bajada">Cuatro niveles, un mismo camino: del juego y la motricidad a la élite internacional.</p>
+    </div>
+
+    <ul role="list" class="programas__lista">
+      {
+        tarjetas.map((t) => (
+          <li class="programas__item soplo">
+            <article class:list={['carta', t.amarilla ? 'carta--amarilla' : 'carta--negra']}>
+              <span class="disp carta__numero" aria-hidden="true">
+                {t.numero}
+              </span>
+              <p class="carta__edad">Desde {t.edadDesde} años</p>
+              <h3 class="disp carta__nombre">{t.nombre}</h3>
+              <p class="carta__texto">{t.descripcion}</p>
+              <div class="carta__pie">
+                <p class="carta__precio-fila">
+                  <span class="disp carta__precio">{t.precio}</span>
+                  <span class="carta__al-mes">al mes</span>
+                                </p>
+                <p class="carta__detalle">{t.detalle}</p>
+              </div>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .programas {
+    position: relative;
+    margin-top: -1px; /* tapa la línea tenue entre los hitos y la sección */
+    overflow: clip;
+    background: var(--negro);
+  }
+
+  /* Foto: más alta que la sección para que el parallax (±9 %) no deje bordes. */
+  .programas__foto-caja {
+    position: absolute;
+    inset: 0;
+    overflow: clip;
+  }
+
+  .programas :global(.programas__foto) {
+    position: absolute;
+    left: 0;
+    top: -10%;
+    width: 100%;
+    height: 120%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.2) brightness(0.45);
+  }
+
+  .programas__velo {
+    position: absolute;
+    inset: 0;
+    background: var(--negro);
+    opacity: 0.45;
+  }
+
+  .programas__cuerpo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-7);
+    padding-block: var(--seccion-y);
+  }
+
+  .programas__cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--esp-4) var(--esp-7);
+  }
+
+  .programas__titulos {
+    flex: 1 1 32rem;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-4);
+  }
+
+  .programas :global(.programas__etiqueta) {
+    color: var(--amarillo);
+  }
+
+  .programas__titulo {
+    font-size: clamp(3.5rem, 8vw, 7.5rem);
+    line-height: 0.86;
+  }
+
+  .programas__titulo span {
+    color: var(--amarillo);
+  }
+
+  .programas__bajada {
+    flex: 1 1 24rem;
+    max-width: 34rem;
+    font-size: var(--t-md);
+    line-height: 1.6;
+    color: var(--texto);
+  }
+
+  .programas__lista {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--esp-5);
+    margin: 0;
+    padding: 0 0.5rem; /* holgura para la inclinación y la sombra en los bordes */
+    list-style: none;
+  }
+
+  .programas__item {
+    display: flex;
+    min-width: 0;
+    container-type: inline-size;
+  }
+
+  /* Tarjeta */
+  .carta {
+    --sombra-carta: var(--sombra-dura-blanca);
+    position: relative;
+    overflow: clip;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--esp-3);
+    min-width: 0;
+    min-height: 27.5rem;
+    padding: 1.9rem 1.6rem 1.6rem;
+    border: 3px solid var(--amarillo);
+    transform: skewX(-3deg);
+    transition:
+      transform var(--dur-rapida) var(--curva-suave),
+      box-shadow var(--dur-rapida) var(--curva-suave);
+  }
+
+  .carta--amarilla {
+    --sombra-carta: var(--sombra-dura-blanca);
+    background: var(--amarillo);
+    color: var(--negro);
+  }
+
+  .carta--negra {
+    --sombra-carta: var(--sombra-dura-amarilla);
+    background: var(--negro);
+    color: var(--blanco);
+  }
+
+  @media (hover: hover) {
+    .carta:hover {
+      transform: translateY(-10px) skewX(-3deg);
+      box-shadow: var(--sombra-carta);
+    }
+  }
+
+  .carta__numero {
+    position: absolute;
+    top: -0.9rem;
+    right: -0.4rem;
+    font-size: 10.5rem;
+    color: transparent;
+    opacity: 0.2;
+    pointer-events: none;
+  }
+
+  .carta--amarilla .carta__numero {
+    -webkit-text-stroke: 2px var(--negro);
+  }
+
+  .carta--negra .carta__numero {
+    -webkit-text-stroke: 2px var(--amarillo);
+  }
+
+  .carta__edad {
+    position: relative;
+    font-size: var(--t-xs);
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .carta__nombre {
+    position: relative;
+    font-size: min(3.5rem, 12cqi);
+  }
+
+  .carta__texto {
+    position: relative;
+    flex-grow: 1;
+    font-size: var(--t-base);
+    line-height: 1.55;
+  }
+
+  .carta__pie {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-2);
+    padding-top: var(--esp-4);
+    border-top: 2px solid currentColor;
+  }
+
+  .carta--negra .carta__pie {
+    border-top-color: var(--amarillo);
+  }
+
+  .carta__precio-fila {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0 var(--esp-3);
+  }
+
+  .carta__precio {
+    font-size: 2.875rem;
+  }
+
+  .carta__al-mes {
+    font-size: var(--t-sm);
+    font-weight: 700;
+  }
+
+  .carta__detalle {
+    font-size: var(--t-sm);
+    font-weight: 600;
+    line-height: 1.45;
+  }
+
+  @media (min-width: 40rem) {
+    .programas__lista {
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--esp-5);
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .programas__lista {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carta:hover {
+      transform: skewX(-3deg);
+    }
+  }
+</style>

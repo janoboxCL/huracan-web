@@ -1,0 +1,244 @@
+---
+/* 9 · 07 Valores (negro). «Sin letra chica»: tarjeta amarilla inclinada con la inscripción,
+   listas de valores y, a la derecha, las promociones (Promociones.astro).
+   Datos solo del JSON: `valores` y `_temporada`. Un `monto: null` se muestra con
+   `formatearPesos` ([por confirmar]); el detalle se conserva tal cual.
+   Semántica: cada grupo es una lista de definición (dt = concepto, dd = monto y detalle),
+   precedida por un h3. No se publican datos bancarios ni `noPublicar`. */
+import { contenido, esPendiente, formatearPesos } from '../../data/contenido';
+import Etiqueta from '../ui/Etiqueta.astro';
+import Promociones from './Promociones.astro';
+
+const { valores, _temporada } = contenido;
+const { inscripcion, vestimenta, otros, clasesExtras, requisitos } = valores;
+
+interface Fila {
+  item: string;
+  monto: number | null;
+  detalle: string;
+}
+
+const extras: Fila[] = [
+  {
+    item: `Pack de ${clasesExtras.pack.clases} clases de ${clasesExtras.pack.minutos} min`,
+    monto: clasesExtras.pack.monto,
+    detalle: clasesExtras.tipos.join(' · '),
+  },
+  { item: 'Clase suelta', monto: clasesExtras.suelta, detalle: '' },
+];
+
+const grupos: { id: string; titulo: string; filas: Fila[] }[] = [
+  { id: 'vestimenta', titulo: 'Vestimenta', filas: vestimenta },
+  { id: 'otros', titulo: 'Otros pagos', filas: otros },
+  { id: 'extras', titulo: 'Clases extras', filas: extras },
+];
+---
+
+<section class="valores" id="valores" aria-labelledby="valores-titulo">
+  <div class="valores__cuerpo contenedor">
+    <div class="valores__izq">
+      <div class="valores__cabecera soplo">
+        <Etiqueta variante="seccion" class="valores__etiqueta">07 · Valores {_temporada}</Etiqueta>
+        <h2 id="valores-titulo" class="disp valores__titulo">Sin letra<br /><span>chica</span></h2>
+      </div>
+
+      <div class="inscripcion-ancla soplo">
+        <div class="inscripcion">
+          <p class="inscripcion__rotulo">Inscripción {_temporada}</p>
+          <p class="disp inscripcion__monto">{formatearPesos(inscripcion.monto)}</p>
+          <p class="inscripcion__detalle">{inscripcion.detalle}</p>
+        </div>
+      </div>
+
+      {
+        grupos.map((g) => (
+          <div class="grupo soplo">
+            <h3 class="disp grupo__titulo" id={`valores-${g.id}`}>
+              {g.titulo}
+            </h3>
+            <dl class="lista">
+              {g.filas.map((f) => (
+                <div class="fila">
+                  <dt class="fila__item">{f.item}</dt>
+                  <dd class:list={['fila__monto', { 'fila__monto--pendiente': esPendiente(formatearPesos(f.monto)) }]}>
+                    {formatearPesos(f.monto)}
+                  </dd>
+                  {f.detalle && <dd class="fila__detalle">{f.detalle}</dd>}
+                </div>
+              ))}
+            </dl>
+          </div>
+        ))
+      }
+
+      <div class="grupo soplo">
+        <h3 class="disp grupo__titulo" id="valores-requisitos">Requisitos</h3>
+        <ul role="list" class="requisitos" aria-labelledby="valores-requisitos">
+          {requisitos.map((r) => <li>{r}</li>)}
+        </ul>
+      </div>
+    </div>
+
+    <div class="valores__der">
+      <Promociones />
+    </div>
+  </div>
+</section>
+
+<style>
+  .valores {
+    position: relative;
+    background: var(--negro);
+    color: var(--blanco);
+    overflow-x: clip;
+  }
+
+  .valores__cuerpo {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--esp-8) var(--esp-7);
+    padding-block: var(--seccion-y);
+  }
+
+  .valores__izq,
+  .valores__der {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-5);
+    min-width: 0;
+  }
+
+  .valores__cabecera {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-4);
+  }
+
+  .valores :global(.valores__etiqueta) {
+    color: var(--amarillo);
+  }
+
+  .valores__titulo {
+    font-size: var(--t-3xl);
+    line-height: 0.88;
+  }
+
+  .valores__titulo span {
+    color: var(--amarillo);
+  }
+
+  /* Tarjeta amarilla inclinada: el reveal (.soplo) va en el ancla; el skew, en la tarjeta. */
+  .inscripcion-ancla {
+    margin-inline: 0.5rem;
+  }
+
+  .inscripcion {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-1);
+    padding: 1.375rem 1.5rem;
+    background: var(--amarillo);
+    color: var(--negro);
+    transform: skewX(-6deg);
+  }
+
+  .inscripcion__rotulo {
+    font-size: var(--t-xs);
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .inscripcion__monto {
+    font-size: clamp(3.75rem, 8vw, 4.5rem);
+  }
+
+  .inscripcion__detalle {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  /* Listas de valores */
+  .grupo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-2);
+  }
+
+  .grupo__titulo {
+    font-size: 1.875rem;
+    color: var(--amarillo);
+  }
+
+  .lista {
+    margin: 0;
+    border-top: 1px solid var(--linea);
+  }
+
+  .fila {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--esp-4);
+    row-gap: 2px;
+    padding: 0.875rem 0;
+    border-bottom: 1px solid var(--linea);
+  }
+
+  .fila__item {
+    color: var(--blanco);
+    font-size: var(--t-base);
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .fila__monto {
+    margin: 0;
+    font-size: var(--t-md);
+    font-weight: 800;
+    text-align: right;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .fila__monto--pendiente {
+    color: var(--texto-2);
+    font-size: var(--t-base);
+  }
+
+  .fila__detalle {
+    grid-column: 1;
+    margin: 0;
+    color: var(--texto-2);
+    font-size: var(--t-sm);
+    line-height: 1.5;
+  }
+
+  .requisitos {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--texto-2);
+    font-size: var(--t-base);
+    line-height: 1.5;
+  }
+
+  .requisitos li {
+    padding-left: 1.25rem;
+    border-left: 4px solid var(--amarillo);
+  }
+
+  @media (min-width: 64rem) {
+    .valores__cuerpo {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+      align-items: start;
+    }
+
+    .valores__der {
+      padding-top: calc(var(--t-3xl) * 0.5);
+    }
+  }
+</style>

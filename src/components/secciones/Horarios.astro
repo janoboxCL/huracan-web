@@ -1,0 +1,252 @@
+---
+/* 8 · 06 Horarios (amarillo, corte diagonal superior, como la v2). Datos: `horarios` del JSON.
+   Semántica: lista de días, cada uno con su nombre como h3 y una lista de bloques.
+   Se prefirió a una tabla porque los días tienen cantidades distintas de bloques
+   y horas que se superponen (p. ej. viernes 18:00 a 19:00 y 18:00 a 20:00), lo que
+   una tabla de filas por hora no puede representar sin celdas combinadas.
+   La rejilla va en un riel con `overflow-x: auto`, foco accesible por teclado.
+   Aviso: se publican las frases de `_notaHorarios` salvo la que empieza por
+   «Verificar…» (pendiente interno: asignación de Pink Ladies del viernes). */
+import { contenido } from '../../data/contenido';
+import Etiqueta from '../ui/Etiqueta.astro';
+
+const { horarios, _notaHorarios, _temporada } = contenido;
+
+const frases = _notaHorarios.split(/(?<=\.)\s+/).filter((f) => f && !f.startsWith('Verificar'));
+const aviso = frases[0]; // «Horarios tentativos.»
+const resto = frases.slice(1).join(' ');
+
+const tipos = { equipo: 'Equipo', extra: 'Clase extra', gimnasia: 'Gimnasia' } as const;
+---
+
+<section class="horarios sobre-amarillo" id="horarios" aria-labelledby="horarios-titulo">
+  <div class="horarios__cuerpo contenedor">
+    <div class="horarios__cabecera soplo">
+      <div class="horarios__titulos">
+        <Etiqueta variante="seccion">06 · Horarios {_temporada}</Etiqueta>
+        <h2 id="horarios-titulo" class="disp horarios__titulo">Tu semana<br />Huracán</h2>
+      </div>
+      <div class="horarios__nota">
+        <p class="horarios__tentativo">{aviso}</p>
+        <p>{resto}</p>
+      </div>
+    </div>
+
+    <ul role="list" class="leyenda" aria-label="Tipos de bloque">
+      <li><span class="muestra muestra--equipo" aria-hidden="true"></span>Entrenamiento de equipo</li>
+      <li><span class="muestra muestra--extra" aria-hidden="true"></span>Clase extra</li>
+      <li><span class="muestra muestra--gimnasia" aria-hidden="true"></span>Gimnasia por nivel</li>
+    </ul>
+
+    <p class="horarios__pista" data-pista>Desliza para ver todos los días.</p>
+
+    <div class="horarios__riel soplo" data-riel role="region" aria-label="Horarios semanales" tabindex="0">
+      <ol role="list" class="semana">
+        {
+          horarios.map((d) => (
+            <li class="dia">
+              <h3 class="disp dia__nombre">{d.dia}</h3>
+              <ul role="list" class="dia__bloques">
+                {d.bloques.map((b) => (
+                  <li class={`bloque bloque--${b.tipo}`}>
+                    <span class="bloque__hora">
+                      {b.inicio} a {b.fin}
+                    </span>
+                    <span class="bloque__texto">{b.texto}</span>
+                    {b.tipo !== 'equipo' && <span class="solo-lectores">({tipos[b.tipo]})</span>}
+                  </li>
+                ))}
+              </ul>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>
+
+<script>
+  /* Mejora progresiva: el riel solo es enfocable (y la pista visible) si de verdad desplaza. */
+  const riel = document.querySelector<HTMLElement>('[data-riel]');
+  const pista = document.querySelector<HTMLElement>('[data-pista]');
+  if (riel && pista) {
+    const ajustar = () => {
+      const desborda = riel.scrollWidth > riel.clientWidth + 1;
+      pista.hidden = !desborda;
+      if (desborda) riel.setAttribute('tabindex', '0');
+      else riel.removeAttribute('tabindex');
+    };
+    new ResizeObserver(ajustar).observe(riel);
+    ajustar();
+  }
+</script>
+
+<style>
+  .horarios {
+    position: relative;
+    margin-top: calc(var(--corte-diagonal) * -1);
+    background: var(--amarillo);
+    color: var(--negro);
+    clip-path: polygon(0 var(--corte-diagonal), 100% 0, 100% 100%, 0 100%);
+    overflow: clip;
+  }
+
+  .horarios__cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-5);
+    padding-block: calc(var(--corte-diagonal) + var(--seccion-y)) var(--seccion-y);
+  }
+
+  .horarios__cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--esp-4) var(--esp-8);
+  }
+
+  .horarios__titulos {
+    flex: 1 1 28rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-4);
+    min-width: 0;
+  }
+
+  .horarios__titulo {
+    font-size: clamp(3.25rem, 6.5vw, 6.25rem);
+    line-height: 0.88;
+  }
+
+  .horarios__nota {
+    flex: 1 1 20rem;
+    font-size: var(--t-base);
+    line-height: 1.6;
+    font-weight: 500;
+  }
+
+  .horarios__tentativo {
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--esp-2) var(--esp-5);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--t-sm);
+    font-weight: 700;
+  }
+
+  .muestra {
+    display: inline-block;
+    width: 1.125rem;
+    height: 0.875rem;
+    margin-right: 0.5rem;
+    vertical-align: -1px;
+    border: 2px solid var(--negro);
+  }
+
+  .muestra--equipo {
+    background: var(--negro);
+  }
+
+  .muestra--gimnasia {
+    border-style: dashed;
+  }
+
+  .horarios__pista[hidden] {
+    display: none;
+  }
+
+  .horarios__pista {
+    font-size: var(--t-sm);
+    font-weight: 700;
+  }
+
+  @media (min-width: 70rem) {
+    .horarios__pista {
+      display: none;
+    }
+  }
+
+  /* Riel desplazable: el scroll es del contenedor, no de la página. */
+  .horarios__riel {
+    overflow-x: auto;
+    padding: 4px 4px var(--esp-3);
+    margin: -4px;
+    overscroll-behavior-x: contain;
+  }
+
+  .semana {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(10.5rem, 1fr));
+    gap: 10px;
+    min-width: 66rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .dia {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .dia__nombre {
+    padding: 0.75rem 0.875rem;
+    background: var(--negro);
+    color: var(--amarillo);
+    font-size: 1.875rem;
+    transform: skewX(-6deg);
+  }
+
+  .dia__bloques {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .bloque {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 0.75rem 0.875rem;
+    border: 2px solid var(--negro);
+  }
+
+  .bloque--equipo {
+    background: var(--negro);
+    color: var(--blanco);
+  }
+
+  .bloque--gimnasia {
+    border-style: dashed;
+  }
+
+  .bloque__hora {
+    font-size: var(--t-xs);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+
+  .bloque--equipo .bloque__hora {
+    color: var(--amarillo);
+  }
+
+  .bloque__texto {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+</style>

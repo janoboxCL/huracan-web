@@ -1,0 +1,65 @@
+---
+/* Corrientes de viento: trazos SVG con stroke-dasharray animado.
+   Decorativo. Cubre su contenedor (que debe ser `position: relative`). */
+interface Trazo {
+  d: string;
+  color: 'amarillo' | 'blanco';
+  /** Grosor en px de pantalla. */
+  grosor: number;
+  /** Largo visible del trazo, sobre un recorrido de 1000. */
+  largo: number;
+  duracion: number;
+  /** Retardo negativo para desfasar. */
+  retardo?: number;
+  opacidad?: number;
+  /** Si se indica, dibuja debajo el recorrido completo, fijo, en este color CSS. */
+  base?: string;
+}
+
+interface Props {
+  trazos?: Trazo[];
+  viewBox?: string;
+  class?: string;
+}
+
+/* Las cuatro corrientes del hero (viewBox 1440 × 900). */
+const hero: Trazo[] = [
+  { d: 'M-200,250 C200,140 520,380 880,250 S1380,120 1700,210', color: 'amarillo', grosor: 3, largo: 130, duracion: 3.4 },
+  { d: 'M-200,420 C260,330 600,560 980,420 S1400,300 1700,380', color: 'blanco', grosor: 2, largo: 80, duracion: 4.2, retardo: -1.2, opacidad: 0.7 },
+  { d: 'M-200,610 C240,520 640,720 1000,590 S1420,470 1700,560', color: 'amarillo', grosor: 4, largo: 160, duracion: 3, retardo: -2 },
+  { d: 'M-200,760 C300,700 700,840 1100,740 S1460,660 1700,700', color: 'blanco', grosor: 2, largo: 60, duracion: 5, retardo: -0.6, opacidad: 0.6 },
+];
+
+const { trazos = hero, viewBox = '0 0 1440 900', class: clase } = Astro.props;
+---
+
+<svg class:list={['corrientes', clase]} {viewBox} preserveAspectRatio="none" aria-hidden="true" focusable="false">
+  {
+    trazos.map((t) => (
+      <>
+      {t.base && (
+        <path d={t.d} fill="none" vector-effect="non-scaling-stroke" style={`stroke: ${t.base}; stroke-width: 2px`} />
+      )}
+      <path
+        class="corriente"
+        d={t.d}
+        pathLength="1000"
+        fill="none"
+        stroke-linecap="round"
+        vector-effect="non-scaling-stroke"
+        style={`stroke: var(--${t.color}); stroke-width: ${t.grosor}px; stroke-dasharray: ${t.largo} ${1000 - t.largo}; --dur-corriente: ${t.duracion}s; animation-delay: ${t.retardo ?? 0}s; opacity: ${t.opacidad ?? 1}`}
+      />
+      </>
+    ))
+  }
+</svg>
+
+<style>
+  .corrientes {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+</style>

@@ -1,0 +1,101 @@
+---
+/* Cinta con marquee. El contenido se duplica (la copia va oculta a lectores)
+   y se desplaza media pista, así el bucle no tiene salto.
+   Quien la use decide la posición; aquí solo viven el aspecto y el movimiento. */
+interface Props {
+  textos: string[];
+  /** amarilla: texto negro sobre amarillo · oscura: lema en contorno amarillo. */
+  variante?: 'amarilla' | 'oscura';
+  inversa?: boolean;
+  /** Segundos que tarda en recorrer media pista. */
+  duracion?: number;
+  /** Separador entre textos. */
+  separador?: string;
+  /** Veces que se repite la lista dentro de cada mitad (para cubrir pantallas anchas). */
+  repeticiones?: number;
+  /** Decorativa: se oculta a lectores de pantalla (p. ej. el lema repetido). */
+  decorativa?: boolean;
+  class?: string;
+}
+
+const {
+  textos,
+  variante = 'amarilla',
+  inversa = false,
+  duracion = 30,
+  separador = '///',
+  repeticiones = 1,
+  decorativa = false,
+  class: clase,
+} = Astro.props;
+
+const mitad = Array.from({ length: repeticiones }, () => textos).flat();
+---
+
+<div class:list={['cinta', `cinta--${variante}`, clase]} aria-hidden={decorativa ? 'true' : undefined}>
+  <div class:list={['marquee', { 'marquee--inversa': inversa }]} style={`--dur-marquee: ${duracion}s`}>
+    {
+      [false, true].map((copia) => (
+        <ul class="cinta__lista" role={copia ? undefined : 'list'} aria-hidden={copia ? 'true' : undefined}>
+          {mitad.map((texto) => (
+            <li class="disp cinta__item">
+              {texto}
+              {separador && (
+                <span class="cinta__sep" aria-hidden="true">
+                  {' '}
+                  {separador}
+                </span>
+              )}
+            </li>
+          ))}
+        </ul>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .cinta {
+    overflow: hidden;
+  }
+
+  .cinta:hover .marquee,
+  .cinta:focus-within .marquee {
+    animation-play-state: paused;
+  }
+
+  .cinta--amarilla {
+    background: var(--amarillo);
+    color: var(--negro);
+    padding-block: 0.75rem;
+  }
+
+  .cinta--oscura {
+    background: var(--superficie-1);
+    border-block: 2px solid var(--amarillo);
+    padding-block: 0.6rem;
+  }
+
+  .cinta__lista {
+    display: flex;
+    flex: none;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .cinta__item {
+    padding-inline: 1.5rem;
+    white-space: nowrap;
+  }
+
+  .cinta--amarilla .cinta__item {
+    font-size: clamp(1.5rem, 3vw, 2.25rem);
+  }
+
+  .cinta--oscura .cinta__item {
+    font-size: clamp(1.4rem, 2.8vw, 2.125rem);
+    color: transparent;
+    -webkit-text-stroke: 1.5px var(--amarillo);
+  }
+</style>

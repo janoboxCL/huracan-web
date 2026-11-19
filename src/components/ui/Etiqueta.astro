@@ -1,0 +1,38 @@
+---
+/* Etiqueta de marca.
+   - solida: pastilla amarilla inclinada (hero).
+   - seccion: `/// 01 · NOMBRE`, hereda el color del fondo de la sección. */
+interface Props {
+  variante?: 'solida' | 'seccion';
+  class?: string;
+}
+
+const { variante = 'solida', class: clase } = Astro.props;
+---
+
+<p class:list={['etiqueta', `etiqueta--${variante}`, clase]}>
+  {variante === 'seccion' && <span aria-hidden="true">/// </span>}<slot />
+</p>
+
+<style>
+  .etiqueta {
+    font-weight: 800;
+    text-transform: uppercase;
+  }
+
+  .etiqueta--solida {
+    display: inline-block;
+    align-self: flex-start;
+    padding: 0.55rem 1rem;
+    background: var(--amarillo);
+    color: var(--negro);
+    font-size: var(--t-sm);
+    letter-spacing: 0.14em;
+    transform: skewX(-12deg);
+  }
+
+  .etiqueta--seccion {
+    font-size: var(--t-sm);
+    letter-spacing: 0.18em;
+  }
+</style>

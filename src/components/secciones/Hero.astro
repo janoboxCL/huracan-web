@@ -1,0 +1,336 @@
+---
+/* 1 · Hero: foto + bloque amarillo diagonal + corrientes + tornado + atleta.
+   Las cifras de la barra inferior salen del JSON (hitos y equipos), no se escriben aquí. */
+import { Image } from 'astro:assets';
+import escenario from '../../assets/img/bg-escenario.jpg';
+import atleta from '../../assets/img/cut-atleta.png';
+import { contenido } from '../../data/contenido';
+import { enlaces } from '../../data/enlaces';
+import Boton from '../ui/Boton.astro';
+import Corrientes from '../ui/Corrientes.astro';
+import Etiqueta from '../ui/Etiqueta.astro';
+import Tornado from '../ui/Tornado.astro';
+
+const { club, hitos, equipos, _temporada } = contenido;
+
+/* Titular: el lema partido en las tres líneas de la maqueta
+   («The power / from the / Wind»). */
+const palabras = club.lema.split(' ');
+const lineas = [palabras.slice(0, 2).join(' '), palabras.slice(2, 4).join(' ')];
+const ultima = palabras.slice(4).join(' ');
+const ultimaCapitalizada = ultima.charAt(0).toUpperCase() + ultima.slice(1);
+
+const ciudad = club.ciudad.split(',')[0];
+const bajada = `Cheerleading All Star en ${ciudad} desde ${club.fundacion}. ${club.edades}, del primer salto a la competencia internacional.`;
+
+/* Datos de la barra: el ordinal («5°») sale del texto del hito de cada año. */
+function ordinalDelHito(anio: number): string {
+  const hito = hitos.find((h) => h.anio === anio);
+  return hito?.texto.match(/^\d+°/)?.[0] ?? '[dato por confirmar]';
+}
+
+const datos = [
+  { cifra: String(club.fundacion), etiqueta: ['Año de', 'fundación'] },
+  { cifra: ordinalDelHito(2009), etiqueta: ['del mundo', 'Worlds 2009'] },
+  { cifra: ordinalDelHito(2026), etiqueta: ['Internacional', 'The Experience 2026'] },
+  { cifra: String(equipos.length), etiqueta: ['equipos', `temporada ${_temporada}`] },
+];
+
+/* Retardos de entrada (s): la cortina sale hacia 0,6 s; el titular va después. */
+const t0 = 0.9;
+const paso = 0.12;
+---
+
+<section class="hero" id="inicio" aria-labelledby="hero-titulo">
+  <Image
+    class="hero__foto"
+    src={escenario}
+    alt=""
+    widths={[640, 1120]}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+    decoding="async"
+    aria-hidden="true"
+  />
+  <div class="hero__velo" aria-hidden="true"></div>
+
+  <div class="hero__bloque" aria-hidden="true"></div>
+  <div class="hero__franja hero__franja--ancha" aria-hidden="true"></div>
+  <div class="hero__franja hero__franja--fina" aria-hidden="true"></div>
+
+  <Corrientes />
+  <Tornado class="hero__tornado" />
+
+  <div class="hero__cuerpo contenedor">
+    <div class="hero__texto">
+      <div class="gust" style={`--retardo: ${t0}s`}>
+        <Etiqueta>Temporada {_temporada} · Inscripciones abiertas</Etiqueta>
+      </div>
+
+      <h1 id="hero-titulo" class="disp hero__titulo">
+        {
+          lineas.map((linea, i) => (
+            <span class="hero__linea gust" style={`--retardo: ${t0 + 0.1 + i * paso}s`}>
+              {linea}
+            </span>
+          ))
+        }
+        <span class="hero__linea">
+          <span class="hero__wind gust" style={`--retardo: ${t0 + 0.1 + 2 * paso}s`}>{ultimaCapitalizada}</span>
+          <span class="hero__barras gust" aria-hidden="true" style={`--retardo: ${t0 + 0.1 + 3 * paso}s`}>///</span>
+        </span>
+      </h1>
+
+      <p class="hero__bajada gust" style={`--retardo: ${t0 + 0.5}s`}>{bajada}</p>
+
+      <div class="hero__acciones gust" style={`--retardo: ${t0 + 0.6}s`}>
+        <Boton href={enlaces.agenda} tamano="grande" etiqueta="Agenda tu evaluación, desde el inicio">Agenda tu evaluación →</Boton>
+        <Boton href={enlaces.equipos} variante="contorno" tamano="grande">¿Qué equipo es para mí?</Boton>
+      </div>
+    </div>
+
+    <div class="hero__figura" aria-hidden="true">
+      <Image
+        class="hero__atleta flota"
+        src={atleta}
+        alt=""
+        widths={[320, 640]}
+        sizes="(min-width: 88rem) 320px, 1px"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  </div>
+
+  <div class="hero__barra">
+    <ul role="list" class="hero__datos contenedor">
+      {
+        datos.map((d) => (
+          <li class="dato">
+            <span class="disp dato__cifra">{d.cifra}</span>
+            <span class="dato__texto">
+              {d.etiqueta[0]} <br />
+              {d.etiqueta[1]}
+            </span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div class="cortina" aria-hidden="true"></div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: min(56rem, 100svh);
+    overflow: hidden;
+    background: var(--negro);
+  }
+
+  .hero :global(.hero__foto) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.25) brightness(0.42);
+  }
+
+  .hero__velo {
+    position: absolute;
+    inset: 0;
+    background: var(--negro);
+    opacity: 0.35;
+  }
+
+  /* Bloque amarillo diagonal y sus dos franjas (solo escritorio). */
+  .hero__bloque,
+  .hero__franja {
+    display: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    background: var(--amarillo);
+    transform: skewX(var(--inclinacion-fuerte));
+  }
+
+  .hero__bloque {
+    right: -11rem;
+    width: 47.5rem;
+  }
+
+  .hero__franja--ancha {
+    right: 38rem;
+    width: 2.125rem;
+  }
+
+  .hero__franja--fina {
+    right: 42rem;
+    width: 0.75rem;
+  }
+
+  .hero :global(.hero__tornado) {
+    display: none;
+    position: absolute;
+    top: 4.5rem;
+    right: 7.5rem;
+    width: 32.5rem;
+    opacity: 0.9;
+  }
+
+  .hero__cuerpo {
+    position: relative;
+    z-index: var(--z-contenido);
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    gap: var(--esp-5);
+    padding-top: calc(var(--alto-header-movil) + var(--esp-4)); /* reserva la altura real del header superpuesto */
+  }
+
+  .hero__texto {
+    flex: 1 1 36rem;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-4);
+    padding-bottom: var(--esp-6);
+  }
+
+  .hero__titulo {
+    font-size: clamp(4rem, min(10.5vw, 15vh), 10.5rem);
+    line-height: 0.86;
+    letter-spacing: -0.01em;
+  }
+
+  .hero__linea {
+    display: block;
+  }
+
+  .hero__wind {
+    display: inline-block;
+    color: var(--amarillo);
+    font-size: 1.35em;
+  }
+
+  .hero__barras {
+    display: inline-block;
+    color: var(--amarillo);
+    font-size: 0.9em;
+  }
+
+  .hero__bajada {
+    max-width: 34rem;
+    font-size: var(--t-lg);
+    line-height: 1.5;
+    color: var(--texto);
+  }
+
+  .hero__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--esp-4);
+  }
+
+  .hero__figura {
+    display: none;
+  }
+
+  /* Barra inferior con los datos. */
+  .hero__barra {
+    position: relative;
+    z-index: calc(var(--z-contenido) + 1);
+    background: var(--negro);
+    border-top: 3px solid var(--amarillo);
+  }
+
+  .hero__datos {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--esp-3) var(--esp-5);
+    margin-block: 0;
+    padding: var(--esp-4) var(--margen);
+    list-style: none;
+  }
+
+  .dato {
+    display: flex;
+    align-items: baseline;
+    gap: var(--esp-3);
+  }
+
+  .dato__cifra {
+    margin: 0;
+    font-size: 2.75rem;
+    color: var(--amarillo);
+  }
+
+  .dato__texto {
+    font-size: var(--t-sm);
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--texto-2);
+  }
+
+  /* El bloque amarillo, las franjas, el tornado y la figura solo caben sin pisar
+     el texto desde 88 rem: su borde izquierdo queda siempre a la derecha del texto. */
+  @media (min-width: 70rem) {
+    .hero__cuerpo {
+      padding-top: 5.5rem;
+    }
+  }
+
+  @media (min-width: 88rem) {
+    .hero__bloque,
+    .hero__franja {
+      display: block;
+    }
+
+    .hero :global(.hero__tornado) {
+      display: block;
+    }
+
+    .hero__texto {
+      flex: 1 1 36rem;
+    }
+
+    .hero__figura {
+      display: block;
+      flex: 1 1 22rem;
+      align-self: stretch;
+      position: relative;
+      min-height: 30rem;
+    }
+
+    .hero :global(.hero__atleta) {
+      position: absolute;
+      right: 1.5rem;
+      bottom: 0;
+      width: auto;
+      height: min(46rem, 80vh);
+      max-width: none;
+      filter: drop-shadow(-22px 10px 0 rgb(10 10 10 / 0.55));
+    }
+  }
+
+  /* En móvil el texto ocupa casi todo el ancho y el SVG se estira sobre toda la altura:
+     las corrientes quedan como una veladura tenue y no compiten con el titular. */
+  @media (max-width: 39.99rem) {
+    .hero :global(.corriente) {
+      opacity: 0.16 !important;
+    }
+  }
+
+  @media (min-width: 54rem) {
+    .hero__datos {
+      grid-template-columns: repeat(4, auto);
+      justify-content: start;
+      gap: var(--esp-3) var(--esp-7);
+    }
+  }
+</style>

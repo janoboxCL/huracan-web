@@ -1,0 +1,225 @@
+---
+/* Header transparente. Se inyecta por el slot `header` de Base y se superpone al
+   hero (position: absolute). La navegación va sobre una pastilla oscura para
+   mantener contraste AA tanto sobre la foto como sobre el bloque amarillo. */
+import { Image } from 'astro:assets';
+import logo from '../../assets/img/logo.png';
+import { contenido } from '../../data/contenido';
+import { enlaces, navegacion } from '../../data/enlaces';
+import Boton from '../ui/Boton.astro';
+
+const { nombre } = contenido.club;
+const [primera, ...resto] = nombre.split(' ');
+---
+
+<header class="header">
+  <div class="header__interior contenedor">
+    <a class="marca" href={enlaces.inicio} aria-label={`${nombre}, inicio`}>
+      <Image src={logo} alt="" width={50} densities={[1, 2]} loading="eager" class="marca__logo" />
+      <span class="disp marca__nombre">{primera}<br /><span class="marca__sub">{resto.join(' ')}</span></span>
+    </a>
+
+    <nav class="nav" aria-label="Principal">
+      <ul role="list" class="nav__lista">
+        {
+          navegacion.map((item) => (
+            <li>
+              <a href={item.href}>{item.texto}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <Boton href={enlaces.agenda} variante="borde" class="header__cta" etiqueta="Agenda tu evaluación, desde el menú">Agenda tu evaluación</Boton>
+  </div>
+</header>
+
+<script>
+  /* El navegador no desplaza la nav si el enlace enfocado solo queda a medias bajo el degradado.
+     `nearest` respeta `scroll-padding-inline` y deja el foco completo a la vista. */
+  document.querySelector<HTMLElement>('.nav')?.addEventListener('focusin', (e) => {
+    (e.target as HTMLElement).scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: 'instant' });
+  });
+</script>
+
+<style>
+  .header {
+    position: absolute;
+    inset: 0 0 auto 0;
+    z-index: var(--z-header);
+  }
+
+  .header__interior {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--esp-2) var(--esp-3);
+    padding-block: var(--esp-3);
+    min-height: var(--alto-header-movil);
+    align-content: flex-start;
+  }
+
+  .marca {
+    display: flex;
+    align-items: center;
+    gap: var(--esp-3);
+    color: var(--blanco);
+    text-decoration: none;
+  }
+
+  .marca__logo {
+    width: 40px;
+    height: auto;
+  }
+
+  .marca__nombre {
+    font-size: 1.375rem;
+    line-height: 0.95;
+  }
+
+  .marca__sub {
+    font-size: 1.125rem;
+    color: var(--amarillo);
+  }
+
+  .header :global(.header__cta) {
+    margin-left: auto;
+    min-height: 2.75rem;
+    padding: 0.5rem 0.75rem;
+    font-size: var(--t-sm);
+  }
+
+  /* Foco de doble anillo (negro por fuera, blanco por dentro): el header se superpone a la
+     foto oscura y, desde 88 rem, al bloque amarillo del hero. Un anillo blanco solo
+     mide ~1,2:1 sobre amarillo; el negro cubre el amarillo y el blanco la foto. */
+  .marca:focus-visible,
+  .nav a:focus-visible,
+  .header :global(.header__cta):focus-visible {
+    outline: 3px solid var(--negro);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 3px var(--blanco);
+  }
+
+  .header :global(.header__cta):focus-visible {
+    box-shadow: 0 0 0 3px var(--blanco), var(--sombra-dura-amarilla);
+  }
+
+  /* Móvil y tablet: una sola fila con scroll propio (alcanzable con teclado y touch),
+     sin barra visible y con degradado en el borde derecho como indicio. */
+  .nav {
+    order: 3;
+    flex-basis: 100%;
+    min-width: 0;
+    background: rgb(10 10 10 / 0.82);
+    padding: var(--esp-1) var(--esp-4);
+    overflow-x: auto;
+    scroll-padding-inline: 3rem; /* más que el degradado: el foco nunca queda bajo la máscara */
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    mask-image: linear-gradient(90deg, #000 calc(100% - 2rem), transparent);
+  }
+
+  .nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .nav__lista {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0 var(--esp-5);
+    width: max-content;
+    margin: 0 auto;
+    padding: 0 var(--esp-5) 0 0;
+  }
+
+  .nav li {
+    flex: none;
+  }
+
+  .nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--blanco);
+    font-weight: 700;
+    font-size: var(--t-sm);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+  }
+
+  .nav a:hover {
+    color: var(--amarillo);
+  }
+
+  @media (min-width: 40rem) {
+    .marca__logo {
+      width: 50px;
+    }
+
+    .marca__nombre {
+      font-size: 1.625rem;
+    }
+
+    .header :global(.header__cta) {
+      padding: 0.5rem 1rem;
+    }
+  }
+
+  @media (min-width: 70rem) {
+    .header__interior {
+      flex-wrap: nowrap;
+      align-content: normal;
+      min-height: 0;
+      gap: var(--esp-3) var(--esp-5);
+      padding-block: var(--esp-4);
+    }
+
+    .nav {
+      overflow: visible;
+      mask-image: none;
+      order: 0;
+      flex-basis: auto;
+      margin-left: auto;
+      padding-inline: var(--esp-4);
+      transform: skewX(-10deg);
+    }
+
+    .nav__lista {
+      width: auto;
+      margin: 0;
+      padding: 0;
+      gap: 0 var(--esp-4);
+    }
+
+    .nav a {
+      transform: skewX(10deg);
+      font-size: var(--t-sm);
+      letter-spacing: 0.04em;
+    }
+
+    .header :global(.header__cta) {
+      margin-left: 0;
+      min-height: 3rem;
+      padding: 0.8rem 1.4rem;
+      font-size: var(--t-base);
+    }
+  }
+
+  /* Con 8 entradas la nav solo respira a tamaño completo desde 90 rem. */
+  @media (min-width: 90rem) {
+    .nav {
+      padding-inline: var(--esp-5);
+    }
+
+    .nav__lista {
+      gap: 0 var(--esp-5);
+    }
+
+    .nav a {
+      font-size: var(--t-base);
+      letter-spacing: 0.06em;
+    }
+  }
+</style>

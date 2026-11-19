@@ -1,0 +1,411 @@
+---
+/* 5 · 03 Equipos (amarillo, corte diagonal superior): buscador por edad.
+   Única isla con JS de la etapa 1, con mejora progresiva: el servidor pinta los
+   14 equipos con sus rangos en `data-edad-min` / `data-edad-max`; el script solo
+   muestra u oculta tarjetas. Sin JS se ve el listado completo; los botones de
+   edad y el resumen (que dependen del script) permanecen ocultos. */
+import { Image } from 'astro:assets';
+import flyer from '../../assets/img/cut-flyer.png';
+import { contenido, equiposPorEdad, programaPorId } from '../../data/contenido';
+import { enlaces } from '../../data/enlaces';
+import Boton from '../ui/Boton.astro';
+import Etiqueta from '../ui/Etiqueta.astro';
+
+const { equipos, _temporada } = contenido;
+
+/* Botones: de 3 años (edad mínima del club) a 20. El último, «20+», agrupa
+   20 años o más y se resuelve con la regla `edadMax === null` del JSON. */
+const EDAD_MIN = 3;
+const EDAD_TOPE = 20;
+/* Edad inicial de la maqueta (10): muestra de entrada un resultado útil. */
+const EDAD_INICIAL = 10;
+
+const edades = Array.from({ length: EDAD_TOPE - EDAD_MIN + 1 }, (_, i) => {
+  const n = EDAD_MIN + i;
+  return { n, etiqueta: n === EDAD_TOPE ? `${n}+` : String(n) };
+});
+
+const generos = { mixto: 'Mixto', damas: 'Damas' } as const;
+
+const iniciales = equiposPorEdad(EDAD_INICIAL);
+const textoInicial = `${iniciales.length} equipos para ${EDAD_INICIAL} años`;
+
+const tarjetas = equipos.map((e) => ({
+  ...e,
+  programaNombre: programaPorId(e.programa).nombre,
+  genero: generos[e.genero],
+  visible: iniciales.includes(e),
+}));
+---
+
+<section class="equipos sobre-amarillo" id="equipos" aria-labelledby="equipos-titulo" data-edad-tope={EDAD_TOPE}>
+  <Image
+    class="equipos__flyer soplo-der"
+    src={flyer}
+    alt=""
+    aria-hidden="true"
+    widths={[320, 640]}
+    sizes="20rem"
+    loading="lazy"
+    decoding="async"
+  />
+
+  <div class="equipos__cuerpo contenedor">
+    <div class="equipos__cabecera soplo">
+      <Etiqueta variante="seccion">03 · Equipos {_temporada}</Etiqueta>
+      <h2 id="equipos-titulo" class="disp equipos__titulo">¿Qué equipo<br />es para ti?</h2>
+      <p class="equipos__bajada" data-bajada-base>
+        Los {equipos.length} equipos de la temporada {_temporada}. El equipo final lo define la evaluación.
+      </p>
+      <p class="equipos__bajada" data-bajada-js hidden>
+        Toca la edad que cumple en {_temporada}. El equipo final lo define la evaluación.
+      </p>
+    </div>
+
+    <div class="equipos__edades" role="group" aria-label={`Edad cumplida en ${_temporada}`} hidden data-edades>
+      {
+        edades.map((e) => (
+          <button
+            type="button"
+            class="disp edad"
+            data-edad={e.n}
+            aria-pressed={e.n === EDAD_INICIAL ? 'true' : 'false'}
+            aria-label={e.n === EDAD_TOPE ? `${e.etiqueta} años` : `${e.n} años`}
+          >
+            {e.etiqueta}
+          </button>
+        ))
+      }
+    </div>
+
+    <p class="equipos__resumen" aria-live="polite" hidden data-resumen>{textoInicial}</p>
+
+    <div class="equipos__accion">
+      <Boton href={enlaces.agenda} variante="negro" tamano="grande" etiqueta="Agenda tu evaluación, desde equipos"><span data-cta-texto>Agenda tu evaluación →</span></Boton>
+    </div>
+
+    <ul role="list" class="equipos__lista" data-lista>
+      {
+        tarjetas.map((t) => (
+          <li class="equipo" data-edad-min={t.edadMin} data-edad-max={t.edadMax ?? ''}>
+            <article class="equipo__tarjeta">
+              <p class="equipo__tipo">
+                {t.programaNombre} · {t.categoria}
+              </p>
+              <h3 class="disp equipo__nombre">{t.nombre}</h3>
+              <p class="equipo__rango">{t.rango}</p>
+              <p class="equipo__genero">{t.genero}</p>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+
+  </div>
+</section>
+
+<style>
+  .equipos {
+    position: relative;
+    margin-top: calc(var(--corte-diagonal) * -1);
+    background: var(--amarillo);
+    color: var(--negro);
+    clip-path: polygon(0 0, 100% var(--corte-diagonal), 100% 100%, 0 100%);
+    overflow: clip;
+  }
+
+  .equipos :global(.equipos__flyer) {
+    display: none;
+    position: absolute;
+    right: 2%;
+    bottom: 0;
+    width: auto;
+    height: clamp(30rem, 52vw, 47.5rem);
+    filter: drop-shadow(-18px 0 0 var(--negro));
+  }
+
+  .equipos__cuerpo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-6);
+    padding-block: calc(var(--corte-diagonal) + var(--seccion-y)) var(--seccion-y);
+  }
+
+  .equipos__cabecera {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--esp-4);
+    max-width: 48.75rem;
+  }
+
+  .equipos__titulo {
+    font-size: clamp(3.5rem, 8vw, 7.5rem);
+    line-height: 0.94; /* el «¿» invertido baja y no debe tocar la segunda línea */
+  }
+
+  .equipos__bajada {
+    font-size: var(--t-md);
+    line-height: 1.6;
+  }
+
+  /* Botones de edad: parte del buscador, solo existen con JS. */
+  .equipos__edades {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    padding-inline: 0.5rem; /* holgura para la inclinación */
+    max-width: 53.75rem;
+  }
+
+  .equipos__edades[hidden],
+  .equipos__resumen[hidden],
+  .equipos__bajada[hidden],
+  .equipo[hidden] {
+    display: none;
+  }
+
+  .edad {
+    min-width: 3.5rem;
+    min-height: 3.25rem;
+    padding: 0 0.875rem;
+    border: 3px solid var(--negro);
+    background: transparent;
+    color: var(--negro);
+    font-size: 1.625rem;
+    transform: skewX(-10deg);
+    transition:
+      transform var(--dur-rapida) var(--curva-suave),
+      box-shadow var(--dur-rapida) var(--curva-suave);
+  }
+
+  @media (hover: hover) {
+    .edad:hover {
+      transform: translateY(-3px) skewX(-10deg);
+      box-shadow: 5px 5px 0 var(--negro);
+    }
+  }
+
+  .edad:active {
+    transform: skewX(-10deg);
+    box-shadow: none;
+  }
+
+  .edad[aria-pressed='true'] {
+    background: var(--negro);
+    color: var(--amarillo);
+  }
+
+  /* El botón activo ya es negro: el anillo de foco negro se separa con un halo amarillo. */
+  .edad[aria-pressed='true']:focus-visible {
+    box-shadow: 0 0 0 3px var(--amarillo);
+  }
+
+  .equipos__resumen {
+    font-size: var(--t-md);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+  }
+
+  .equipos__lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 16.25rem), 1fr));
+    gap: 0.875rem;
+    align-content: start; /* la altura reservada no estira las filas */
+    max-width: 56rem;
+    padding: 0 0.5rem; /* holgura para la inclinación */
+  }
+
+  .equipo {
+    display: flex;
+    min-width: 0;
+  }
+
+  /* Móvil: una sola fila deslizable, para que la altura no dependa de cuántos
+     equipos coinciden. */
+  @media (max-width: 39.99rem) {
+    .equipos__lista {
+      display: flex;
+      gap: 0.875rem;
+      margin-inline: calc(var(--margen) * -1);
+      padding: 0 var(--margen) 0.75rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      overscroll-behavior-x: contain;
+    }
+
+    .equipo {
+      flex: 0 0 min(82%, 19rem);
+      scroll-snap-align: start;
+    }
+  }
+
+  .equipo__tarjeta {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: var(--esp-2);
+    min-width: 0;
+    padding: 1.375rem;
+    background: var(--negro);
+    color: var(--blanco);
+    transform: skewX(-4deg);
+  }
+
+  .equipo__tipo {
+    color: var(--amarillo);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .equipo__nombre {
+    font-size: 2.375rem;
+    overflow-wrap: anywhere;
+  }
+
+  .equipo__rango {
+    font-size: 0.9375rem;
+    color: var(--texto-2);
+  }
+
+  .equipo__genero {
+    align-self: flex-start;
+    margin-top: auto;
+    padding: 0.125rem 0.625rem;
+    border: 2px solid var(--amarillo);
+    color: var(--amarillo);
+    font-size: var(--t-xs);
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .equipos__accion {
+    display: flex;
+    padding-inline: 0.5rem;
+  }
+
+  /* Tras la primera interacción, las tarjetas que aparecen entran con un soplo. */
+  @media (prefers-reduced-motion: no-preference) {
+    .equipos[data-activo] .equipo:not([hidden]) .equipo__tarjeta {
+      animation: aparece var(--dur-media) var(--curva-soplo) both;
+    }
+  }
+
+  @keyframes aparece {
+    from {
+      opacity: 0;
+      transform: translateX(-28px) skewX(-12deg);
+    }
+    to {
+      opacity: 1;
+      transform: skewX(-4deg);
+    }
+  }
+
+  @media (min-width: 72rem) {
+    .equipos :global(.equipos__flyer) {
+      display: block;
+    }
+
+    /* Deja libre el lado derecho para el recorte. */
+    .equipos__cabecera,
+    .equipos__edades,
+    .equipos__lista {
+      max-width: min(56rem, calc(100% - 21rem));
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .edad:hover {
+      transform: skewX(-10deg);
+    }
+  }
+</style>
+
+<script>
+  /* Buscador por edad: muestra u oculta las tarjetas ya renderizadas.
+     Regla de rango (igual a `equiposPorEdad`): edadMin <= edad y, si hay
+     edadMax, edad <= edadMax. «20+» = 20 años o más. */
+  const seccion = document.querySelector<HTMLElement>('#equipos');
+  const grupo = seccion?.querySelector<HTMLElement>('[data-edades]');
+  const resumen = seccion?.querySelector<HTMLElement>('[data-resumen]');
+  const botones = Array.from(seccion?.querySelectorAll<HTMLButtonElement>('[data-edad]') ?? []);
+  const tarjetas = Array.from(seccion?.querySelectorAll<HTMLElement>('[data-lista] > li') ?? []);
+
+  if (seccion && grupo && resumen && botones.length && tarjetas.length) {
+    const tope = Number(seccion.dataset.edadTope);
+    let actual: number | null = null;
+    const coincideCon = (li: HTMLElement, edad: number) => {
+      const min = Number(li.dataset.edadMin);
+      const max = li.dataset.edadMax === '' ? null : Number(li.dataset.edadMax);
+      return edad >= min && (max === null || edad <= max);
+    };
+
+    const lista = seccion.querySelector<HTMLElement>('[data-lista]')!;
+    const cta = seccion.querySelector<HTMLElement>('[data-cta-texto]');
+    const edades = botones.map((b) => Number(b.dataset.edad));
+
+    /* Altura de la lista = la del peor caso entre todas las edades, medida en el
+       navegador (no hardcodeada), para que el CTA y lo siguiente no salten. */
+    const reservar = () => {
+      lista.style.minHeight = '0px';
+      let peor = 0;
+      for (const e of edades) {
+        for (const li of tarjetas) li.hidden = !coincideCon(li, e);
+        peor = Math.max(peor, lista.offsetHeight);
+      }
+      lista.style.minHeight = `${peor}px`;
+      if (actual !== null) for (const li of tarjetas) li.hidden = !coincideCon(li, actual);
+    };
+
+    const aplicar = (edad: number, interactivo: boolean) => {
+      if (interactivo) seccion.dataset.activo = '';
+      let total = 0;
+      actual = edad;
+      lista.scrollLeft = 0;
+      for (const li of tarjetas) {
+        const coincide = coincideCon(li, edad);
+        li.hidden = !coincide;
+        if (coincide) total += 1;
+      }
+      for (const b of botones) b.setAttribute('aria-pressed', String(Number(b.dataset.edad) === edad));
+      const sujeto = total === 1 ? '1 equipo' : `${total} equipos`;
+      const anios = edad >= tope ? `${tope} años o más` : `${edad} años`;
+      resumen.textContent = total === 0 ? `Sin equipos para ${anios}` : `${sujeto} para ${anios}`;
+      enfocable();
+    };
+
+    /* La lista solo entra en el orden del teclado cuando realmente desborda (fila
+       deslizable en móvil); así no hay una parada de Tab sin nada que desplazar. */
+    function enfocable() {
+      if (lista.scrollWidth > lista.clientWidth + 1) lista.tabIndex = 0;
+      else lista.removeAttribute('tabindex');
+    }
+
+    for (const b of botones) b.addEventListener('click', () => aplicar(Number(b.dataset.edad), true));
+    const inicial = botones.find((b) => b.getAttribute('aria-pressed') === 'true') ?? botones[0]!;
+    aplicar(Number(inicial.dataset.edad ?? 0), false);
+    grupo.hidden = false;
+    resumen.hidden = false;
+    seccion.querySelector<HTMLElement>('[data-bajada-base]')!.hidden = true;
+    seccion.querySelector<HTMLElement>('[data-bajada-js]')!.hidden = false;
+    if (cta) {
+      cta.textContent = 'Agenda la evaluación para esta edad →';
+      cta.closest('a')?.setAttribute('aria-label', 'Agenda la evaluación para esta edad, desde equipos');
+    }
+    lista.setAttribute('aria-label', 'Equipos para la edad elegida');
+    reservar();
+    enfocable();
+    new ResizeObserver(enfocable).observe(lista);
+    let t: number | undefined;
+    addEventListener('resize', () => {
+      clearTimeout(t);
+      t = window.setTimeout(reservar, 150);
+    });
+    document.fonts?.ready.then(reservar);
+  }
+</script>

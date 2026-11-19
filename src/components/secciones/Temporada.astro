@@ -1,0 +1,257 @@
+---
+/* 7 · 05 Temporada 2027 (negro): dos corrientes de viento cruzando y una fila
+   desplazable de meses. Datos: `calendario` del JSON.
+   - El JSON trae 13 meses (nov 2026 a nov 2027, `contenido.ts` lo valida): se muestran
+     todos, aunque la especificación hable de 12.
+   - `evento: true` (evento con público o competencia) → amarillo sólido, texto negro.
+     Entrenamiento y montaje → gris oscuro. El estado no depende solo del color: cada
+     mes lleva además una etiqueta de texto.
+   - Los hitos con `[confirmar mes]` / `[fecha por confirmar]` se muestran tal cual.
+   - `porConfirmar` se muestra como marcador visible `[por confirmar]`; su texto es una
+     nota interna de trabajo y NO se publica (ni visible ni para lectores de pantalla). */
+import { contenido } from '../../data/contenido';
+import Corrientes from '../ui/Corrientes.astro';
+import Etiqueta from '../ui/Etiqueta.astro';
+
+const { calendario, _temporada } = contenido;
+
+const primero = calendario.at(0);
+const ultimo = calendario.at(-1);
+
+const corrientes = [
+  { d: 'M-100,200 C200,80 500,320 800,190 S1300,60 1600,180', color: 'amarillo' as const, grosor: 3, largo: 200, duracion: 4 },
+  { d: 'M-100,260 C260,150 560,380 860,250 S1340,130 1600,240', color: 'blanco' as const, grosor: 2, largo: 130, duracion: 5.2, retardo: -2, opacidad: 0.5 },
+];
+---
+
+<section class="temporada" id="temporada" aria-labelledby="temporada-titulo">
+  <div class="temporada__viento" aria-hidden="true">
+    <Corrientes trazos={corrientes} viewBox="0 0 1440 400" />
+  </div>
+
+  <div class="temporada__cuerpo contenedor">
+    <div class="temporada__cabecera soplo">
+      <div class="temporada__titulos">
+        <Etiqueta variante="seccion" class="temporada__etiqueta">05 · Temporada {_temporada}</Etiqueta>
+        <h2 id="temporada-titulo" class="disp temporada__titulo">Un año<br />a <span>toda velocidad</span></h2>
+      </div>
+      <ul role="list" class="leyenda" aria-label="Leyenda del calendario">
+        <li><span class="leyenda__muestra leyenda__muestra--evento" aria-hidden="true"></span>Evento con público o competencia</li>
+        <li><span class="leyenda__muestra leyenda__muestra--entreno" aria-hidden="true"></span>Entrenamiento y montaje</li>
+      </ul>
+    </div>
+
+    <p class="temporada__pista" id="temporada-pista">
+      {primero?.mes} a {ultimo?.mes}. Desliza para ver todos los meses.
+    </p>
+
+    <div
+      class="temporada__riel soplo"
+      role="region"
+      aria-label="Calendario de la temporada 2027"
+      aria-describedby="temporada-pista"
+      tabindex="0"
+    >
+      <ol role="list" class="meses">
+        {
+          calendario.map((m) => (
+            <li class:list={['mes', m.evento ? 'mes--evento' : 'mes--entreno']}>
+              <h3 class="disp mes__nombre"><span>{m.mes.split(" ")[0]}</span> <span>{m.mes.split(" ")[1]}</span></h3>
+              <p class="mes__tipo">{m.evento ? 'Evento o competencia' : 'Entrenamiento'}</p>
+              {m.porConfirmar && (
+                <p class="mes__aviso">
+                  <span aria-hidden="true">[por confirmar]</span>
+                  <span class="solo-lectores">Por confirmar</span>
+                </p>
+              )}
+              <ul role="list" class="mes__hitos">
+                {m.hitos.map((h) => (
+                  <li>{h}</li>
+                ))}
+              </ul>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </div>
+</section>
+
+<style>
+  .temporada {
+    position: relative;
+    overflow: clip;
+    background: var(--negro);
+    color: var(--blanco);
+  }
+
+  .temporada__viento {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0; /* anclado abajo: cruza solo la franja de los meses, nunca el título ni la leyenda */
+    height: 18rem;
+    pointer-events: none;
+  }
+
+  .temporada__cuerpo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-5);
+    /* Franja libre bajo los meses: por ahí cruzan las corrientes. */
+    padding-block: var(--seccion-y) calc(var(--seccion-y) + 5rem);
+  }
+
+  .temporada__cabecera {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--esp-5) var(--esp-8);
+  }
+
+  .temporada__titulos {
+    flex: 1 1 28rem;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-4);
+    min-width: 0;
+  }
+
+  .temporada :global(.temporada__etiqueta),
+  .temporada__titulo span {
+    color: var(--amarillo);
+  }
+
+  .temporada__titulo {
+    font-size: clamp(3.5rem, 8vw, 7.5rem);
+    line-height: 0.88;
+  }
+
+  .leyenda {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--t-sm);
+    font-weight: 600;
+  }
+
+  .leyenda__muestra {
+    display: inline-block;
+    width: 0.875rem;
+    height: 0.875rem;
+    margin-right: 0.5rem;
+    vertical-align: -2px;
+  }
+
+  .leyenda__muestra--evento {
+    background: var(--amarillo);
+  }
+
+  .leyenda__muestra--entreno {
+    background: #2a2a2a;
+    border: 1px solid #555;
+  }
+
+  .temporada__pista {
+    font-size: var(--t-sm);
+    color: var(--texto-2);
+  }
+
+  /* Riel desplazable: el scroll es del contenedor, no de la página. */
+  .temporada__riel {
+    position: relative;
+    overflow-x: auto;
+    padding-bottom: var(--esp-3);
+    overscroll-behavior-x: contain;
+  }
+
+  .meses {
+    display: grid;
+    grid-template-columns: repeat(13, 11.5rem);
+    gap: 6px;
+    width: max-content;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-2);
+    min-width: 0;
+    padding: 1.125rem 1rem 1.25rem;
+  }
+
+  .mes--evento {
+    background: var(--amarillo);
+    color: var(--negro);
+  }
+
+  .mes--entreno {
+    background: #2a2a2a;
+    color: var(--blanco);
+    border: 1px solid #555;
+  }
+
+  .mes__nombre {
+    font-size: 2.125rem;
+    line-height: 0.95;
+  }
+
+  /* Mes y año en líneas propias: todas las tarjetas tienen la misma altura de nombre. */
+  .mes__nombre span {
+    display: block;
+  }
+
+  .mes__tipo {
+    min-height: 2.8em; /* reserva dos líneas: los hitos quedan alineados entre meses */
+    line-height: 1.4;
+    font-size: var(--t-xs);
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .mes--entreno .mes__tipo {
+    color: var(--texto-2);
+  }
+
+  .mes__aviso {
+    align-self: flex-start;
+    padding: 0.2rem 0.5rem;
+    background: var(--negro);
+    color: var(--amarillo);
+    font-size: var(--t-xs);
+    font-weight: 800;
+    letter-spacing: 0.04em;
+  }
+
+  .mes__hitos {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--t-sm);
+    line-height: 1.45;
+    font-weight: 600;
+  }
+
+  .mes__hitos li {
+    padding-left: 0.875rem;
+    border-left: 2px solid currentColor;
+    overflow-wrap: anywhere;
+  }
+
+  @media (min-width: 40rem) {
+    .leyenda {
+      align-self: flex-end;
+    }
+  }
+</style>
