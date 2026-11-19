@@ -57,3 +57,20 @@ _(se completa bloque a bloque)_
 - **Capturas 1440 px:** `.revision/inicio-1440-sin-movimiento.png`, `.revision/inicio-1440-mov-00.png`, `.revision/inicio-1440-mov-01.png`, `.revision/prog-check.png` (sección Programas con la foto cargada)
 
 ---
+
+## Bloque 4 · Equipos con buscador interactivo
+
+- **Veredicto final:** Aprobado con cambios (1 ronda, sin Bloqueantes). Build y `astro check` sin errores. Filtro verificado contra el JSON en 8 edades (3, 4, 7, 9, 10, 15, 19, 20+) y de nuevo tras las correcciones (3, 9, 10, 15, 20+).
+- **Corregido:** salto de altura de la sección al filtrar (el script reserva el peor caso medido, sin valores fijos; altura idéntica para todas las edades en 390, 1024 y 1440 px); textos que no tenían sentido sin JavaScript (ahora hay bajada y CTA neutros, y la versión «Toca la edad…» solo con JS); `aria-label="20+ años"`.
+- **Decisiones de diseño a validar:**
+  - En móvil (menos de 40 rem) la lista de equipos es una fila deslizable con `scroll-snap`, para no reservar un hueco enorme.
+  - En escritorio, con pocas tarjetas (p. ej. 3 años: 1 equipo) quedan ~600 px de amarillo vacío bajo la tarjeta, costo de no mover el layout. Reevaluar en la revisión final.
+  - Edad inicial 10 y tope «20+» vienen de la maqueta, no del JSON; confirmar con el club.
+  - Textos fuera del JSON: bajada «Toca la edad…», formato del contador, mapa de género (Mixto/Damas), prefijo «Programa · Categoría».
+  - La nota «Categorías y niveles tentativos 2027» (`_notaEquipos` del JSON) no se muestra en la sección; valorar mostrarla.
+- **Pendientes:** el CTA «Agenda…» apunta a `#cierre` (provisorio, bloque 9) y no pasa la edad elegida; separación superior ~190 px frente a 170 px de la maqueta.
+- **Marcadores `[así]`:** ninguno.
+- **Capturas 390 px:** `.revision/inicio-390-sin-movimiento.png`, `.revision/inicio-390-mov-00.png`, `.revision/inicio-390-mov-01.png`
+- **Capturas 1440 px:** `.revision/inicio-1440-sin-movimiento.png`, `.revision/inicio-1440-mov-00.png`, `.revision/inicio-1440-mov-01.png`
+
+---
