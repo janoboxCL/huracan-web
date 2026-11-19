@@ -5,7 +5,20 @@ Las capturas viven en `.revision/` (ignorada por git) y se regeneran con `npm ru
 
 ## Datos pendientes detectados al construir
 
-_(se completa bloque a bloque)_
+Consolidado al cierre de la etapa 1 (detalle por bloque más abajo):
+
+- **Dirección del gimnasio** (hoy `[Dirección del gimnasio]`, visible en el footer).
+- **Enlace publicable del reglamento y los protocolos** (el JSON solo remite al informativo, desde la pág. 33): el botón «Reglamento 2027» del Cierre y el enlace del footer están inactivos con `[enlace por confirmar]`.
+- **URLs de Facebook y TikTok** (el JSON trae solo los nombres; hoy van como texto sin enlace).
+- **Mes del viaje a Orlando y de la evaluación final** (febrero) y **fecha del showcase** (el PDF dice «sábado 9», pero el 9-9-2027 es jueves): `[por confirmar]` visible en el calendario.
+- **Detalle de cada coach** (las columnas del PDF no se alinean con certeza; `_notaCoaches`, no publicada) y el de Christopher González (`[Detalle por confirmar]`).
+- **Fotos del staff** y **fotos originales en alta resolución** (las del PDF rondan 1.100 px).
+- **Logo en vector** (el PNG mide 247 px; el favicon es un recorte del emblema a 192 px).
+- **Montos de ropa de abrigo y del pack de competencias internacionales** (`[por confirmar]`).
+- **Asignación de Pink Ladies del viernes** (diagramación ambigua del PDF; no publicada).
+- **Pago antes de la evaluación:** definir si el flujo online lo mantiene (no se publica el proceso actual).
+- **Dominio definitivo:** hoy `SITE_URL` por defecto es `https://huracan-web.pages.dev`.
+- **Textos que vienen de la maqueta v2 y no del JSON**, a validar con el club: ver «Decisiones de contenido» de cada bloque.
 
 ---
 
@@ -167,3 +180,42 @@ _(se completa bloque a bloque)_
 - **Header:** añadidas Horarios, Staff y Viajes (8 entradas). Entre 70 y 90 rem la nav va en una fila a 14 px; desde 90 rem a 16 px. Medido sin desborde a 1120, 1280 y 1440 px. En móvil la nav ocupa unas 3 filas.
 - **Viajes (pendiente cerrado):** el último pasaje termina en opacidad 1 y transform identidad a 360, 390, 820 y 1024 px con el Cierre debajo; no hizo falta tocar `animation-range`.
 - **Pendientes / decisiones a validar:** bajada del cierre y etiqueta «10 · Tu ingreso» vienen de la v2, no del JSON; «Reglamento 2027» y «Reglamento y protocolos» sin enlace hasta tener URL o archivo publicable (`documentos.reglamento` solo remite al informativo, desde la pág. 33); dirección del gimnasio; URLs de Facebook y TikTok; la v2 traía «Proshop» y «Portal de familias» en el footer, se omitieron por no existir en el JSON.
+
+## Revisión de la página completa, pulido y cierre de la etapa 1
+
+- **Revisión de la página completa (revisor nuevo, contexto fresco):** Aprobado con cambios, **sin Bloqueantes**. 4 Importantes y 6 Menores. axe-core: 0 violaciones. 0 errores de consola, 0 recursos 404, sin scroll horizontal de 320 a 1920 px, 57 reveals completos a 390, 820, 1024 y 1440 px, sin JS se ven el hero y los 14 equipos. Contraste AA medido por píxel: sin combinaciones bajo AA (salvo falsos positivos por cajas inclinadas). Las 4 diagonales (Equipos, Horarios, Staff, Cierre) tienen la orientación de la v2, sin líneas ni huecos de 320 a 1920 px.
+- **Importantes corregidos:**
+  - Notas internas del PDF accesibles para lectores de pantalla (`porConfirmar` de febrero y septiembre): ahora solo se oye «Por confirmar». Búsqueda en `dist/index.html` de «el PDF», «informativo», «Verificar» y `porConfirmar`: 0 coincidencias («Jueves» es el encabezado del día).
+  - CLS por el cambio de fuente en el hero: fuentes de respaldo con métricas ajustadas. Antes → después: 0,053 → 0,0017 (390 px), 0,097 → 0,0032 (1440 px), 0,385 → 0,0083 (1920 px).
+  - Anillo de foco blanco sobre amarillo (≈1,16:1): doble anillo negro y blanco en logo, nav, CTA del header, enlace «Saltar al contenido» y botón flotante.
+  - SEO: sitemap (`@astrojs/sitemap`), `Sitemap:` en `robots.txt` (ahora endpoint que deriva de `site`), `image` en el JSON-LD, favicon y apple-touch-icon (recorte del emblema del logo).
+- **Menores aplicados:** `tabindex` de la lista de equipos solo si desborda; corrientes del hero móvil a opacidad 0,16 (ya no cruzan texto); `cut-atleta` lazy (transferido a 390 px: 417 → 370 KB); enlaces del footer de 44 × 44 px; los 7 «Agenda tu evaluación» con `aria-label` diferenciado por origen.
+- **Pulido (criterio de `impeccable polish` aplicado a mano, sin ejecutar el lanzador del skill, que descarga un binario):** hover solo con `@media (hover: hover)`, estados `:active` en botones y edades, `text-wrap: balance` en títulos y `pretty` en párrafos, interlineado del título de Equipos (el «¿» tocaba la segunda línea), eliminada la clase `.sobre-negro` sin CSS. No se ejecutó `/impeccable polish` como comando.
+- **Pendientes tras el pulido:**
+  - `bg-models` (Programas) sigue descargándose en la carga inicial en Chromium headless (queda dentro del umbral de lazy-load); no comprobado en un navegador real.
+  - El anillo blanco del CTA del hero (sobre foto oscura) y las capturas de foco del botón flotante y del salto quedaron dadas por buenas por barrido de contraste, sin verlas en imagen.
+  - Menores aún abiertos de los bloques 1 a 9 (ver cada entrada), p. ej.: hero apretado entre 1408 y 1440 px, hueco de ~600 px bajo Equipos con pocas tarjetas, página de ~19.300 px en móvil, corriente inferior de Viajes poco visible, hover en tarjetas no interactivas, buscador de edades sin flechas de teclado (`radiogroup`).
+  - Los CTA de agenda apuntan a `#cierre`; pasarán a `/agenda` en la etapa 3.
+  - Las 3 correcciones del bloque 9 (foco de la nav, botón flotante, `scroll-padding`) y estas últimas no pasaron por una revisión externa posterior.
+- **Capturas 390 px:** `.revision/inicio-390-sin-movimiento.png`, `.revision/inicio-390-mov-00.png` a `.revision/inicio-390-mov-24.png`
+- **Capturas 1440 px:** `.revision/inicio-1440-sin-movimiento.png`, `.revision/inicio-1440-mov-00.png` a `.revision/inicio-1440-mov-17.png`, `.revision/foco-header-1440.png`
+
+## Resumen final de la etapa 1
+
+| Bloque | Commit | Veredicto final |
+|---|---|---|
+| Base (Astro 5, tokens, layout, contenido tipado) | `4fefde8` | n/a |
+| 1 · Hero + cintas cruzadas | `d5274bc` | Aprobado con cambios (2 rondas) |
+| 2 · El club + hitos | `4cc44f1` | Aprobado con cambios |
+| 3 · Programas | `71a3dc5` | Aprobado con cambios |
+| 4 · Equipos con buscador | `19d87dc` | Aprobado con cambios |
+| 5 · Cómo funciona | `d9f4a6c` | Aprobado con cambios |
+| 6 · Temporada + horarios | `ba6fd65` | Aprobado con cambios |
+| 7 · Valores + promociones | `64a409d` | Aprobado con cambios |
+| 8 · Staff + viajes | `f76f1eb` | Rechazado en ronda 2 por un Importante residual; cerrado con el bloque 9 |
+| 9 · Cierre + footer + nav | `1df8179` | Aprobado con cambios (2 rondas) |
+| Página completa + pulido | (este commit) | Aprobado con cambios, sin Bloqueantes |
+
+- **Defectos transversales encontrados por la revisión y corregidos en todo el sitio:** el `.soplo` pisaba el `skewX` de tarjetas inclinadas (bloques 5 y 7), y `overflow: hidden` en secciones rompía los reveals ligados al scroll (`animation-timeline: view()`); se pasó a `overflow: clip`.
+- **Cómo se trabajó:** los subagentes `constructor-ui` y `revisor-diseno` de `.claude/agents/` no estaban registrados como tipos de agente en esta sesión; se usaron agentes genéricos que leían y seguían sus instrucciones (el revisor sin editar archivos).
+- **Sin `git push` ni merge a `main`.** Todo vive en la rama local `etapa-1`.

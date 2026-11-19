@@ -7,8 +7,8 @@
      Entrenamiento y montaje → gris oscuro. El estado no depende solo del color: cada
      mes lleva además una etiqueta de texto.
    - Los hitos con `[confirmar mes]` / `[fecha por confirmar]` se muestran tal cual.
-   - `porConfirmar` se muestra como marcador visible `[por confirmar]` y su texto
-     completo queda disponible para lectores de pantalla. */
+   - `porConfirmar` se muestra como marcador visible `[por confirmar]`; su texto es una
+     nota interna de trabajo y NO se publica (ni visible ni para lectores de pantalla). */
 import { contenido } from '../../data/contenido';
 import Corrientes from '../ui/Corrientes.astro';
 import Etiqueta from '../ui/Etiqueta.astro';
@@ -61,7 +61,7 @@ const corrientes = [
               {m.porConfirmar && (
                 <p class="mes__aviso">
                   <span aria-hidden="true">[por confirmar]</span>
-                  <span class="solo-lectores">Por confirmar: {m.porConfirmar}</span>
+                  <span class="solo-lectores">Por confirmar</span>
                 </p>
               )}
               <ul role="list" class="mes__hitos">

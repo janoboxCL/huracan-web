@@ -41,7 +41,7 @@ const t0 = 0.9;
 const paso = 0.12;
 ---
 
-<section class="hero sobre-negro" id="inicio" aria-labelledby="hero-titulo">
+<section class="hero" id="inicio" aria-labelledby="hero-titulo">
   <Image
     class="hero__foto"
     src={escenario}
@@ -85,7 +85,7 @@ const paso = 0.12;
       <p class="hero__bajada gust" style={`--retardo: ${t0 + 0.5}s`}>{bajada}</p>
 
       <div class="hero__acciones gust" style={`--retardo: ${t0 + 0.6}s`}>
-        <Boton href={enlaces.agenda} tamano="grande">Agenda tu evaluación →</Boton>
+        <Boton href={enlaces.agenda} tamano="grande" etiqueta="Agenda tu evaluación, desde el inicio">Agenda tu evaluación →</Boton>
         <Boton href={enlaces.equipos} variante="contorno" tamano="grande">¿Qué equipo es para mí?</Boton>
       </div>
     </div>
@@ -97,7 +97,7 @@ const paso = 0.12;
         alt=""
         widths={[320, 640]}
         sizes="(min-width: 88rem) 320px, 1px"
-        loading="eager"
+        loading="lazy"
         decoding="async"
       />
     </div>
@@ -315,6 +315,14 @@ const paso = 0.12;
       height: min(46rem, 80vh);
       max-width: none;
       filter: drop-shadow(-22px 10px 0 rgb(10 10 10 / 0.55));
+    }
+  }
+
+  /* En móvil el texto ocupa casi todo el ancho y el SVG se estira sobre toda la altura:
+     las corrientes quedan como una veladura tenue y no compiten con el titular. */
+  @media (max-width: 39.99rem) {
+    .hero :global(.corriente) {
+      opacity: 0.16 !important;
     }
   }
 

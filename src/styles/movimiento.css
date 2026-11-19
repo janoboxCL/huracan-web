@@ -148,9 +148,11 @@
     box-shadow var(--dur-rapida) var(--curva-suave);
 }
 
-.hover-marca:hover {
-  transform: translateY(-10px) skewX(var(--inclinacion-hover, -3deg));
-  box-shadow: var(--sombra-hover, var(--sombra-dura));
+@media (hover: hover) {
+  .hover-marca:hover {
+    transform: translateY(-10px) skewX(var(--inclinacion-hover, -3deg));
+    box-shadow: var(--sombra-hover, var(--sombra-dura));
+  }
 }
 
 /* ── Reveals y parallax ligados al scroll ──────────────────── */

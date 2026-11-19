@@ -9,11 +9,16 @@ interface Props {
   tamano?: 'normal' | 'grande';
   type?: 'button' | 'submit';
   class?: string;
+  /** Nombre accesible cuando el mismo texto se repite en varios botones (debe empezar por el texto visible). */
+  etiqueta?: string;
 }
 
-const { href, variante = 'amarillo', tamano = 'normal', type = 'button', class: clase } = Astro.props;
+const { href, variante = 'amarillo', tamano = 'normal', type = 'button', class: clase, etiqueta } = Astro.props;
 const Elemento = href ? 'a' : 'button';
-const atributos = href ? { href } : { type };
+const atributos = {
+  ...(href ? { href } : { type }),
+  ...(etiqueta ? { 'aria-label': etiqueta } : {}),
+};
 ---
 
 <Elemento {...atributos} class:list={['boton', `boton--${variante}`, `boton--${tamano}`, clase]}>
@@ -80,20 +85,37 @@ const atributos = href ? { href } : { type };
     pointer-events: none;
   }
 
-  .boton:hover,
   .boton:focus-visible {
     transform: translateY(-3px) skewX(-12deg);
     box-shadow: var(--sombra-dura-blanca);
   }
 
-  .boton--negro:hover,
   .boton--negro:focus-visible,
-  .boton--borde:hover,
   .boton--borde:focus-visible {
     box-shadow: var(--sombra-dura-amarilla);
   }
 
-  @media (prefers-reduced-motion: no-preference) {
+  /* Hover solo con puntero real: en táctil el :hover queda pegado tras tocar. */
+  @media (hover: hover) {
+    .boton:hover {
+      transform: translateY(-3px) skewX(-12deg);
+      box-shadow: var(--sombra-dura-blanca);
+    }
+
+    .boton--negro:hover,
+    .boton--borde:hover {
+      box-shadow: var(--sombra-dura-amarilla);
+    }
+  }
+
+  /* Pulsado: el botón vuelve a su sitio y pierde la sombra. */
+  .boton:active {
+    transform: skewX(-10deg);
+    box-shadow: none;
+    transition-duration: 0.06s;
+  }
+
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
     .boton:hover::after {
       animation: brillo 0.6s ease-out;
     }

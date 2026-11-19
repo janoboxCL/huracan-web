@@ -9,7 +9,7 @@ import { enlaces } from '../../data/enlaces';
 ---
 
 <div class="agenda-flotante">
-  <a class="agenda-flotante__enlace" href={enlaces.agenda}>Agenda tu evaluación</a>
+  <a class="agenda-flotante__enlace" href={enlaces.agenda} aria-label="Agenda tu evaluación, acceso rápido">Agenda tu evaluación</a>
 </div>
 
 <style>
@@ -34,9 +34,11 @@ import { enlaces } from '../../data/enlaces';
     text-decoration: none;
   }
 
+  /* Doble anillo: el botón flota sobre secciones negras, amarillas y fotos. */
   .agenda-flotante__enlace:focus-visible {
-    outline: var(--foco);
+    outline: 3px solid var(--negro);
     outline-offset: 3px;
+    box-shadow: 4px 4px 0 var(--negro), 0 0 0 3px var(--blanco);
   }
 
   /* Sin soporte de animation-timeline no se muestra: el hero, el Cierre y cada sección ya

@@ -31,7 +31,7 @@ const [primera, ...resto] = nombre.split(' ');
       </ul>
     </nav>
 
-    <Boton href={enlaces.agenda} variante="borde" class="header__cta">Agenda tu evaluación</Boton>
+    <Boton href={enlaces.agenda} variante="borde" class="header__cta" etiqueta="Agenda tu evaluación, desde el menú">Agenda tu evaluación</Boton>
   </div>
 </header>
 
@@ -88,6 +88,21 @@ const [primera, ...resto] = nombre.split(' ');
     min-height: 2.75rem;
     padding: 0.5rem 0.75rem;
     font-size: var(--t-sm);
+  }
+
+  /* Foco de doble anillo (negro por fuera, blanco por dentro): el header se superpone a la
+     foto oscura y, desde 88 rem, al bloque amarillo del hero. Un anillo blanco solo
+     mide ~1,2:1 sobre amarillo; el negro cubre el amarillo y el blanco la foto. */
+  .marca:focus-visible,
+  .nav a:focus-visible,
+  .header :global(.header__cta):focus-visible {
+    outline: 3px solid var(--negro);
+    outline-offset: 3px;
+    box-shadow: 0 0 0 3px var(--blanco);
+  }
+
+  .header :global(.header__cta):focus-visible {
+    box-shadow: 0 0 0 3px var(--blanco), var(--sombra-dura-amarilla);
   }
 
   /* Móvil y tablet: una sola fila con scroll propio (alcanzable con teclado y touch),

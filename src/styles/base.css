@@ -1,5 +1,40 @@
 /* Base global: reinicio mínimo, tipografía y accesibilidad. */
 
+/* Fuentes de respaldo con métricas ajustadas a Barlow y Barlow Condensed (medidas
+   contra Arial y Arial Narrow): el cambio a la webfont casi no reflota el texto (CLS).
+   Escala (size-adjust) medida sobre texto real; ascent/descent salen de la tabla hhea
+   de las fuentes (1000 / -200 de 1000 unidades) divididos por el size-adjust. */
+@font-face {
+  font-family: 'Barlow Fallback';
+  font-weight: 400 500;
+  src: local('Arial'), local('ArialMT');
+  size-adjust: 96%;
+  ascent-override: 104.2%;
+  descent-override: 20.8%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Barlow Fallback';
+  font-weight: 600 800;
+  src: local('Arial Bold'), local('Arial-BoldMT');
+  size-adjust: 92.5%;
+  ascent-override: 108.1%;
+  descent-override: 21.6%;
+  line-gap-override: 0%;
+}
+
+@font-face {
+  font-family: 'Barlow Condensed Fallback';
+  font-style: italic;
+  font-weight: 800 900;
+  src: local('Arial Narrow Bold Italic'), local('ArialNarrow-BoldItalic');
+  size-adjust: 82%;
+  ascent-override: 122%;
+  descent-override: 24.4%;
+  line-gap-override: 0%;
+}
+
 *,
 *::before,
 *::after {
@@ -81,6 +116,11 @@ button {
   text-transform: uppercase;
   line-height: var(--interlineado-titulo);
   letter-spacing: 0.005em;
+  text-wrap: balance; /* sin palabras huérfanas en títulos de varias líneas */
+}
+
+p {
+  text-wrap: pretty; /* evita una palabra sola en la última línea */
 }
 
 /* Contenedor centrado de las secciones. */
@@ -129,6 +169,8 @@ button {
 
 .saltar:focus-visible {
   transform: none;
+  outline: 3px solid var(--negro);
+  box-shadow: 0 0 0 3px var(--blanco);
 }
 
 ::selection {

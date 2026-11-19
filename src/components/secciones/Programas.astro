@@ -17,7 +17,7 @@ const tarjetas = programas.map((p, i) => ({
 }));
 ---
 
-<section class="programas sobre-negro" id="programas" aria-labelledby="programas-titulo">
+<section class="programas" id="programas" aria-labelledby="programas-titulo">
   <div class="programas__foto-caja" aria-hidden="true">
     <Image
       class="programas__foto parallax"
@@ -190,9 +190,11 @@ const tarjetas = programas.map((p, i) => ({
     color: var(--blanco);
   }
 
-  .carta:hover {
-    transform: translateY(-10px) skewX(-3deg);
-    box-shadow: var(--sombra-carta);
+  @media (hover: hover) {
+    .carta:hover {
+      transform: translateY(-10px) skewX(-3deg);
+      box-shadow: var(--sombra-carta);
+    }
   }
 
   .carta__numero {
