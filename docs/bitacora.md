@@ -25,3 +25,20 @@ _(se completa bloque a bloque)_
 - **Capturas 1440 px:** `.revision/inicio-1440-sin-movimiento.png`, `.revision/inicio-1440-mov-00.png`, `.revision/inicio-1440-mov-01.png`
 
 ---
+
+## Bloque 2 · El club + hitos
+
+- **Veredicto final:** Aprobado con cambios (1 ronda, sin Bloqueantes). Build y `astro check` sin errores.
+- **Corregido:** el recorte del dúo caía bajo el texto entre 992 y 1100 px (ahora aparece desde 70 rem); `role="list"` en la lista de hitos.
+- **Pendientes (Menor):**
+  - La corriente de viento cruza el texto de los hitos (2003, 2010, 2017); bajar `top` o la opacidad.
+  - El párrafo de historia es el texto oficial completo, mucho más largo que la síntesis de la v2 y repite los hitos de abajo. Decidir con el club; si se acorta, agregar un campo `historiaCorta` al JSON (no se inventa).
+  - El botón «Conoce al staff» apunta a `#staff`, que aún no existe (se resuelve en el bloque 8).
+  - Hueco amarillo de ~250 px bajo el texto a 1440 px.
+  - La sección mide más de 1500 px a 1120 y 1280 px; revisar en la revisión final.
+  - Clase `.sobre-negro` usada pero sin definir en `base.css` (no hace nada hoy).
+- **Marcadores `[así]`:** ninguno.
+- **Capturas 390 px:** `.revision/inicio-390-sin-movimiento.png`, `.revision/inicio-390-mov-00.png`, `.revision/inicio-390-mov-01.png`
+- **Capturas 1440 px:** `.revision/inicio-1440-sin-movimiento.png`, `.revision/inicio-1440-mov-00.png`, `.revision/inicio-1440-mov-01.png`
+
+---

@@ -44,6 +44,18 @@
   }
 }
 
+/* Soplo desde la derecha (recortes que entran en sentido contrario). */
+@keyframes soplo-der {
+  from {
+    opacity: 0;
+    transform: translateX(120px) skewX(14deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* Corrientes de viento: el trazo discontinuo avanza. */
 @keyframes corriente {
   to {
@@ -148,6 +160,12 @@
     animation: soplo linear both;
     animation-timeline: view();
     animation-range: entry 0% cover 28%;
+  }
+
+  .soplo-der {
+    animation: soplo-der linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 34%;
   }
 
   .parallax {

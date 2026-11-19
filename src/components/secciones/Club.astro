@@ -1,0 +1,182 @@
+---
+/* 3 · 01 El club (amarillo) + línea de hitos (negro, corte diagonal superior).
+   Textos desde el JSON: historia, fundación y hitos. */
+import { Image } from 'astro:assets';
+import duo from '../../assets/img/cut-duo2.png';
+import { contenido } from '../../data/contenido';
+import { enlaces } from '../../data/enlaces';
+import Boton from '../ui/Boton.astro';
+import Corrientes from '../ui/Corrientes.astro';
+import Etiqueta from '../ui/Etiqueta.astro';
+
+const { club, hitos, _temporada } = contenido;
+
+/* «25 temporadas»: años entre la fundación y la temporada en curso. */
+const temporadas = _temporada - club.fundacion;
+
+const corrienteHitos = [
+  {
+    d: 'M-100,70 C240,10 520,120 820,60 S1300,10 1600,60',
+    color: 'amarillo' as const,
+    grosor: 4,
+    largo: 180,
+    duracion: 3.6,
+    base: 'var(--linea)',
+  },
+];
+---
+
+<section class="club sobre-amarillo" id="club" aria-labelledby="club-titulo">
+  <div class="club__fondo disp" aria-hidden="true">{club.fundacion}</div>
+
+  <div class="club__cuerpo contenedor">
+    <div class="club__texto soplo">
+      <Etiqueta variante="seccion">01 · El club</Etiqueta>
+      <h2 id="club-titulo" class="disp club__titulo">{temporadas} temporadas<br />soplando fuerte</h2>
+      <p class="club__historia">{club.historia}</p>
+      <Boton href={enlaces.staff} variante="negro" tamano="grande">Conoce al staff →</Boton>
+    </div>
+
+    <Image
+      class="club__duo soplo-der"
+      src={duo}
+      alt="Dos deportistas de Huracán All Stars en pose de equipo"
+      widths={[400, 800]}
+      sizes="400px"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+
+  <div class="hitos sobre-negro">
+    <div class="hitos__viento" aria-hidden="true">
+      <Corrientes trazos={corrienteHitos} viewBox="0 0 1440 120" />
+    </div>
+    <ol role="list" class="hitos__lista contenedor" aria-label="Hitos del club">
+      {
+        hitos.map((h) => (
+          <li class="hito soplo">
+            <span class="disp hito__anio">{h.anio}</span>
+            <span class="hito__texto">{h.texto}</span>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .club {
+    position: relative;
+    background: var(--amarillo);
+    color: var(--negro);
+    overflow: hidden;
+  }
+
+  .club__fondo {
+    position: absolute;
+    top: 2.5rem;
+    right: -2.5rem;
+    font-size: clamp(14rem, 30vw, 26rem);
+    color: transparent;
+    -webkit-text-stroke: 3px var(--negro);
+    opacity: 0.07;
+    pointer-events: none;
+  }
+
+  .club__cuerpo {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--esp-7);
+    padding-block: var(--seccion-y) calc(var(--seccion-y) - 0.5rem);
+  }
+
+  .club__texto {
+    flex: 1 1 32rem;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--esp-5);
+  }
+
+  .club__titulo {
+    font-size: clamp(3.5rem, 8vw, 8rem);
+    line-height: 0.86;
+  }
+
+  .club__historia {
+    max-width: 38rem;
+    font-size: var(--t-md);
+    line-height: 1.6;
+  }
+
+  .club :global(.club__duo) {
+    display: none;
+    width: 25rem;
+    height: auto;
+    filter: drop-shadow(16px 16px 0 var(--negro));
+  }
+
+  /* Línea de hitos */
+  .hitos {
+    position: relative;
+    background: var(--negro);
+    color: var(--blanco);
+    clip-path: polygon(0 var(--corte-diagonal), 100% 0, 100% 100%, 0 100%);
+    padding-block: calc(var(--corte-diagonal) + 3.5rem) 4.5rem;
+  }
+
+  .hitos__viento {
+    display: none;
+    position: absolute;
+    inset: calc(var(--corte-diagonal) + 3.5rem) 0 auto 0;
+    height: 7.5rem;
+  }
+
+  .hitos__lista {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+    gap: var(--esp-5) var(--esp-4);
+    margin-block: 0;
+    padding: 0 var(--margen);
+    list-style: none;
+  }
+
+  .hito {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-3);
+  }
+
+  .hito__anio {
+    font-size: 3.375rem;
+    color: var(--amarillo);
+  }
+
+  .hito__texto {
+    font-size: var(--t-base);
+    line-height: 1.45;
+    color: var(--texto-2);
+  }
+
+  @media (min-width: 54rem) {
+    .hitos__viento {
+      display: block;
+    }
+
+    .club__fondo {
+      opacity: 0.12;
+    }
+  }
+
+  @media (min-width: 70rem) {
+    .club :global(.club__duo) {
+      display: block;
+      flex: 0 1 25rem;
+    }
+  }
+</style>

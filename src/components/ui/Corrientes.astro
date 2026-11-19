@@ -12,6 +12,8 @@ interface Trazo {
   /** Retardo negativo para desfasar. */
   retardo?: number;
   opacidad?: number;
+  /** Si se indica, dibuja debajo el recorrido completo, fijo, en este color CSS. */
+  base?: string;
 }
 
 interface Props {
@@ -34,6 +36,10 @@ const { trazos = hero, viewBox = '0 0 1440 900', class: clase } = Astro.props;
 <svg class:list={['corrientes', clase]} {viewBox} preserveAspectRatio="none" aria-hidden="true" focusable="false">
   {
     trazos.map((t) => (
+      <>
+      {t.base && (
+        <path d={t.d} fill="none" vector-effect="non-scaling-stroke" style={`stroke: ${t.base}; stroke-width: 2px`} />
+      )}
       <path
         class="corriente"
         d={t.d}
@@ -43,6 +49,7 @@ const { trazos = hero, viewBox = '0 0 1440 900', class: clase } = Astro.props;
         vector-effect="non-scaling-stroke"
         style={`stroke: var(--${t.color}); stroke-width: ${t.grosor}px; stroke-dasharray: ${t.largo} ${1000 - t.largo}; --dur-corriente: ${t.duracion}s; animation-delay: ${t.retardo ?? 0}s; opacity: ${t.opacidad ?? 1}`}
       />
+      </>
     ))
   }
 </svg>
