@@ -1,0 +1,146 @@
+---
+/* Footer negro (slot `footer` de Base). Todo sale del JSON salvo los rótulos de columna.
+   - WhatsApp: `enlaceWhatsapp()` + `contacto.whatsappTexto`. Instagram: `enlaceInstagram()`.
+   - Facebook y TikTok: solo texto (el JSON trae el nombre pero no la URL; no se inventan enlaces).
+   - Dirección: `contacto.direccion` es el marcador `[Dirección del gimnasio]`, se muestra tal cual.
+   - Familias: anclas reales de la página. Reglamento: marcador visible hasta tener enlace.
+   - Sin datos bancarios (`noPublicar`).
+   - Logo de baja resolución (247 px): se muestra a 96 px (192 px reales a 2x). Pedir el vector. */
+import { Image } from 'astro:assets';
+import logo from '../../assets/img/logo.png';
+import { contenido, enlaceInstagram, enlaceWhatsapp } from '../../data/contenido';
+
+const { club, contacto, _temporada } = contenido;
+
+const familias = [
+  { texto: 'Cómo funciona el ingreso', href: '#como-funciona' },
+  { texto: 'Programas', href: '#programas' },
+  { texto: 'Equipos', href: '#equipos' },
+  { texto: 'Horarios', href: '#horarios' },
+  { texto: 'Valores y promociones', href: '#valores' },
+  { texto: 'Temporada', href: '#temporada' },
+  { texto: 'Staff', href: '#staff' },
+];
+---
+
+<footer class="pie sobre-negro">
+  <div class="pie__cuerpo contenedor">
+    <div class="pie__col pie__marca">
+      <Image src={logo} alt={club.nombre} width={96} densities={[1, 2]} loading="lazy" class="pie__logo" />
+      <p class="disp pie__lema">{club.lema}</p>
+    </div>
+
+    <div class="pie__col">
+      <h2 class="pie__rotulo">Contacto</h2>
+      <ul role="list" class="pie__lista">
+        <li>
+          <a href={enlaceWhatsapp()} rel="noopener">WhatsApp head coach: {contacto.whatsappTexto}</a>
+        </li>
+        <li>
+          <address class="pie__direccion">{contacto.direccion}</address>
+        </li>
+      </ul>
+    </div>
+
+    <div class="pie__col">
+      <h2 class="pie__rotulo">Síguenos</h2>
+      <ul role="list" class="pie__lista">
+        <li><a href={enlaceInstagram()} rel="noopener">Instagram · @{contacto.instagram}</a></li>
+        <li><span>Facebook · {contacto.facebook}</span></li>
+        <li><span>TikTok · {contacto.tiktok}</span></li>
+      </ul>
+    </div>
+
+    <nav class="pie__col" aria-labelledby="pie-familias">
+      <h2 class="pie__rotulo" id="pie-familias">Familias</h2>
+      <ul role="list" class="pie__lista">
+        {familias.map((f) => <li><a href={f.href}>{f.texto}</a></li>)}
+        <li><span>Reglamento y protocolos · [enlace por confirmar]</span></li>
+      </ul>
+    </nav>
+  </div>
+
+  <p class="pie__legal">© {_temporada} {club.nombre} · {club.ciudad}</p>
+</footer>
+
+<style>
+  .pie {
+    background: var(--negro);
+    color: var(--blanco);
+  }
+
+  .pie__cuerpo {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+    gap: var(--esp-7) var(--esp-8);
+    padding-block: var(--esp-8) var(--esp-6);
+  }
+
+  .pie__col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-3);
+    min-width: 0;
+  }
+
+  .pie__marca {
+    gap: var(--esp-4);
+  }
+
+  .pie :global(.pie__logo) {
+    width: 6rem;
+    height: auto;
+  }
+
+  .pie__lema {
+    font-size: 2.125rem;
+    line-height: 1;
+    color: var(--amarillo);
+  }
+
+  .pie__rotulo {
+    font-size: var(--t-xs);
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--texto-3);
+  }
+
+  .pie__lista {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-1);
+    margin: 0;
+    padding: 0;
+    font-size: var(--t-base);
+    overflow-wrap: anywhere;
+  }
+
+  .pie__lista a,
+  .pie__lista span,
+  .pie__direccion {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    color: var(--texto-2);
+    font-style: normal;
+  }
+
+  .pie__lista a {
+    color: var(--blanco);
+    text-decoration: none;
+  }
+
+  .pie__lista a:hover {
+    color: var(--amarillo);
+    text-decoration: underline;
+    text-underline-offset: 0.25em;
+  }
+
+  .pie__legal {
+    padding: var(--esp-4) var(--margen) var(--esp-6);
+    text-align: center;
+    font-size: var(--t-xs);
+    color: var(--texto-3);
+  }
+</style>

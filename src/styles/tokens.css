@@ -54,6 +54,7 @@
   --margen: clamp(1.25rem, 4vw, 2rem);
   --seccion-y: clamp(4.5rem, 9vw, 7.5rem);
   --alto-header: 4.5rem;
+  --alto-header-movil: 8.75rem; /* header de móvil/tablet: fila logo+CTA y fila de nav; el hero la reserva */
 
   /* Gestos de marca */
   --inclinacion: -8deg; /* skewX base de tarjetas y botones */

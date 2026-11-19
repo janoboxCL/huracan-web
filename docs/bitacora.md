@@ -152,3 +152,18 @@ _(se completa bloque a bloque)_
 - **Capturas 1440 px:** `.revision/inicio-1440-mov-13.png`, `.revision/inicio-1440-mov-14.png`, `.revision/inicio-1440-mov-15.png`
 
 ---
+
+## Bloque 9 · Cierre + footer + nav del header
+
+- **Veredicto final:** Aprobado con cambios (2 rondas de revisión). La ronda 1 fue «Rechazado» por un Bloqueante; la ronda 2 quedó sin Bloqueantes y con 2 Importantes que se corrigieron sin una tercera revisión (verificados por medición, ver abajo). Build y `astro check` sin errores.
+- **Ronda 1 (Bloqueante, corregido):** a 360 y 390 px la nav de 8 entradas, en 3 filas, tapaba texto del hero. Ahora la nav móvil va en una sola fila con scroll propio y degradado; variable `--alto-header-movil` reservada en el hero; el header mide 140 px a 360 px (antes 321 px). Cero solape de texto del hero de 360 a 1920 px.
+- **Ronda 1 (Importante, corregido):** el header es absoluto y la navegación solo estaba arriba; se añadió un botón flotante «Agenda tu evaluación» (solo <70 rem; aparece tras el hero y se retira al llegar al Cierre).
+- **Ronda 2 (Importantes corregidos sin tercera revisión):** foco oculto en la nav móvil (`scroll-padding-inline` y `focusin` con `scrollIntoView`; medido que los 8 enlaces quedan completos a 360 y 390 px); botón flotante que quedaba fijo con movimiento reducido o sin soporte de `animation-timeline` (ahora solo existe con soporte y se oculta en el Cierre y el footer también con movimiento reducido; verificado por la sesión principal a 390 px en ambos modos); `scroll-padding-top` a 1 rem. Estas tres correcciones NO pasaron por una tercera revisión del revisor.
+- **Pendiente cerrado:** el último pasaje de Viajes ya termina su reveal (opacidad 1, transform identidad) con el Cierre debajo; 57 elementos con reveal completos a 360, 390, 820, 1024, 1440 y 1920 px.
+- **Pendientes (Menor):** el botón flotante tapa de forma transitoria chips de edad, tarjetas de Equipos y rieles al desplazarse (fricción, no bloqueo; valorar etiqueta corta «Agenda» u opacidad 0,92); tornado del Cierre más discreto que en la v2; Facebook y TikTok solo como texto (sin URL en el JSON); el botón de reglamento inactivo y su `aria-disabled` (cambiar a `<a href>` cuando exista el enlace).
+- **Estado de la construcción (anotado por el constructor):** build y `astro check` sin errores.
+- **Cierre (`#cierre`):** amarillo con corte diagonal como Horarios en la v2 (esquina baja a la izquierda), tornado al 25 % detrás del recorte `cut-duo` (que flota), botón negro «Agenda tu evaluación →» y «Reglamento 2027» como botón inactivo (`aria-disabled`) con `[enlace por confirmar]`. Los CTA del hero, header, equipos y cómo funciona caen aquí (`enlaces.agenda`).
+- **Footer:** logo (96 px; el original es de 247 px, pedir el vector), lema, WhatsApp, Instagram, Facebook y TikTok solo como texto, dirección `[Dirección del gimnasio]` tal cual, anclas de familias. Sin datos bancarios.
+- **Header:** añadidas Horarios, Staff y Viajes (8 entradas). Entre 70 y 90 rem la nav va en una fila a 14 px; desde 90 rem a 16 px. Medido sin desborde a 1120, 1280 y 1440 px. En móvil la nav ocupa unas 3 filas.
+- **Viajes (pendiente cerrado):** el último pasaje termina en opacidad 1 y transform identidad a 360, 390, 820 y 1024 px con el Cierre debajo; no hizo falta tocar `animation-range`.
+- **Pendientes / decisiones a validar:** bajada del cierre y etiqueta «10 · Tu ingreso» vienen de la v2, no del JSON; «Reglamento 2027» y «Reglamento y protocolos» sin enlace hasta tener URL o archivo publicable (`documentos.reglamento` solo remite al informativo, desde la pág. 33); dirección del gimnasio; URLs de Facebook y TikTok; la v2 traía «Proshop» y «Portal de familias» en el footer, se omitieron por no existir en el JSON.

@@ -3,7 +3,7 @@
 
 export const enlaces = {
   inicio: '#inicio',
-  /** Provisorio: lleva al cierre, que tiene los botones de agenda. Pasará a `/agenda`. */
+  /** Lleva al cierre, que tiene el botón de agenda. Pasará a `/agenda` en la etapa 3. */
   agenda: '#cierre',
   equipos: '#equipos',
   staff: '#staff',
@@ -15,5 +15,8 @@ export const navegacion = [
   { texto: 'Programas', href: '#programas' },
   { texto: 'Equipos', href: '#equipos' },
   { texto: 'Temporada', href: '#temporada' },
+  { texto: 'Horarios', href: '#horarios' },
   { texto: 'Valores', href: '#valores' },
+  { texto: 'Staff', href: '#staff' },
+  { texto: 'Viajes', href: '#viajes' },
 ] as const;

@@ -1,0 +1,176 @@
+---
+/* 12 · 10 Cierre (amarillo, corte diagonal superior como Horarios en la v2).
+   `id="cierre"` es el destino de `enlaces.agenda` (CTA del hero, header, equipos y cómo funciona).
+   Textos: título, etiqueta y botones vienen de la v2. La bajada usa la frase de la v2 y no
+   sale del JSON (decisión a validar con el club).
+   Reglamento: `documentos.reglamento` solo dice «ver informativo-2027.txt (desde la página 33)»;
+   no hay URL ni archivo publicable. Se muestra como botón inactivo con marcador visible
+   `[enlace por confirmar]`, sin destino falso.
+   El tornado vive dentro de la escena del recorte (no cruza texto). Reveal: `.soplo` en
+   contenedores; el recorte flota en el <img> (hijo) para no mezclar transforms. */
+import { Image } from 'astro:assets';
+import duo from '../../assets/img/cut-duo.png';
+import { enlaces } from '../../data/enlaces';
+import Boton from '../ui/Boton.astro';
+import Etiqueta from '../ui/Etiqueta.astro';
+import Tornado from '../ui/Tornado.astro';
+---
+
+<section class="cierre sobre-amarillo" id="cierre" aria-labelledby="cierre-titulo">
+  <div class="cierre__cuerpo contenedor">
+    <div class="cierre__texto soplo">
+      <Etiqueta variante="seccion">10 · Tu ingreso</Etiqueta>
+      <h2 id="cierre-titulo" class="disp cierre__titulo">Súmate<br />al huracán</h2>
+      <p class="cierre__bajada">
+        Agenda la evaluación, lee el reglamento interno y prepárate para tu primera temporada. Deportista y apoderado se comprometen con su equipo de inicio a fin.
+      </p>
+      <div class="cierre__botones">
+        <Boton href={enlaces.agenda} variante="negro" tamano="grande">Agenda tu evaluación →</Boton>
+        <button type="button" class="reglamento" aria-disabled="true" aria-describedby="reglamento-nota">
+          <span>Reglamento 2027</span>
+          <span class="reglamento__marca" id="reglamento-nota">[enlace por confirmar]</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="cierre__escena soplo-der">
+      <Tornado class="cierre__tornado" />
+      <Image
+        class="cierre__duo flota"
+        src={duo}
+        alt="Dos deportistas de Huracán All Stars con uniforme de competencia"
+        widths={[360, 560, 1120]}
+        sizes="(min-width: 70rem) 560px, 80vw"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+  </div>
+</section>
+
+<style>
+  .cierre {
+    position: relative;
+    margin-top: calc(var(--corte-diagonal) * -1);
+    background: var(--amarillo);
+    color: var(--negro);
+    clip-path: polygon(0 var(--corte-diagonal), 100% 0, 100% 100%, 0 100%);
+    overflow: clip;
+  }
+
+  @supports (animation-timeline: view()) {
+    .cierre {
+      view-timeline: --cierre block;
+    }
+  }
+
+  .cierre__cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-7);
+    padding-block: calc(var(--corte-diagonal) + var(--seccion-y)) 0;
+  }
+
+  .cierre__texto {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--esp-5);
+    min-width: 0;
+  }
+
+  .cierre__titulo {
+    font-size: clamp(3.75rem, 9vw, 9.375rem);
+    line-height: 0.86;
+  }
+
+  .cierre__bajada {
+    max-width: 35rem;
+    font-size: var(--t-lg);
+    font-weight: 500;
+    line-height: 1.6;
+  }
+
+  .cierre__botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--esp-4);
+    padding-inline: 0.5rem;
+  }
+
+  .reglamento {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.125rem;
+    min-height: 3.75rem;
+    padding: 0.75rem 1.5rem;
+    border: 3px dashed var(--negro);
+    background: transparent;
+    color: var(--negro);
+    font: inherit;
+    font-weight: 800;
+    font-size: var(--t-lg);
+    line-height: 1.15;
+    text-align: center;
+    cursor: not-allowed;
+    transform: skewX(-10deg);
+  }
+
+  .reglamento__marca {
+    font-size: var(--t-sm);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  /* Escena del recorte: el tornado queda detrás de las deportistas, nunca bajo el texto. */
+  .cierre__escena {
+    position: relative;
+    align-self: center;
+    width: min(100%, 26rem);
+    margin-top: auto;
+  }
+
+  .cierre :global(.cierre__tornado) {
+    position: absolute;
+    left: 50%;
+    top: 0;
+    width: 135%;
+    height: auto;
+    opacity: 0.25;
+    transform: translateX(-42%);
+    pointer-events: none;
+  }
+
+  .cierre :global(.cierre__duo) {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(10px 0 0 var(--negro));
+  }
+
+  @media (min-width: 70rem) {
+    .cierre__cuerpo {
+      flex-direction: row;
+      align-items: flex-end;
+      gap: var(--esp-6);
+    }
+
+    .cierre__texto {
+      flex: 1 1 0;
+      padding-bottom: var(--esp-9);
+    }
+
+    .cierre__escena {
+      flex: 0 1 35rem;
+      width: auto;
+      align-self: flex-end;
+    }
+
+    .cierre :global(.cierre__duo) {
+      filter: drop-shadow(14px 0 0 var(--negro));
+    }
+  }
+</style>

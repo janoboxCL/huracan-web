@@ -1,0 +1,96 @@
+---
+/* Acceso compacto a la agenda para móvil y tablet (el header grande no es fijo).
+   Aparece al pasar el hero y se retira al llegar al Cierre, que ya tiene su botón.
+   Dos animaciones ligadas al scroll en dos elementos (opacity/visibility en cada uno):
+   el contenedor sigue el scroll de la página; el enlace sigue la entrada del #cierre.
+   Sin soporte de `animation-timeline` o con movimiento reducido queda siempre visible.
+   Desde 70 rem no se muestra (ahí el header lleva la nav completa). */
+import { enlaces } from '../../data/enlaces';
+---
+
+<div class="agenda-flotante">
+  <a class="agenda-flotante__enlace" href={enlaces.agenda}>Agenda tu evaluación</a>
+</div>
+
+<style>
+  .agenda-flotante {
+    position: fixed;
+    right: max(var(--esp-4), env(safe-area-inset-right));
+    bottom: max(var(--esp-4), env(safe-area-inset-bottom));
+    z-index: var(--z-header);
+  }
+
+  .agenda-flotante__enlace {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+    padding: 0.5rem 1.125rem;
+    background: var(--amarillo);
+    color: var(--negro);
+    border: 2px solid var(--negro);
+    box-shadow: 4px 4px 0 var(--negro);
+    font-weight: 800;
+    font-size: var(--t-sm);
+    text-decoration: none;
+  }
+
+  .agenda-flotante__enlace:focus-visible {
+    outline: var(--foco);
+    outline-offset: 3px;
+  }
+
+  /* Sin soporte de animation-timeline no se muestra: el hero, el Cierre y cada sección ya
+     tienen su CTA. Con soporte, aparece y desaparece según el scroll también con
+     movimiento reducido (es solo opacidad, sin desplazamiento ni transición): por eso el
+     !important, para no caer en la regla global que apaga todas las animaciones. */
+  .agenda-flotante {
+    display: none;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    :global(body) {
+      timeline-scope: --cierre;
+    }
+
+    .agenda-flotante {
+      display: block;
+      animation: flotante-entra linear both !important;
+      animation-timeline: scroll(root block) !important;
+      animation-range: 60vh 110vh !important;
+    }
+
+    .agenda-flotante__enlace {
+      animation: flotante-sale linear both !important;
+      animation-timeline: --cierre !important;
+      animation-range: entry 0% entry 40% !important;
+    }
+  }
+
+  @keyframes flotante-entra {
+    from {
+      opacity: 0;
+      visibility: hidden;
+    }
+    to {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  @keyframes flotante-sale {
+    from {
+      opacity: 1;
+      visibility: visible;
+    }
+    to {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+
+  @media (min-width: 70rem) {
+    .agenda-flotante {
+      display: none !important;
+    }
+  }
+</style>

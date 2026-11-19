@@ -190,7 +190,7 @@ const paso = 0.12;
     display: flex;
     align-items: flex-end;
     gap: var(--esp-5);
-    padding-top: 13rem; /* deja sitio al header superpuesto, que en móvil ocupa tres filas */
+    padding-top: calc(var(--alto-header-movil) + var(--esp-4)); /* reserva la altura real del header superpuesto */
   }
 
   .hero__texto {
