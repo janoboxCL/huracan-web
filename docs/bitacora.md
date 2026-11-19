@@ -110,3 +110,25 @@ _(se completa bloque a bloque)_
 - **Capturas 1440 px:** `.revision/inicio-1440-mov-08.png`, `.revision/inicio-1440-mov-09.png`, `.revision/inicio-1440-mov-10.png`
 
 ---
+
+## Bloque 7 · Valores + promociones
+
+- **Veredicto final:** Aprobado con cambios (1 ronda, sin Bloqueantes). Build y `astro check` sin errores.
+- **Corregido:**
+  - La tarjeta de inscripción perdía su inclinación al terminar el reveal por scroll (`.soplo` terminaba en `transform: none` y pisaba el `skewX` propio). Se separó el reveal (contenedor) del skew (hijo).
+  - Mismo defecto en la caja inclinada de **Cómo funciona (bloque 5)**, que su revisión no detectó; corregido con el mismo patrón. El resto de secciones (Programas, Equipos, Club, Horarios, Temporada, Promociones) ya usaban el patrón correcto; skews verificados por medición con movimiento activo.
+  - Rótulo accesible «Descuento:» engañoso en las promociones: ahora «Beneficio:».
+  - `aria-labelledby` sobre `<dl>` eliminado.
+- **Verificado:** inscripción, vestimenta, otros pagos, clases extras, requisitos y las 8 promociones coinciden con el JSON; `monto: null` se muestra como `[por confirmar]`; sin datos bancarios, `noPublicar` ni `_notaPromociones`; sin scroll horizontal de 360 a 1920 px.
+- **Pendientes (Menor):**
+  - Hueco de ~580 px bajo la columna derecha en escritorio (columna izquierda más larga); valorar `position: sticky` o mover «Requisitos».
+  - Hover de las entradas de promociones sugiere un clic que no existe; valorar dejarlo solo con `@media (hover: hover)` o quitarlo.
+  - `[por confirmar]` en montos se lee como texto secundario; unificar con la pastilla de Temporada.
+  - Títulos de sección algo menores que en la v2; cifra de descuento apretada y cuerpo inclinado en 360-390 px.
+  - Borde amarillo añadido al bloque negro de las entradas (no está en la v2); el revisor lo valora positivo.
+- **Decisiones de contenido a validar:** títulos de grupo «Vestimenta», «Otros pagos», «Clases extras», «Requisitos»; rótulo «Clase suelta»; «Pack de 4 clases de 75 min» compuesto desde el JSON; mostrar las 8 promociones sin fusionar (la v2 mostraba 5 resumidas); no hay aviso sobre las condiciones de las becas (la lista de habilidades está solo en el informativo, págs. 30-31).
+- **Datos pendientes del club:** montos de ropa de abrigo y pack de competencias internacionales.
+- **Capturas 390 px:** `.revision/inicio-390-mov-14.png`, `.revision/inicio-390-mov-16.png`
+- **Capturas 1440 px:** `.revision/inicio-1440-mov-10.png`, `.revision/inicio-1440-mov-11.png`
+
+---

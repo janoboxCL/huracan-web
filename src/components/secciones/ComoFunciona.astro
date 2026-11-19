@@ -27,12 +27,14 @@ const { sistema, club } = contenido;
   </div>
 
   <div class="funciona__cuerpo contenedor">
-    <div class="funciona__caja soplo">
-      <Etiqueta variante="seccion" class="funciona__etiqueta">04 · Cómo funciona</Etiqueta>
-      <h2 id="funciona-titulo" class="disp funciona__titulo">
-        Nadie queda fuera.<br /><span>{club.mensajeClave}.</span>
-      </h2>
-      <p class="funciona__resumen">{sistema.resumen}</p>
+    <div class="funciona__ancla soplo">
+      <div class="funciona__caja">
+        <Etiqueta variante="seccion" class="funciona__etiqueta">04 · Cómo funciona</Etiqueta>
+        <h2 id="funciona-titulo" class="disp funciona__titulo">
+          Nadie queda fuera.<br /><span>{club.mensajeClave}.</span>
+        </h2>
+        <p class="funciona__resumen">{sistema.resumen}</p>
+      </div>
     </div>
 
     <ol role="list" class="funciona__pasos">
@@ -93,17 +95,21 @@ const { sistema, club } = contenido;
   }
 
   /* Caja negra inclinada (el texto se inclina con ella) */
-  .funciona__caja {
+  /* El reveal (.soplo) vive en el ancla; la inclinación, en la caja interior. */
+  .funciona__ancla {
     align-self: flex-start;
+    max-width: 47.5rem;
+    margin-inline: 0.5rem;
+  }
+
+  .funciona__caja {
     display: flex;
     flex-direction: column;
     gap: var(--esp-4);
-    max-width: 47.5rem;
     padding: 1.75rem 1.5rem;
     background: var(--negro);
     color: var(--blanco);
     transform: skewX(-6deg);
-    margin-inline: 0.5rem;
   }
 
   .funciona :global(.funciona__etiqueta) {

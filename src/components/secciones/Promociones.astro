@@ -1,0 +1,134 @@
+---
+/* Promociones como «entradas»: bloque negro con el descuento en amarillo + cuerpo amarillo.
+   Columna derecha de 07 · Valores. Datos: `promociones` y `_notaPagoMensualidad` del JSON.
+   Los descuentos textuales («Mensualidad especial», «Gratis») se muestran tal cual.
+   No se publica `_notaPromociones` (es una referencia interna al informativo). */
+import { contenido } from '../../data/contenido';
+
+const { promociones, _notaPagoMensualidad, _temporada } = contenido;
+
+/* Un descuento largo (texto) baja de tamaño para no desbordar el bloque negro. */
+const esLargo = (d: string) => d.includes(' ');
+---
+
+<div class="promos">
+  <h3 class="disp promos__titulo soplo-der">Promociones <span>{_temporada}</span></h3>
+
+  <ul role="list" class="promos__lista">
+    {
+      promociones.map((p) => (
+        <li class="soplo-der">
+          <article class="entrada hover-marca">
+            <p class:list={['disp', 'entrada__dcto', { 'entrada__dcto--largo': esLargo(p.descuento) }]}>
+              <span class="solo-lectores">Beneficio: </span>{p.descuento}
+            </p>
+            <div class="entrada__cuerpo">
+              <h4 class="entrada__nombre">{p.nombre}</h4>
+              <p class="entrada__texto">{p.texto}</p>
+            </div>
+          </article>
+        </li>
+      ))
+    }
+  </ul>
+
+  <p class="promos__nota">{_notaPagoMensualidad}</p>
+</div>
+
+<style>
+  .promos {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-4);
+    min-width: 0;
+  }
+
+  .promos__titulo {
+    font-size: clamp(2.5rem, 4vw, 3.5rem);
+  }
+
+  .promos__titulo span {
+    color: var(--amarillo);
+  }
+
+  .promos__lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .entrada {
+    --inclinacion-hover: -8deg;
+    --sombra-hover: var(--sombra-dura-blanca);
+    display: flex;
+    align-items: stretch;
+    background: var(--amarillo);
+    color: var(--negro);
+    transform: skewX(-5deg);
+  }
+
+  .entrada__dcto {
+    display: flex;
+    flex: 0 0 7.5rem;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 0.5rem;
+    background: var(--negro);
+    box-shadow: inset 0 0 0 2px var(--amarillo); /* el bloque se lee sobre el fondo negro */
+    color: var(--amarillo);
+    font-size: 2.125rem;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  .entrada__dcto--largo {
+    font-size: 1.25rem;
+    line-height: 0.95;
+    white-space: normal;
+  }
+
+  .entrada__cuerpo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.25rem;
+    min-width: 0;
+    padding: 0.875rem 1.25rem;
+  }
+
+  .entrada__nombre {
+    font-size: var(--t-md);
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .entrada__texto {
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  .promos__nota {
+    margin-top: var(--esp-2);
+    padding: var(--esp-3) var(--esp-4);
+    border-left: 4px solid var(--amarillo);
+    background: var(--superficie-1);
+    color: var(--texto-2);
+    font-size: var(--t-sm);
+    line-height: 1.5;
+  }
+
+  @media (min-width: 40rem) {
+    .entrada__dcto {
+      flex-basis: 8.5rem;
+      font-size: 2.5rem;
+    }
+
+    .entrada__dcto--largo {
+      font-size: 1.5rem;
+    }
+  }
+</style>
