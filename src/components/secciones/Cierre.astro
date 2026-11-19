@@ -19,8 +19,8 @@ import Tornado from '../ui/Tornado.astro';
 <section class="cierre sobre-amarillo" id="cierre" aria-labelledby="cierre-titulo">
   <div class="cierre__cuerpo contenedor">
     <div class="cierre__texto soplo">
-      <Etiqueta variante="seccion">10 · Tu ingreso</Etiqueta>
-      <h2 id="cierre-titulo" class="disp cierre__titulo">Súmate<br />al huracán</h2>
+      <Etiqueta variante="seccion">11 · Tu ingreso</Etiqueta>
+      <h2 id="cierre-titulo" class="disp cierre__titulo">Sé parte<br />de Huracán</h2>
       <p class="cierre__bajada">
         Agenda la evaluación, lee el reglamento interno y prepárate para tu primera temporada. Deportista y apoderado se comprometen con su equipo de inicio a fin.
       </p>
@@ -81,11 +81,14 @@ import Tornado from '../ui/Tornado.astro';
 
   .cierre__titulo {
     font-size: clamp(3.75rem, 9vw, 9.375rem);
-    line-height: 0.86;
+    line-height: 1;
   }
 
   .cierre__bajada {
     max-width: 35rem;
+    padding: var(--esp-4) var(--esp-5);
+    background: var(--blanco);
+    border-left: 8px solid var(--negro);
     font-size: var(--t-lg);
     font-weight: 500;
     line-height: 1.6;
@@ -107,7 +110,7 @@ import Tornado from '../ui/Tornado.astro';
     min-height: 3.75rem;
     padding: 0.75rem 1.5rem;
     border: 3px dashed var(--negro);
-    background: transparent;
+    background: var(--blanco);
     color: var(--negro);
     font: inherit;
     font-weight: 800;

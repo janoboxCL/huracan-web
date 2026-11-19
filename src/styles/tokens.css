@@ -23,7 +23,7 @@
 
   /* Tipografía */
   --fuente-texto: 'Barlow', 'Barlow Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-  --fuente-titulo: 'Barlow Condensed', 'Barlow Condensed Fallback', 'Arial Narrow', 'Barlow', sans-serif;
+  --fuente-titulo: 'Anton', 'Anton Fallback', Impact, 'Arial Narrow', sans-serif;
 
   --t-xs: 0.8125rem; /* 13 px */
   --t-sm: 0.875rem; /* 14 px */
@@ -36,7 +36,7 @@
   --t-hero: clamp(4rem, 8vw, 8rem); /* titular del hero y números gigantes */
 
   --interlineado-texto: 1.55;
-  --interlineado-titulo: 0.92;
+  --interlineado-titulo: 1.02;
 
   /* Espacios */
   --esp-1: 0.25rem;

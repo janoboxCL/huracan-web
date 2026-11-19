@@ -1,0 +1,193 @@
+---
+/* 07 Checklist de entrenamiento (negro). Contenido: `checklistEntrenamiento` del JSON
+   (pieza enviada por el club). Seis hexágonos con ícono y un panel blanco con la
+   presentación personal obligatoria. Íconos decorativos (aria-hidden); el texto lleva el sentido. */
+import { contenido } from '../../data/contenido';
+import Etiqueta from '../ui/Etiqueta.astro';
+
+const { checklistEntrenamiento: c } = contenido;
+
+/* Trazos de 48 × 48; se dibujan en blanco sobre el hexágono amarillo. */
+const iconos: Record<string, string> = {
+  puntualidad: '<circle cx="24" cy="24" r="16"/><path d="M24 14v10l7 5"/>',
+  uniforme: '<path d="M8 14l8-5 4 3h8l4-3 8 5-4 7-4-2v19H16V19l-4 2z"/>',
+  peinado: '<path d="M16 38V24c0-7 4-12 10-12s9 5 9 11M35 17c5 1 7 7 4 15"/><path d="M16 30l-4 2 4 1"/>',
+  maquillaje: '<rect x="11" y="24" width="8" height="14"/><path d="M12 24v-8l6-4v12M30 38l8-22M34 14l5 3"/><ellipse cx="27" cy="33" rx="9" ry="4"/>',
+  agua: '<path d="M20 6h8v4h-8zM18 10h12l2 6v24H16V16z"/><path d="M24 24c-3 4-3 6 0 8s3-4 0-8z"/>',
+  pagos: '<path d="M6 20h22v12H6zM28 14h14v12H28z"/><circle cx="17" cy="26" r="3"/><circle cx="35" cy="20" r="2"/>',
+};
+---
+
+<section class="checklist" id="checklist" aria-labelledby="checklist-titulo">
+  <div class="checklist__cuerpo contenedor">
+    <div class="checklist__cabecera soplo">
+      <Etiqueta variante="seccion">07 · Entrenamiento</Etiqueta>
+      <h2 id="checklist-titulo" class="disp checklist__titulo">
+        Checklist<span>para tu próximo entrenamiento</span>
+      </h2>
+    </div>
+
+    <div class="checklist__rejilla">
+      <ul role="list" class="items">
+        {
+          c.items.map((i) => (
+            <li class="item soplo">
+              <svg class="item__hex" viewBox="0 0 120 138" aria-hidden="true" focusable="false">
+                <polygon points="60,5 113,35 113,103 60,133 7,103 7,35" />
+                <g transform="translate(24 33) scale(1.5)" set:html={iconos[i.id]} />
+              </svg>
+              <h3 class="disp item__titulo">{i.titulo}</h3>
+              <p class="item__detalle">{i.detalle}</p>
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="presentacion soplo">
+        <h3 class="presentacion__titulo">{c.presentacion}</h3>
+        <ul role="list" class="presentacion__lista">
+          {c.requisitos.map((r) => <li>{r}</li>)}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .checklist {
+    position: relative;
+    background: var(--superficie-1);
+    overflow: clip;
+  }
+
+  .checklist__cuerpo {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-7);
+    padding-block: var(--seccion-y);
+  }
+
+  .checklist__cabecera {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-4);
+  }
+
+  .checklist__titulo {
+    font-size: var(--t-3xl);
+    color: var(--amarillo);
+  }
+
+  .checklist__titulo span {
+    display: block;
+    margin-top: 0.15em;
+    font-size: 0.42em;
+    color: var(--blanco);
+  }
+
+  .checklist__rejilla {
+    display: grid;
+    gap: var(--esp-7);
+    align-items: start;
+  }
+
+  @media (min-width: 64rem) {
+    .checklist__rejilla {
+      grid-template-columns: 1.25fr 1fr;
+    }
+  }
+
+  .items {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--esp-6) var(--esp-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  @media (min-width: 40rem) {
+    .items {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--esp-2);
+    text-align: center;
+  }
+
+  .item__hex {
+    width: min(100%, 8.5rem);
+    fill: var(--negro);
+    stroke: var(--amarillo);
+    stroke-width: 4;
+    stroke-linejoin: round;
+  }
+
+  .item__hex g {
+    fill: none;
+    stroke: var(--blanco);
+    stroke-width: 2.4;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .item__titulo {
+    font-size: var(--t-xl);
+    color: var(--amarillo);
+  }
+
+  .item__detalle {
+    max-width: 16rem;
+    font-size: var(--t-sm);
+    color: var(--texto-2);
+  }
+
+  /* Panel blanco: contrapeso claro frente al negro y al amarillo de las secciones vecinas. */
+  .presentacion {
+    padding: var(--esp-6);
+    background: var(--blanco);
+    color: var(--negro);
+    border-left: 8px solid var(--amarillo);
+    box-shadow: var(--sombra-dura-amarilla);
+  }
+
+  .presentacion__titulo {
+    margin-bottom: var(--esp-4);
+    font-size: var(--t-md);
+    font-weight: 800;
+    line-height: 1.25;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .presentacion__lista {
+    display: grid;
+    gap: var(--esp-2);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--t-base);
+    font-weight: 500;
+  }
+
+  .presentacion__lista li {
+    position: relative;
+    padding-left: 1.5rem;
+  }
+
+  .presentacion__lista li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5em;
+    width: 0.75rem;
+    height: 0.75rem;
+    background: var(--negro);
+    transform: skewX(-12deg);
+  }
+</style>

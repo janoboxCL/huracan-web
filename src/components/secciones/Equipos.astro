@@ -1,7 +1,7 @@
 ---
 /* 5 · 03 Equipos (amarillo, corte diagonal superior): buscador por edad.
    Única isla con JS de la etapa 1, con mejora progresiva: el servidor pinta los
-   14 equipos con sus rangos en `data-edad-min` / `data-edad-max`; el script solo
+   16 equipos con sus rangos en `data-edad-min` / `data-edad-max`; el script solo
    muestra u oculta tarjetas. Sin JS se ve el listado completo; los botones de
    edad y el resumen (que dependen del script) permanecen ocultos. */
 import { Image } from 'astro:assets';
@@ -142,7 +142,7 @@ const tarjetas = equipos.map((e) => ({
 
   .equipos__titulo {
     font-size: clamp(3.5rem, 8vw, 7.5rem);
-    line-height: 0.94; /* el «¿» invertido baja y no debe tocar la segunda línea */
+    line-height: 1.05; /* el «¿» invertido baja y no debe tocar la segunda línea */
   }
 
   .equipos__bajada {
@@ -171,7 +171,7 @@ const tarjetas = equipos.map((e) => ({
     min-height: 3.25rem;
     padding: 0 0.875rem;
     border: 3px solid var(--negro);
-    background: transparent;
+    background: var(--blanco);
     color: var(--negro);
     font-size: 1.625rem;
     transform: skewX(-10deg);
