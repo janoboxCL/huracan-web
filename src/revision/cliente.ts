@@ -1,37 +1,49 @@
-/* Modo revisión del cliente.
+/* Modo revisión: control de cambios del sitio entre el club y el equipo.
    Se carga solo cuando la página se abre con ?revision=<clave> (ver
-   components/revision/ActivadorRevision.astro). Agrega sobre el sitio real:
-   - una barra inferior con la sección que se está mirando,
-   - un marcador «Comentar» al inicio de cada sección,
-   - un panel con preguntas guía, veredicto de la sección, comentarios de la
-     ronda con su estado de atención, y el formulario para comentar,
-   - una vista de resumen para entregar la revisión de la ronda.
-   Todo lo que se guarda va a GitHub Issues a través de /api/revision/*. */
+   components/revision/ActivadorRevision.astro). La clave determina el rol:
+
+   - Club (rol cliente): crea observaciones por sección, marca el veredicto de
+     cada sección, responde en el hilo de cada observación y entrega la ronda.
+   - Equipo (rol equipo): no crea observaciones; responde en el hilo y decide
+     (aceptar con el cambio acordado, pedir aclaración, posponer, rechazar,
+     marcar implementada). Tiene una bandeja y el consolidado de cambios
+     aceptados para pasárselo a Claude Code.
+
+   Todo se guarda en GitHub Issues a través de /api/revision/*. */
 
 import estilos from './revision.css?inline';
 import { crearApi, ErrorApi, type Api } from './api';
 import { formatearFecha, h, icono, ICONOS } from './dom';
 import { describirElemento, senalar } from './senalar';
+import { aceptadas, generarConsolidado } from './consolidado';
 import {
+  DECISIONES,
   ESTADOS_COMENTARIO,
   ESTADOS_SECCION,
   LIMITES,
   PRIORIDADES,
   RONDA_ACTUAL,
+  ROLES,
   SECCIONES,
   TIPOS,
   buscarSeccion,
   nombreSeccion,
   type Comentario,
   type EstadoRonda,
+  type IdDecision,
   type IdEstadoSeccion,
   type IdPrioridad,
   type IdTipo,
+  type Respuesta,
+  type Rol,
   type SeccionRevision,
 } from '../data/revision';
 
-const CLAVE_REVISOR = 'huracan-revision-revisor';
 const CLAVE_ACCESO = 'huracan-revision';
+const CLAVE_NOMBRE: Record<Rol, string> = { cliente: 'huracan-revision-revisor', equipo: 'huracan-revision-equipo' };
+
+type Vista = 'seccion' | 'resumen' | 'bandeja' | 'consolidado';
+type Filtro = 'por-responder' | 'esperando-otro' | 'aceptada' | 'pospuesta' | 'cerradas' | 'todas';
 
 interface Borrador {
   tipo: IdTipo | null;
@@ -40,16 +52,30 @@ interface Borrador {
   elemento: string | null;
 }
 
+interface BorradorRespuesta {
+  texto: string;
+  decision: IdDecision | null;
+  cambio: string;
+}
+
 interface Estado {
   datos: EstadoRonda | null;
-  revisor: string;
+  rol: Rol | null;
+  nombre: string;
   seccionActual: string;
   seccionPanel: string;
   panelAbierto: boolean;
-  vista: 'seccion' | 'resumen';
+  vista: Vista;
+  filtro: Filtro;
   borrador: Borrador;
   enviando: boolean;
   confirmandoEntrega: boolean;
+  /** Hilos cargados, por número de observación. */
+  hilos: Map<number, Respuesta[]>;
+  /** Hilos desplegados. */
+  hilosAbiertos: Set<number>;
+  /** Formularios de respuesta abiertos, con su borrador. */
+  respuestas: Map<number, BorradorRespuesta>;
 }
 
 const version = `${__VERSION_SITIO__.commit} (${__VERSION_SITIO__.rama})`;
@@ -83,18 +109,26 @@ function elementoDe(s: SeccionRevision): HTMLElement | null {
   return s.selector ? document.querySelector<HTMLElement>(s.selector) : null;
 }
 
+const esFijo = (el: HTMLElement) => getComputedStyle(el).position === 'fixed';
+const plural = (n: number, singular: string, pluralTexto = `${singular}s`) => `${n} ${n === 1 ? singular : pluralTexto}`;
+
 export function iniciar(clave: string): void {
   const api: Api = crearApi(clave);
   const estado: Estado = {
     datos: null,
-    revisor: leerLocal(CLAVE_REVISOR),
+    rol: null,
+    nombre: '',
     seccionActual: 'general',
     seccionPanel: 'general',
     panelAbierto: false,
     vista: 'seccion',
+    filtro: 'por-responder',
     borrador: borradorVacio(),
     enviando: false,
     confirmandoEntrega: false,
+    hilos: new Map(),
+    hilosAbiertos: new Set(),
+    respuestas: new Map(),
   };
 
   const estilo = h('style', { 'data-revision': '' });
@@ -110,26 +144,37 @@ export function iniciar(clave: string): void {
 
   const aviso = h('div', { class: 'rv-raiz rv-aviso', role: 'status', 'aria-live': 'polite' });
 
+  const dockRol = h('span', {}, ` · Ronda ${RONDA_ACTUAL}`);
+  const dockAccion = h('span', { class: 'rv-dock__accion' }, 'Comentar');
   const dockSeccion = h('span', { class: 'rv-dock__seccion' }, 'Cargando…');
+  const dockVistaNombre = h('span', { class: 'rv-ocultar-movil' }, 'Resumen ');
   const dockProgreso = h('span', { class: 'rv-dock__progreso' });
+  const dockPendientes = h('span', { class: 'rv-dock__pendientes', hidden: true });
+  const botonVista = h(
+    'button',
+    {
+      type: 'button',
+      class: 'rv-dock__boton',
+      onclick: () => abrirPanel(estado.seccionPanel, estado.rol === 'equipo' ? 'bandeja' : 'resumen'),
+    },
+    icono(ICONOS.lista),
+    dockVistaNombre,
+    dockProgreso,
+    dockPendientes,
+  );
+  const botonComentar = h(
+    'button',
+    { type: 'button', class: 'rv-dock__comentar', onclick: () => abrirPanel(estado.seccionActual, 'seccion') },
+    icono(ICONOS.globo),
+    dockAccion,
+    dockSeccion,
+  );
   const dock = h(
     'div',
     { class: 'rv-raiz rv-dock', role: 'region', 'aria-label': 'Modo revisión' },
-    h('span', { class: 'rv-dock__marca' }, h('strong', {}, 'Revisión'), ` · Ronda ${RONDA_ACTUAL}`),
-    h(
-      'button',
-      { type: 'button', class: 'rv-dock__comentar', onclick: () => abrirPanel(estado.seccionActual, 'seccion') },
-      icono(ICONOS.globo),
-      h('span', { class: 'rv-dock__accion' }, 'Comentar'),
-      dockSeccion,
-    ),
-    h(
-      'button',
-      { type: 'button', class: 'rv-dock__boton', onclick: () => abrirPanel(estado.seccionPanel, 'resumen') },
-      icono(ICONOS.lista),
-      h('span', { class: 'rv-ocultar-movil' }, 'Resumen '),
-      dockProgreso,
-    ),
+    h('span', { class: 'rv-dock__marca' }, h('strong', {}, 'Revisión'), dockRol),
+    botonComentar,
+    botonVista,
     h(
       'button',
       {
@@ -148,27 +193,30 @@ export function iniciar(clave: string): void {
     ),
     h(
       'button',
-      { type: 'button', class: 'rv-dock__boton', 'aria-label': 'Salir del modo revisión', title: 'Salir del modo revisión', onclick: salir },
+      {
+        type: 'button',
+        class: 'rv-dock__boton',
+        'aria-label': 'Salir del modo revisión',
+        title: 'Salir del modo revisión',
+        onclick: salir,
+      },
       icono(ICONOS.salir),
     ),
   );
 
-  const panelTitulo = h('h2', { id: 'rv-panel-titulo', class: 'rv-panel__titulo' });
+  const panelAntetitulo = h('p', { class: 'rv-panel__antetitulo' }, `Revisión del sitio · Ronda ${RONDA_ACTUAL}`);
+  const panelTitulo = h('h2', { id: 'rv-panel-titulo', class: 'rv-panel__titulo', tabindex: '-1' });
+  const panelPestanas = h('div', { class: 'rv-pestanas', role: 'group', 'aria-label': 'Vista' });
   const panelCuerpo = h('div', { class: 'rv-panel__cuerpo' });
   const selectorSeccion = h(
     'select',
     {
       class: 'rv-select',
       'aria-label': 'Cambiar de sección',
-      onchange: (e: Event) => {
-        const id = (e.target as HTMLSelectElement).value;
-        abrirPanel(id, 'seccion', true);
-      },
+      onchange: (e: Event) => abrirPanel((e.target as HTMLSelectElement).value, 'seccion', true),
     },
     SECCIONES.map((s) => h('option', { value: s.id }, nombreSeccion(s))),
   );
-  const pestanaSeccion = h('button', { type: 'button', class: 'rv-pestana', onclick: () => cambiarVista('seccion') }, 'Sección');
-  const pestanaResumen = h('button', { type: 'button', class: 'rv-pestana', onclick: () => cambiarVista('resumen') }, 'Resumen de la ronda');
   const panel = h(
     'aside',
     { class: 'rv-raiz rv-panel', role: 'dialog', 'aria-modal': 'false', 'aria-labelledby': 'rv-panel-titulo', hidden: true },
@@ -178,15 +226,11 @@ export function iniciar(clave: string): void {
       h(
         'div',
         { class: 'rv-panel__fila' },
-        h('p', { class: 'rv-panel__antetitulo' }, `Revisión del sitio · Ronda ${RONDA_ACTUAL}`),
-        h(
-          'button',
-          { type: 'button', class: 'rv-icono-boton', 'aria-label': 'Cerrar panel', onclick: cerrarPanel },
-          icono(ICONOS.cerrar),
-        ),
+        panelAntetitulo,
+        h('button', { type: 'button', class: 'rv-icono-boton', 'aria-label': 'Cerrar panel', onclick: cerrarPanel }, icono(ICONOS.cerrar)),
       ),
       panelTitulo,
-      h('div', { class: 'rv-pestanas', role: 'group', 'aria-label': 'Vista' }, pestanaSeccion, pestanaResumen),
+      panelPestanas,
     ),
     panelCuerpo,
   );
@@ -195,7 +239,7 @@ export function iniciar(clave: string): void {
 
   const esUi = (el: Element) => Boolean(el.closest('.rv-raiz'));
 
-  /* ── Avisos ───────────────────────────────────────────────────────── */
+  /* ── Avisos y errores ─────────────────────────────────────────────── */
 
   let temporizadorAviso = 0;
   function avisar(texto: string, tipo: 'ok' | 'error' = 'ok'): void {
@@ -216,34 +260,76 @@ export function iniciar(clave: string): void {
     avisar(e instanceof Error ? e.message : 'No se pudo completar la acción.', 'error');
   }
 
+  /* ── Datos ────────────────────────────────────────────────────────── */
+
+  const comentarios = () => estado.datos?.comentarios ?? [];
+  const comentariosDe = (seccion: string) => comentarios().filter((c) => c.seccion === seccion);
+  const esperanMiRespuesta = () => comentarios().filter((c) => estado.rol && c.turno === estado.rol);
+
+  function reemplazarComentario(nuevo: Comentario): void {
+    if (!estado.datos) return;
+    const i = estado.datos.comentarios.findIndex((c) => c.numero === nuevo.numero);
+    if (i === -1) estado.datos.comentarios.push(nuevo);
+    else estado.datos.comentarios[i] = nuevo;
+  }
+
+  async function cargar(): Promise<void> {
+    try {
+      estado.datos = await api.estado();
+      if (!estado.rol) {
+        estado.rol = estado.datos.rol;
+        estado.nombre = leerLocal(CLAVE_NOMBRE[estado.rol]);
+        document.documentElement.dataset['rvRol'] = estado.rol;
+        crearMarcadores();
+      } else {
+        // Recarga: los hilos abiertos también pueden tener respuestas nuevas.
+        for (const numero of estado.hilosAbiertos) {
+          api
+            .respuestas(numero)
+            .then((r) => {
+              estado.hilos.set(numero, r);
+              if (estado.panelAbierto) pintarPanel();
+            })
+            .catch(() => undefined);
+        }
+      }
+      pintarTodo();
+    } catch (e) {
+      manejarError(e);
+    }
+  }
+
   /* ── Marcadores sobre la página ───────────────────────────────────── */
 
   const marcadores = new Map<string, HTMLButtonElement>();
-  for (const s of SECCIONES) {
-    if (!s.marcador || !elementoDe(s)) continue;
-    const boton = h('button', {
-      type: 'button',
-      class: 'rv-marca',
-      onclick: () => abrirPanel(s.id, 'seccion'),
-    });
-    marcadores.set(s.id, boton);
-    capa.append(boton);
+  function crearMarcadores(): void {
+    for (const s of SECCIONES) {
+      if (!s.marcador || !elementoDe(s)) continue;
+      const boton = h('button', { type: 'button', class: 'rv-marca', onclick: () => abrirPanel(s.id, 'seccion') });
+      marcadores.set(s.id, boton);
+      capa.append(boton);
+    }
   }
 
   function pintarMarcadores(): void {
     for (const [id, boton] of marcadores) {
       const s = buscarSeccion(id)!;
-      const n = comentariosDe(id).length;
+      const lista = comentariosDe(id);
+      const pendientes = lista.filter((c) => c.turno === estado.rol).length;
       const veredicto = estado.datos?.secciones[id]?.estado ?? 'sin-revisar';
+      boton.classList.toggle('rv-marca--alerta', pendientes > 0);
       boton.replaceChildren(
         h('span', { class: `rv-punto rv-punto--${veredicto}`, 'aria-hidden': 'true' }),
         icono(ICONOS.globo),
         h('span', {}, s.numero === '—' ? s.nombre : `${s.numero} ${s.nombre}`),
-        ...(n > 0 ? [h('span', { class: 'rv-marca__n' }, n)] : []),
+        ...(lista.length > 0 ? [h('span', { class: 'rv-marca__n' }, lista.length)] : []),
       );
       boton.setAttribute(
         'aria-label',
-        `Comentar la sección ${nombreSeccion(s)}. ${n} comentario${n === 1 ? '' : 's'}. ${ESTADOS_SECCION[veredicto].nombre}.`,
+        `${estado.rol === 'equipo' ? 'Ver' : 'Comentar'} la sección ${nombreSeccion(s)}. ` +
+          `${plural(lista.length, 'observación', 'observaciones')}` +
+          (pendientes ? `, ${pendientes} esperan tu respuesta` : '') +
+          `. Veredicto: ${ESTADOS_SECCION[veredicto].nombre}.`,
       );
     }
   }
@@ -268,7 +354,7 @@ export function iniciar(clave: string): void {
       const el = activa ? elementoDe(activa) : null;
       if (el) {
         const r = el.getBoundingClientRect();
-        const fijo = getComputedStyle(el).position === 'fixed';
+        const fijo = esFijo(el);
         Object.assign(marco.style, {
           display: 'block',
           position: fijo ? 'fixed' : 'absolute',
@@ -304,31 +390,29 @@ export function iniciar(clave: string): void {
   );
   for (const s of SECCIONES) {
     const el = elementoDe(s);
-    if (el && getComputedStyle(el).position !== 'fixed') observador.observe(el);
+    if (el && !esFijo(el)) observador.observe(el);
   }
 
-  /* ── Datos ────────────────────────────────────────────────────────── */
-
-  function comentariosDe(seccion: string): Comentario[] {
-    return estado.datos?.comentarios.filter((c) => c.seccion === seccion) ?? [];
-  }
-
-  async function cargar(): Promise<void> {
-    try {
-      estado.datos = await api.estado();
-      pintarTodo();
-    } catch (e) {
-      manejarError(e);
-    }
-  }
+  /* ── Barra inferior ───────────────────────────────────────────────── */
 
   function pintarDock(): void {
     const s = buscarSeccion(estado.seccionActual)!;
     dockSeccion.textContent = nombreSeccion(s);
-    const total = SECCIONES.length;
+    if (!estado.rol) return;
+    const equipo = estado.rol === 'equipo';
+    dockRol.textContent = ` · Ronda ${RONDA_ACTUAL} · ${ROLES[estado.rol]}`;
+    dockAccion.textContent = equipo ? 'Ver' : 'Comentar';
+    dockVistaNombre.textContent = equipo ? 'Bandeja ' : 'Resumen ';
     const conVeredicto = SECCIONES.filter((x) => estado.datos?.secciones[x.id]).length;
-    dockProgreso.textContent = `${conVeredicto}/${total}`;
-    dockProgreso.setAttribute('title', `${conVeredicto} de ${total} secciones con veredicto`);
+    dockProgreso.textContent = equipo ? '' : `${conVeredicto}/${SECCIONES.length}`;
+    const pendientes = esperanMiRespuesta().length;
+    dockPendientes.hidden = pendientes === 0;
+    dockPendientes.textContent = String(pendientes);
+    const descripcion =
+      (equipo ? 'Bandeja' : `Resumen de la ronda: ${conVeredicto} de ${SECCIONES.length} secciones con veredicto`) +
+      (pendientes ? `. ${pendientes} esperan tu respuesta` : '');
+    botonVista.setAttribute('aria-label', descripcion);
+    botonVista.setAttribute('title', descripcion);
   }
 
   function pintarTodo(): void {
@@ -340,8 +424,11 @@ export function iniciar(clave: string): void {
 
   /* ── Panel ────────────────────────────────────────────────────────── */
 
-  function abrirPanel(id: string, vista: Estado['vista'], mantenerFoco = false): void {
+  function abrirPanel(id: string, vista: Vista, mantenerFoco = false): void {
     if (estado.seccionPanel !== id) estado.borrador.elemento = null;
+    if ((vista === 'resumen' || vista === 'bandeja') && vista !== estado.vista) {
+      estado.filtro = esperanMiRespuesta().length ? 'por-responder' : 'todas';
+    }
     estado.seccionPanel = id;
     estado.vista = vista;
     estado.panelAbierto = true;
@@ -358,10 +445,13 @@ export function iniciar(clave: string): void {
     panel.hidden = true;
     document.documentElement.classList.remove('rv-panel-abierto');
     ubicar();
-    dock.querySelector<HTMLButtonElement>('.rv-dock__comentar')?.focus();
+    botonComentar.focus();
   }
 
-  function cambiarVista(vista: Estado['vista']): void {
+  function cambiarVista(vista: Vista): void {
+    if ((vista === 'resumen' || vista === 'bandeja') && vista !== estado.vista) {
+      estado.filtro = esperanMiRespuesta().length ? 'por-responder' : 'todas';
+    }
     estado.vista = vista;
     estado.confirmandoEntrega = false;
     pintarPanel();
@@ -371,31 +461,66 @@ export function iniciar(clave: string): void {
   panel.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') cerrarPanel();
   });
-  panelTitulo.tabIndex = -1;
+
+  const NOMBRES_VISTA: Record<Vista, string> = {
+    seccion: 'Sección',
+    resumen: 'Resumen de la ronda',
+    bandeja: 'Bandeja',
+    consolidado: 'Consolidado',
+  };
 
   let vistaPintada = '';
   function pintarPanel(): void {
     const s = buscarSeccion(estado.seccionPanel)!;
-    const enSeccion = estado.vista === 'seccion';
+    const rol = estado.rol ?? 'cliente';
+    const vistas: Vista[] = rol === 'equipo' ? ['seccion', 'bandeja', 'consolidado'] : ['seccion', 'resumen'];
+    if (!vistas.includes(estado.vista)) estado.vista = 'seccion';
+
     // Al cambiar de sección o de vista el panel vuelve arriba; al guardar, se queda donde estaba.
-    const clave = `${estado.vista}:${s.id}`;
-    const desplazamiento = clave === vistaPintada ? panelCuerpo.scrollTop : 0;
-    vistaPintada = clave;
-    panelTitulo.textContent = enSeccion ? nombreSeccion(s) : 'Resumen de la ronda';
+    const claveVista = `${estado.vista}:${s.id}:${estado.filtro}`;
+    const desplazamiento = claveVista === vistaPintada ? panelCuerpo.scrollTop : 0;
+    vistaPintada = claveVista;
+
+    panelAntetitulo.textContent = `Revisión del sitio · Ronda ${RONDA_ACTUAL}${estado.rol ? ` · ${ROLES[estado.rol]}` : ''}`;
+    panelTitulo.textContent = estado.vista === 'seccion' ? nombreSeccion(s) : NOMBRES_VISTA[estado.vista];
     selectorSeccion.value = s.id;
-    pestanaSeccion.setAttribute('aria-pressed', String(enSeccion));
-    pestanaResumen.setAttribute('aria-pressed', String(!enSeccion));
-    panelCuerpo.replaceChildren(...(enSeccion ? vistaSeccion(s) : vistaResumen()));
+    const pendientes = esperanMiRespuesta().length;
+    panelPestanas.replaceChildren(
+      ...vistas.map((v) =>
+        h(
+          'button',
+          { type: 'button', class: 'rv-pestana', 'aria-pressed': String(estado.vista === v), onclick: () => cambiarVista(v) },
+          v === 'resumen' ? 'Resumen' : NOMBRES_VISTA[v],
+          (v === 'bandeja' || v === 'resumen') && pendientes > 0
+            ? h('span', { class: 'rv-pestana__n', 'aria-label': `${pendientes} esperan tu respuesta` }, pendientes)
+            : null,
+          v === 'consolidado' && aceptadas(comentarios()).length > 0
+            ? h('span', { class: 'rv-pestana__n rv-pestana__n--neutro' }, aceptadas(comentarios()).length)
+            : null,
+        ),
+      ),
+    );
+
+    const contenido =
+      estado.vista === 'seccion'
+        ? vistaSeccion(s)
+        : estado.vista === 'resumen'
+          ? vistaResumen()
+          : estado.vista === 'bandeja'
+            ? vistaBandeja()
+            : vistaConsolidado();
+    panelCuerpo.replaceChildren(...contenido);
     panelCuerpo.scrollTop = desplazamiento;
   }
 
-  function campoRevisor(): HTMLElement {
-    if (estado.revisor) {
+  function campoNombre(): HTMLElement {
+    const equipo = estado.rol === 'equipo';
+    if (estado.nombre) {
       return h(
         'p',
         { class: 'rv-revisor' },
-        'Revisas como ',
-        h('strong', {}, estado.revisor),
+        equipo ? 'Respondes como ' : 'Revisas como ',
+        h('strong', {}, estado.nombre),
         ' · ',
         h(
           'button',
@@ -403,8 +528,8 @@ export function iniciar(clave: string): void {
             type: 'button',
             class: 'rv-enlace',
             onclick: () => {
-              estado.revisor = '';
-              guardarLocal(CLAVE_REVISOR, null);
+              estado.nombre = '';
+              if (estado.rol) guardarLocal(CLAVE_NOMBRE[estado.rol], null);
               pintarPanel();
             },
           },
@@ -413,17 +538,17 @@ export function iniciar(clave: string): void {
       );
     }
     const entrada = h('input', {
-      id: 'rv-revisor',
+      id: 'rv-nombre',
       class: 'rv-input',
       type: 'text',
       maxlength: LIMITES.revisor,
       autocomplete: 'name',
-      placeholder: 'Nombre y cargo, p. ej. Ana Pérez, directora',
+      placeholder: equipo ? 'Tu nombre, p. ej. Jano' : 'Nombre y cargo, p. ej. Ana Pérez, directora',
     });
     return h(
       'div',
       { class: 'rv-bloque rv-bloque--destacado' },
-      h('label', { class: 'rv-etiqueta', for: 'rv-revisor' }, '¿Quién revisa?'),
+      h('label', { class: 'rv-etiqueta', for: 'rv-nombre' }, equipo ? '¿Quién responde?' : '¿Quién revisa?'),
       h(
         'div',
         { class: 'rv-fila' },
@@ -439,35 +564,47 @@ export function iniciar(clave: string): void {
                 entrada.focus();
                 return;
               }
-              estado.revisor = valor;
-              guardarLocal(CLAVE_REVISOR, valor);
+              estado.nombre = valor;
+              if (estado.rol) guardarLocal(CLAVE_NOMBRE[estado.rol], valor);
               pintarPanel();
             },
           },
           'Guardar',
         ),
       ),
-      h('p', { class: 'rv-ayuda' }, 'Queda registrado en cada comentario.'),
+      h('p', { class: 'rv-ayuda' }, 'Queda registrado en cada observación y respuesta.'),
     );
   }
 
-  function exigirRevisor(): boolean {
-    if (estado.revisor) return true;
-    avisar('Antes de guardar, indica quién revisa.', 'error');
-    document.getElementById('rv-revisor')?.focus();
+  function exigirNombre(): boolean {
+    if (estado.nombre) return true;
+    avisar(estado.rol === 'equipo' ? 'Antes de responder, indica tu nombre.' : 'Antes de guardar, indica quién revisa.', 'error');
+    panelCuerpo.scrollTop = 0;
+    document.getElementById('rv-nombre')?.focus();
     return false;
   }
 
+  function pie(): HTMLElement {
+    return h('p', { class: 'rv-pie' }, `Versión revisada: ${version}`);
+  }
+
+  function chip(texto: string, clase: string): HTMLElement {
+    return h('span', { class: `rv-chip ${clase}` }, texto);
+  }
+
+  /* ── Vista: sección ───────────────────────────────────────────────── */
+
   function vistaSeccion(s: SeccionRevision): HTMLElement[] {
     const el = elementoDe(s);
-    const comentarios = comentariosDe(s.id);
+    const lista = comentariosDe(s.id);
     const registro = estado.datos?.secciones[s.id];
+    const cliente = estado.rol === 'cliente';
 
     const navegacion = h(
       'div',
       { class: 'rv-fila rv-fila--separada' },
       selectorSeccion,
-      el && getComputedStyle(el).position !== 'fixed'
+      el && !esFijo(el)
         ? h(
             'button',
             {
@@ -491,7 +628,39 @@ export function iniciar(clave: string): void {
       h('ul', { class: 'rv-preguntas' }, s.preguntas.map((p) => h('li', {}, p))),
     );
 
-    // Veredicto de la sección
+    const listado = h(
+      'div',
+      { class: 'rv-bloque' },
+      h('h3', { class: 'rv-subtitulo' }, `Observaciones de esta ronda (${lista.length})`),
+      lista.length
+        ? h('ol', { class: 'rv-comentarios' }, lista.slice().reverse().map((c) => tarjeta(c)))
+        : h('p', { class: 'rv-ayuda' }, cliente ? 'Todavía no hay observaciones en esta sección.' : 'El club no ha dejado observaciones en esta sección.'),
+    );
+
+    const veredicto = cliente
+      ? bloqueVeredicto(s)
+      : h(
+          'div',
+          { class: 'rv-bloque' },
+          h('h3', { class: 'rv-subtitulo' }, 'Veredicto del club'),
+          h(
+            'p',
+            {},
+            h('span', { class: `rv-punto rv-punto--${registro?.estado ?? 'sin-revisar'}`, 'aria-hidden': 'true' }),
+            ' ',
+            ESTADOS_SECCION[registro?.estado ?? 'sin-revisar'].nombre,
+            registro ? ` · ${registro.revisor} · ${formatearFecha(registro.fecha)}` : '',
+          ),
+          registro?.nota ? h('p', { class: 'rv-ayuda' }, `Nota: «${registro.nota}»`) : null,
+        );
+
+    return cliente
+      ? [navegacion, campoNombre(), preguntas, formulario(s), listado, veredicto, pie()]
+      : [navegacion, campoNombre(), veredicto, listado, preguntas, pie()];
+  }
+
+  function bloqueVeredicto(s: SeccionRevision): HTMLElement {
+    const registro = estado.datos?.secciones[s.id];
     const nota = h('textarea', {
       class: 'rv-input rv-input--corto',
       rows: 2,
@@ -499,24 +668,27 @@ export function iniciar(clave: string): void {
       placeholder: 'Nota para el veredicto (opcional)',
       'aria-label': 'Nota para el veredicto',
     });
-    const botonesVeredicto = (['aprobada', 'aprobada-con-cambios', 'rehacer'] as const).map((id) =>
-      h(
-        'button',
-        {
-          type: 'button',
-          class: `rv-veredicto rv-veredicto--${id}`,
-          'aria-pressed': String(registro?.estado === id),
-          disabled: estado.enviando,
-          onclick: () => void guardarVeredicto(s, id, nota.value),
-        },
-        ESTADOS_SECCION[id].nombre,
-      ),
-    );
-    const veredicto = h(
+    return h(
       'div',
       { class: 'rv-bloque' },
       h('h3', { class: 'rv-subtitulo' }, 'Veredicto de la sección'),
-      h('div', { class: 'rv-veredictos', role: 'group', 'aria-label': 'Veredicto' }, botonesVeredicto),
+      h(
+        'div',
+        { class: 'rv-veredictos', role: 'group', 'aria-label': 'Veredicto' },
+        (['aprobada', 'aprobada-con-cambios', 'rehacer'] as const).map((id) =>
+          h(
+            'button',
+            {
+              type: 'button',
+              class: `rv-veredicto rv-veredicto--${id}`,
+              'aria-pressed': String(registro?.estado === id),
+              disabled: estado.enviando,
+              onclick: () => void guardarVeredicto(s, id, nota.value),
+            },
+            ESTADOS_SECCION[id].nombre,
+          ),
+        ),
+      ),
       registro
         ? h(
             'p',
@@ -527,83 +699,270 @@ export function iniciar(clave: string): void {
         : h('p', { class: 'rv-ayuda' }, 'Cuando termines de revisar la sección, marca tu veredicto.'),
       nota,
     );
-
-    const lista = h(
-      'div',
-      { class: 'rv-bloque' },
-      h('h3', { class: 'rv-subtitulo' }, `Comentarios de esta ronda (${comentarios.length})`),
-      comentarios.length
-        ? h('ol', { class: 'rv-comentarios' }, comentarios.slice().reverse().map(tarjetaComentario))
-        : h('p', { class: 'rv-ayuda' }, 'Todavía no hay comentarios en esta sección.'),
-    );
-
-    return [navegacion, campoRevisor(), preguntas, formulario(s), lista, veredicto, pie()];
   }
 
-  function pie(): HTMLElement {
-    return h('p', { class: 'rv-pie' }, `Versión revisada: ${version}`);
-  }
+  /* ── Tarjeta de observación con su hilo ───────────────────────────── */
 
-  function chip(texto: string, clase: string): HTMLElement {
-    return h('span', { class: `rv-chip ${clase}` }, texto);
-  }
+  function tarjeta(c: Comentario, mostrarSeccion = false): HTMLElement {
+    const rol = estado.rol ?? 'cliente';
+    const seccion = buscarSeccion(c.seccion);
+    const abierto = estado.hilosAbiertos.has(c.numero);
+    const hilo = estado.hilos.get(c.numero);
+    const borrador = estado.respuestas.get(c.numero);
 
-  function tarjetaComentario(c: Comentario): HTMLElement {
-    const contenedorRespuestas = h('div', { class: 'rv-respuestas' });
-    return h(
-      'li',
-      { class: `rv-comentario rv-comentario--${c.estado}` },
-      h(
-        'div',
-        { class: 'rv-chips' },
-        c.tipo ? chip(TIPOS[c.tipo].nombre, `rv-chip--${c.tipo}`) : null,
-        c.prioridad ? chip(PRIORIDADES[c.prioridad].nombre, 'rv-chip--prioridad') : null,
-        chip(ESTADOS_COMENTARIO[c.estado].nombre, `rv-chip--estado rv-chip--${c.estado}`),
-      ),
-      h('p', { class: 'rv-comentario__texto' }, c.comentario),
-      c.elemento ? h('p', { class: 'rv-comentario__elemento' }, 'Señalado: ', c.elemento) : null,
-      h('p', { class: 'rv-comentario__meta' }, `#${c.numero} · ${c.revisor} · ${formatearFecha(c.fecha)}`),
+    const turno = c.turno
+      ? c.turno === rol
+        ? chip('Esperando tu respuesta', 'rv-chip--alerta')
+        : chip(`Esperando ${c.turno === 'equipo' ? 'al equipo' : 'al club'}`, 'rv-chip--turno')
+      : null;
+
+    const botonHilo =
       c.respuestas > 0
         ? h(
             'button',
             {
               type: 'button',
               class: 'rv-enlace',
-              'aria-expanded': 'false',
-              onclick: async (e: Event) => {
-                const boton = e.currentTarget as HTMLButtonElement;
-                if (boton.getAttribute('aria-expanded') === 'true') {
-                  boton.setAttribute('aria-expanded', 'false');
-                  contenedorRespuestas.replaceChildren();
-                  return;
-                }
-                boton.disabled = true;
-                try {
-                  const respuestas = await api.respuestas(c.numero);
-                  contenedorRespuestas.replaceChildren(
-                    ...respuestas.map((r) =>
-                      h(
-                        'div',
-                        { class: 'rv-respuesta' },
-                        h('p', { class: 'rv-comentario__meta' }, `Respuesta · ${formatearFecha(r.fecha)}`),
-                        h('p', { class: 'rv-comentario__texto' }, r.texto),
-                      ),
-                    ),
-                  );
-                  boton.setAttribute('aria-expanded', 'true');
-                } catch (err) {
-                  manejarError(err);
-                } finally {
-                  boton.disabled = false;
-                }
-              },
+              'aria-expanded': String(abierto),
+              onclick: () => void alternarHilo(c.numero),
             },
-            `Ver respuestas (${c.respuestas})`,
+            abierto ? 'Ocultar conversación' : `Ver conversación (${c.respuestas})`,
           )
+        : null;
+
+    const botonResponder = borrador
+      ? null
+      : h(
+          'button',
+          {
+            type: 'button',
+            class: c.turno === rol ? 'rv-boton rv-boton--claro rv-boton--chico' : 'rv-enlace',
+            onclick: () => {
+              estado.respuestas.set(c.numero, { texto: '', decision: null, cambio: c.cambio });
+              if (c.respuestas > 0) void alternarHilo(c.numero, true);
+              else pintarPanel();
+            },
+          },
+          rol === 'equipo' ? 'Responder o decidir' : 'Responder',
+        );
+
+    return h(
+      'li',
+      { class: `rv-comentario rv-comentario--${c.estado}${c.turno === rol ? ' rv-comentario--turno' : ''}` },
+      mostrarSeccion && seccion ? h('p', { class: 'rv-comentario__seccion' }, nombreSeccion(seccion)) : null,
+      h(
+        'div',
+        { class: 'rv-chips' },
+        c.tipo ? chip(TIPOS[c.tipo].nombre, `rv-chip--${c.tipo}`) : null,
+        c.prioridad ? chip(PRIORIDADES[c.prioridad].nombre, 'rv-chip--prioridad') : null,
+        chip(ESTADOS_COMENTARIO[c.estado].nombre, `rv-chip--estado rv-chip--${c.estado}`),
+        turno,
+      ),
+      h('p', { class: 'rv-comentario__texto' }, c.comentario),
+      c.elemento ? h('p', { class: 'rv-comentario__elemento' }, 'Señalado: ', c.elemento) : null,
+      h('p', { class: 'rv-comentario__meta' }, `#${c.numero} · ${c.revisor} · ${formatearFecha(c.fecha)}`),
+      c.cambio && (c.estado === 'aceptada' || c.estado === 'implementada')
+        ? h('div', { class: 'rv-cambio' }, h('strong', {}, 'Cambio acordado: '), c.cambio)
         : null,
-      contenedorRespuestas,
+      abierto
+        ? hilo
+          ? h(
+              'ol',
+              { class: 'rv-hilo', 'aria-label': `Conversación de la observación ${c.numero}` },
+              hilo.map((r) => mensaje(r)),
+            )
+          : h('p', { class: 'rv-ayuda' }, 'Cargando conversación…')
+        : null,
+      borrador ? formularioRespuesta(c, borrador) : null,
+      botonHilo || botonResponder ? h('div', { class: 'rv-fila rv-fila--separada' }, botonHilo, botonResponder) : null,
     );
   }
+
+  function mensaje(r: Respuesta): HTMLElement {
+    const propio = r.rol === estado.rol;
+    return h(
+      'li',
+      { class: `rv-mensaje rv-mensaje--${r.rol}${propio ? ' rv-mensaje--propio' : ''}` },
+      h(
+        'p',
+        { class: 'rv-mensaje__autor' },
+        h('strong', {}, `${ROLES[r.rol]} · ${r.autor || 'sin nombre'}`),
+        ` · ${formatearFecha(r.fecha)}`,
+      ),
+      r.decision
+        ? h('p', { class: 'rv-mensaje__decision' }, 'Decisión: ', chip(DECISIONES[r.decision].nombre, `rv-chip--estado rv-chip--${r.decision}`))
+        : null,
+      r.texto ? h('p', { class: 'rv-comentario__texto' }, r.texto) : null,
+      r.cambio ? h('p', { class: 'rv-mensaje__cambio' }, h('strong', {}, 'Cambio acordado: '), r.cambio) : null,
+    );
+  }
+
+  async function alternarHilo(numero: number, forzarAbierto = false): Promise<void> {
+    if (estado.hilosAbiertos.has(numero) && !forzarAbierto) {
+      estado.hilosAbiertos.delete(numero);
+      pintarPanel();
+      return;
+    }
+    estado.hilosAbiertos.add(numero);
+    pintarPanel();
+    try {
+      estado.hilos.set(numero, await api.respuestas(numero));
+    } catch (e) {
+      estado.hilosAbiertos.delete(numero);
+      manejarError(e);
+    }
+    pintarPanel();
+  }
+
+  function formularioRespuesta(c: Comentario, b: BorradorRespuesta): HTMLElement {
+    const equipo = estado.rol === 'equipo';
+    const idTexto = `rv-resp-${c.numero}`;
+    const idCambio = `rv-cambio-${c.numero}`;
+
+    const campoCambio =
+      equipo && b.decision === 'aceptada'
+        ? h(
+            'div',
+            {},
+            h('label', { class: 'rv-etiqueta', for: idCambio }, 'Cambio acordado'),
+            h('p', { class: 'rv-ayuda' }, 'Instrucción concreta: es lo que va al consolidado para Claude Code.'),
+            h('textarea', {
+              id: idCambio,
+              class: 'rv-input rv-input--corto',
+              rows: 3,
+              maxlength: LIMITES.cambio,
+              value: b.cambio,
+              placeholder: 'Ej.: Cambiar el valor de Novice a $45.000 en el JSON de contenido.',
+              oninput: (e: Event) => (b.cambio = (e.target as HTMLTextAreaElement).value),
+            }),
+          )
+        : null;
+
+    const decisiones = equipo
+      ? h(
+          'fieldset',
+          { class: 'rv-opciones' },
+          h('legend', { class: 'rv-etiqueta' }, 'Decisión'),
+          h(
+            'div',
+            { class: 'rv-opciones__lista' },
+            [['', 'Solo responder'] as const, ...Object.entries(DECISIONES).map(([id, d]) => [id, d.nombre] as const)].map(
+              ([id, nombre]) =>
+                h(
+                  'label',
+                  { class: `rv-opcion rv-opcion--${id || 'ninguna'}` },
+                  h('input', {
+                    type: 'radio',
+                    name: `rv-decision-${c.numero}`,
+                    value: id,
+                    checked: (b.decision ?? '') === id,
+                    onchange: () => {
+                      b.decision = (id || null) as IdDecision | null;
+                      pintarPanel();
+                      document.getElementById(b.decision === 'aceptada' ? idCambio : idTexto)?.focus();
+                    },
+                  }),
+                  h('span', {}, nombre),
+                ),
+            ),
+          ),
+          b.decision ? h('p', { class: 'rv-ayuda' }, DECISIONES[b.decision].ayuda) : null,
+        )
+      : null;
+
+    const etiquetaTexto = !equipo
+      ? 'Tu respuesta'
+      : b.decision === 'aclaracion'
+        ? 'Pregunta para el club'
+        : b.decision === 'rechazada' || b.decision === 'pospuesta'
+          ? 'Motivo para el club'
+          : 'Respuesta para el club';
+
+    return h(
+      'form',
+      {
+        class: 'rv-respuesta-form',
+        novalidate: true,
+        onsubmit: (e: Event) => {
+          e.preventDefault();
+          void enviarRespuesta(c, b);
+        },
+      },
+      decisiones,
+      campoCambio,
+      h(
+        'div',
+        {},
+        h('label', { class: 'rv-etiqueta', for: idTexto }, etiquetaTexto),
+        h('textarea', {
+          id: idTexto,
+          class: 'rv-input rv-input--corto',
+          rows: 3,
+          maxlength: LIMITES.respuesta,
+          value: b.texto,
+          oninput: (e: Event) => (b.texto = (e.target as HTMLTextAreaElement).value),
+        }),
+      ),
+      h(
+        'div',
+        { class: 'rv-fila' },
+        h(
+          'button',
+          {
+            type: 'button',
+            class: 'rv-boton rv-boton--claro',
+            onclick: () => {
+              estado.respuestas.delete(c.numero);
+              pintarPanel();
+            },
+          },
+          'Cancelar',
+        ),
+        h(
+          'button',
+          { type: 'submit', class: 'rv-boton rv-boton--principal', disabled: estado.enviando },
+          estado.enviando ? 'Enviando…' : 'Enviar respuesta',
+        ),
+      ),
+    );
+  }
+
+  async function enviarRespuesta(c: Comentario, b: BorradorRespuesta): Promise<void> {
+    if (!exigirNombre()) return;
+    if (b.decision === 'aceptada' && b.cambio.trim().length < 3) {
+      avisar('Describe el cambio acordado antes de aceptar.', 'error');
+      document.getElementById(`rv-cambio-${c.numero}`)?.focus();
+      return;
+    }
+    if (!b.texto.trim() && (!b.decision || b.decision === 'aclaracion' || b.decision === 'rechazada' || b.decision === 'pospuesta')) {
+      avisar(b.decision === 'aclaracion' ? 'Escribe la pregunta para el club.' : b.decision ? 'Explica el motivo al club.' : 'Escribe una respuesta.', 'error');
+      document.getElementById(`rv-resp-${c.numero}`)?.focus();
+      return;
+    }
+    estado.enviando = true;
+    pintarPanel();
+    try {
+      const actualizado = await api.responder(c.numero, {
+        ronda: RONDA_ACTUAL,
+        autor: estado.nombre,
+        texto: b.texto,
+        ...(b.decision ? { decision: b.decision } : {}),
+        ...(b.decision === 'aceptada' ? { cambio: b.cambio } : {}),
+      });
+      reemplazarComentario(actualizado);
+      estado.respuestas.delete(c.numero);
+      estado.hilosAbiertos.add(c.numero);
+      estado.hilos.set(c.numero, await api.respuestas(c.numero));
+      avisar(b.decision ? `#${c.numero}: ${DECISIONES[b.decision].nombre}.` : `Respuesta enviada en #${c.numero}.`);
+    } catch (e) {
+      manejarError(e);
+    } finally {
+      estado.enviando = false;
+      pintarTodo();
+    }
+  }
+
+  /* ── Formulario de nueva observación (club) ───────────────────────── */
 
   function grupoOpciones<T extends string>(
     nombre: string,
@@ -651,7 +1010,7 @@ export function iniciar(clave: string): void {
       class: 'rv-input',
       rows: 4,
       maxlength: LIMITES.comentario,
-      placeholder: 'Qué ves, qué cambiarías y por qué. Un tema por comentario.',
+      placeholder: 'Qué ves, qué cambiarías y por qué. Un tema por observación.',
       value: b.texto,
       oninput: (e: Event) => {
         b.texto = (e.target as HTMLTextAreaElement).value;
@@ -679,12 +1038,6 @@ export function iniciar(clave: string): void {
         )
       : null;
 
-    const enviar = h(
-      'button',
-      { type: 'submit', class: 'rv-boton rv-boton--principal', disabled: estado.enviando },
-      estado.enviando ? 'Enviando…' : 'Enviar comentario',
-    );
-
     return h(
       'form',
       {
@@ -692,16 +1045,16 @@ export function iniciar(clave: string): void {
         novalidate: true,
         onsubmit: (e: Event) => {
           e.preventDefault();
-          void enviarComentario(s);
+          void enviarObservacion(s);
         },
       },
-      h('h3', { class: 'rv-subtitulo' }, 'Nuevo comentario'),
+      h('h3', { class: 'rv-subtitulo' }, 'Nueva observación'),
       grupoOpciones('tipo', 'Tipo', TIPOS, b.tipo, (v) => (b.tipo = v)),
       grupoOpciones('prioridad', 'Prioridad', PRIORIDADES, b.prioridad, (v) => (b.prioridad = v)),
       h(
         'div',
         {},
-        h('div', { class: 'rv-fila rv-fila--separada' }, h('label', { class: 'rv-etiqueta', for: 'rv-texto' }, 'Comentario'), contador),
+        h('div', { class: 'rv-fila rv-fila--separada' }, h('label', { class: 'rv-etiqueta', for: 'rv-texto' }, 'Observación'), contador),
         texto,
       ),
       h(
@@ -716,7 +1069,11 @@ export function iniciar(clave: string): void {
         h('span', { class: 'rv-ayuda' }, dispositivo()),
       ),
       elemento,
-      enviar,
+      h(
+        'button',
+        { type: 'submit', class: 'rv-boton rv-boton--principal', disabled: estado.enviando },
+        estado.enviando ? 'Enviando…' : 'Enviar observación',
+      ),
     );
   }
 
@@ -737,15 +1094,15 @@ export function iniciar(clave: string): void {
     document.getElementById('rv-texto')?.focus();
   }
 
-  async function enviarComentario(s: SeccionRevision): Promise<void> {
+  async function enviarObservacion(s: SeccionRevision): Promise<void> {
     const b = estado.borrador;
-    if (!exigirRevisor()) return;
+    if (!exigirNombre()) return;
     if (!b.tipo || !b.prioridad) {
-      avisar('Elige el tipo y la prioridad del comentario.', 'error');
+      avisar('Elige el tipo y la prioridad de la observación.', 'error');
       return;
     }
     if (b.texto.trim().length < 3) {
-      avisar('Escribe el comentario antes de enviarlo.', 'error');
+      avisar('Escribe la observación antes de enviarla.', 'error');
       document.getElementById('rv-texto')?.focus();
       return;
     }
@@ -755,21 +1112,21 @@ export function iniciar(clave: string): void {
       const url = new URL(location.pathname, location.origin);
       const el = elementoDe(s);
       if (el?.id) url.hash = el.id;
-      const nuevo = await api.comentar({
+      const nueva = await api.comentar({
         ronda: RONDA_ACTUAL,
         seccion: s.id,
         tipo: b.tipo,
         prioridad: b.prioridad,
         comentario: b.texto,
-        revisor: estado.revisor,
+        revisor: estado.nombre,
         dispositivo: dispositivo(),
         ...(b.elemento ? { elemento: b.elemento } : {}),
         url: url.href,
         version,
       });
-      estado.datos?.comentarios.push(nuevo);
+      reemplazarComentario(nueva);
       estado.borrador = borradorVacio();
-      avisar(`Comentario #${nuevo.numero} guardado en ${nombreSeccion(s)}.`);
+      avisar(`Observación #${nueva.numero} guardada en ${nombreSeccion(s)}.`);
     } catch (e) {
       manejarError(e);
     } finally {
@@ -779,11 +1136,11 @@ export function iniciar(clave: string): void {
   }
 
   async function guardarVeredicto(s: SeccionRevision, id: IdEstadoSeccion, nota: string): Promise<void> {
-    if (!exigirRevisor()) return;
+    if (!exigirNombre()) return;
     estado.enviando = true;
     pintarPanel();
     try {
-      const registro = await api.veredicto({ ronda: RONDA_ACTUAL, seccion: s.id, estado: id, revisor: estado.revisor, nota });
+      const registro = await api.veredicto({ ronda: RONDA_ACTUAL, seccion: s.id, estado: id, revisor: estado.nombre, nota });
       if (estado.datos) estado.datos.secciones[s.id] = registro;
       avisar(`${nombreSeccion(s)}: ${ESTADOS_SECCION[id].nombre}.`);
     } catch (e) {
@@ -794,39 +1151,35 @@ export function iniciar(clave: string): void {
     }
   }
 
-  /* ── Resumen ──────────────────────────────────────────────────────── */
+  /* ── Piezas compartidas de resumen ────────────────────────────────── */
 
-  function vistaResumen(): HTMLElement[] {
-    const datos = estado.datos;
-    const comentarios = datos?.comentarios ?? [];
-    const conVeredicto = SECCIONES.filter((s) => datos?.secciones[s.id]);
-    const cuenta = <K extends string>(claves: readonly K[], f: (c: Comentario) => K | null) =>
-      claves.map((k) => [k, comentarios.filter((c) => f(c) === k).length] as const).filter(([, n]) => n > 0);
-
-    const porEstado = cuenta(Object.keys(ESTADOS_COMENTARIO) as Array<keyof typeof ESTADOS_COMENTARIO>, (c) => c.estado);
-    const porTipo = cuenta(Object.keys(TIPOS) as IdTipo[], (c) => c.tipo);
-
-    const cifras = h(
+  function cifras(): HTMLElement {
+    const lista = comentarios();
+    const conVeredicto = SECCIONES.filter((s) => estado.datos?.secciones[s.id]).length;
+    const porEstado = (Object.keys(ESTADOS_COMENTARIO) as Array<keyof typeof ESTADOS_COMENTARIO>)
+      .map((k) => [k, lista.filter((c) => c.estado === k).length] as const)
+      .filter(([, n]) => n > 0);
+    return h(
       'div',
       { class: 'rv-bloque' },
       h(
         'div',
         { class: 'rv-cifras' },
-        h('div', { class: 'rv-cifra' }, h('strong', {}, `${conVeredicto.length}/${SECCIONES.length}`), h('span', {}, 'secciones con veredicto')),
-        h('div', { class: 'rv-cifra' }, h('strong', {}, comentarios.length), h('span', {}, 'comentarios')),
+        h('div', { class: 'rv-cifra' }, h('strong', {}, `${conVeredicto}/${SECCIONES.length}`), h('span', {}, 'secciones con veredicto')),
+        h('div', { class: 'rv-cifra' }, h('strong', {}, lista.length), h('span', {}, 'observaciones')),
       ),
       porEstado.length
         ? h('div', { class: 'rv-chips' }, porEstado.map(([k, n]) => chip(`${ESTADOS_COMENTARIO[k].nombre}: ${n}`, `rv-chip--estado rv-chip--${k}`)))
         : null,
-      porTipo.length ? h('div', { class: 'rv-chips' }, porTipo.map(([k, n]) => chip(`${TIPOS[k].nombre}: ${n}`, `rv-chip--${k}`))) : null,
     );
+  }
 
-    const tabla = h(
+  function listaSecciones(): HTMLElement {
+    return h(
       'ul',
       { class: 'rv-resumen' },
       SECCIONES.map((s) => {
-        const registro = datos?.secciones[s.id];
-        const veredicto = registro?.estado ?? 'sin-revisar';
+        const veredicto = estado.datos?.secciones[s.id]?.estado ?? 'sin-revisar';
         const n = comentariosDe(s.id).length;
         return h(
           'li',
@@ -838,18 +1191,25 @@ export function iniciar(clave: string): void {
               class: 'rv-resumen__fila',
               onclick: () => {
                 const el = elementoDe(s);
-                if (el && getComputedStyle(el).position !== 'fixed') el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                if (el && !esFijo(el)) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 abrirPanel(s.id, 'seccion');
               },
             },
             h('span', { class: `rv-punto rv-punto--${veredicto}`, 'aria-hidden': 'true' }),
             h('span', { class: 'rv-resumen__nombre' }, nombreSeccion(s)),
             h('span', { class: 'rv-resumen__estado' }, ESTADOS_SECCION[veredicto].nombre),
-            h('span', { class: 'rv-resumen__n', 'aria-label': `${n} comentarios` }, n),
+            h('span', { class: 'rv-resumen__n', 'aria-label': plural(n, 'observación', 'observaciones') }, n),
           ),
         );
       }),
     );
+  }
+
+  /* ── Vista: resumen (club) ────────────────────────────────────────── */
+
+  function vistaResumen(): HTMLElement[] {
+    const datos = estado.datos;
+    const conVeredicto = SECCIONES.filter((s) => datos?.secciones[s.id]).length;
 
     const entrega = datos?.entregada
       ? h(
@@ -857,15 +1217,23 @@ export function iniciar(clave: string): void {
           { class: 'rv-bloque rv-bloque--ok' },
           h('h3', { class: 'rv-subtitulo' }, 'Revisión entregada'),
           h('p', {}, `${datos.entregada.revisor} entregó la revisión de la ronda ${RONDA_ACTUAL} · ${formatearFecha(datos.entregada.fecha)}`),
-          h('p', { class: 'rv-ayuda' }, 'Puedes seguir agregando comentarios; quedarán registrados en esta misma ronda.'),
+          h('p', { class: 'rv-ayuda' }, 'Puedes seguir respondiendo y agregando observaciones; quedan registradas en esta misma ronda.'),
         )
-      : bloqueEntrega(conVeredicto.length);
+      : bloqueEntrega(conVeredicto);
 
-    return [campoRevisor(), cifras, h('h3', { class: 'rv-subtitulo' }, 'Secciones'), tabla, entrega, pie()];
+    return [
+      campoNombre(),
+      cifras(),
+      ...bloqueObservaciones(),
+      h('h3', { class: 'rv-subtitulo' }, 'Secciones'),
+      listaSecciones(),
+      entrega,
+      pie(),
+    ];
   }
 
   function bloqueEntrega(conVeredicto: number): HTMLElement {
-    const mensaje = h('textarea', {
+    const mensajeFinal = h('textarea', {
       class: 'rv-input rv-input--corto',
       rows: 3,
       maxlength: LIMITES.nota,
@@ -880,13 +1248,13 @@ export function iniciar(clave: string): void {
         class: 'rv-boton rv-boton--principal',
         disabled: estado.enviando,
         onclick: () => {
-          if (!exigirRevisor()) return;
+          if (!exigirNombre()) return;
           if (!estado.confirmandoEntrega) {
             estado.confirmandoEntrega = true;
             boton.textContent = 'Confirmar entrega';
             return;
           }
-          void entregar(mensaje.value);
+          void entregar(mensajeFinal.value);
         },
       },
       estado.confirmandoEntrega ? 'Confirmar entrega' : `Entregar revisión de la ronda ${RONDA_ACTUAL}`,
@@ -902,16 +1270,16 @@ export function iniciar(clave: string): void {
           ? `Quedan ${faltan} secciones sin veredicto. Entrega cuando hayas recorrido todo el sitio: así se cierra la ronda y comienzan los ajustes.`
           : 'Todas las secciones tienen veredicto. Al entregar, se cierra la ronda y comienzan los ajustes.',
       ),
-      mensaje,
+      mensajeFinal,
       boton,
     );
   }
 
-  async function entregar(mensaje: string): Promise<void> {
+  async function entregar(mensajeFinal: string): Promise<void> {
     estado.enviando = true;
     pintarPanel();
     try {
-      const entrega = await api.entregar({ ronda: RONDA_ACTUAL, revisor: estado.revisor, mensaje });
+      const entrega = await api.entregar({ ronda: RONDA_ACTUAL, revisor: estado.nombre, mensaje: mensajeFinal });
       if (estado.datos) estado.datos.entregada = entrega;
       avisar('Revisión entregada. ¡Gracias!');
     } catch (e) {
@@ -923,6 +1291,125 @@ export function iniciar(clave: string): void {
     }
   }
 
+  /* ── Vista: bandeja (equipo) ──────────────────────────────────────── */
+
+  function filtros(): Record<Filtro, { nombre: string; incluye: (c: Comentario) => boolean }> {
+    const rol = estado.rol ?? 'cliente';
+    const otro = rol === 'cliente' ? 'equipo' : 'cliente';
+    return {
+      'por-responder': { nombre: rol === 'equipo' ? 'Por responder' : 'Esperan tu respuesta', incluye: (c) => c.turno === rol },
+      'esperando-otro': { nombre: otro === 'equipo' ? 'Esperando al equipo' : 'Esperando al club', incluye: (c) => c.turno === otro },
+      aceptada: { nombre: 'Aceptadas', incluye: (c) => c.estado === 'aceptada' },
+      pospuesta: { nombre: 'Pospuestas', incluye: (c) => c.estado === 'pospuesta' },
+      cerradas: { nombre: 'Cerradas', incluye: (c) => c.estado === 'implementada' || c.estado === 'rechazada' },
+      todas: { nombre: 'Todas', incluye: () => true },
+    };
+  }
+
+  /** Filtros + listado de observaciones de toda la ronda. */
+  function bloqueObservaciones(): HTMLElement[] {
+    const lista = comentarios();
+    const opciones = filtros();
+    const orden = (c: Comentario) => SECCIONES.findIndex((s) => s.id === c.seccion);
+    const filtradas = lista.filter(opciones[estado.filtro].incluye).sort((a, b) => orden(a) - orden(b) || a.numero - b.numero);
+    return [
+      h('h3', { class: 'rv-subtitulo' }, 'Observaciones de la ronda'),
+      h(
+        'div',
+        { class: 'rv-filtros', role: 'group', 'aria-label': 'Filtrar observaciones' },
+        (Object.keys(opciones) as Filtro[]).map((id) =>
+          h(
+            'button',
+            {
+              type: 'button',
+              class: 'rv-filtro',
+              'aria-pressed': String(estado.filtro === id),
+              onclick: () => {
+                estado.filtro = id;
+                pintarPanel();
+              },
+            },
+            `${opciones[id].nombre} (${lista.filter(opciones[id].incluye).length})`,
+          ),
+        ),
+      ),
+      filtradas.length
+        ? h('ol', { class: 'rv-comentarios' }, filtradas.map((c) => tarjeta(c, true)))
+        : h('p', { class: 'rv-ayuda' }, 'No hay observaciones en este filtro.'),
+    ];
+  }
+
+  function vistaBandeja(): HTMLElement[] {
+    const entregada = estado.datos?.entregada;
+    return [
+      campoNombre(),
+      entregada
+        ? h(
+            'div',
+            { class: 'rv-bloque rv-bloque--ok' },
+            h('p', {}, h('strong', {}, 'Revisión entregada'), ` por ${entregada.revisor} · ${formatearFecha(entregada.fecha)}`),
+            entregada.mensaje ? h('p', { class: 'rv-ayuda' }, `«${entregada.mensaje}»`) : null,
+          )
+        : h('p', { class: 'rv-ayuda' }, 'El club aún no entrega su revisión de esta ronda.'),
+      cifras(),
+      ...bloqueObservaciones(),
+      h('h3', { class: 'rv-subtitulo' }, 'Veredictos del club por sección'),
+      listaSecciones(),
+      pie(),
+    ];
+  }
+
+  /* ── Vista: consolidado (equipo) ──────────────────────────────────── */
+
+  function vistaConsolidado(): HTMLElement[] {
+    const lista = aceptadas(comentarios());
+    const texto = generarConsolidado(comentarios(), RONDA_ACTUAL, version);
+    const implementadas = comentarios().filter((c) => c.estado === 'implementada').length;
+
+    const copiar = async () => {
+      try {
+        await navigator.clipboard.writeText(texto);
+      } catch {
+        const area = h('textarea', { class: 'rv-oculto', value: texto });
+        document.body.append(area);
+        area.select();
+        document.execCommand('copy');
+        area.remove();
+      }
+      avisar('Consolidado copiado. Pégalo en Claude Code.');
+    };
+    const descargar = () => {
+      const enlace = h('a', {
+        href: URL.createObjectURL(new Blob([texto], { type: 'text/markdown;charset=utf-8' })),
+        download: `cambios-ronda-${RONDA_ACTUAL}.md`,
+      });
+      document.body.append(enlace);
+      enlace.click();
+      enlace.remove();
+    };
+
+    return [
+      h(
+        'div',
+        { class: 'rv-bloque' },
+        h(
+          'p',
+          { class: 'rv-ayuda' },
+          `${plural(lista.length, 'cambio aceptado', 'cambios aceptados')} por implementar · ${plural(implementadas, 'implementado', 'implementados')}. ` +
+            'Solo entran las observaciones aceptadas, con su cambio acordado. Cuando Claude Code cierra cada issue, la observación pasa a «Implementada» y sale de esta lista.',
+        ),
+        h(
+          'div',
+          { class: 'rv-fila' },
+          h('button', { type: 'button', class: 'rv-boton rv-boton--principal', disabled: !lista.length, onclick: () => void copiar() }, 'Copiar para Claude Code'),
+          h('button', { type: 'button', class: 'rv-boton rv-boton--claro', disabled: !lista.length, onclick: descargar }, 'Descargar .md'),
+        ),
+      ),
+      h('pre', { class: 'rv-md', tabindex: '0', 'aria-label': 'Vista previa del consolidado' }, texto),
+      pie(),
+    ];
+  }
+
   /* ── Salir ────────────────────────────────────────────────────────── */
 
   function salir(): void {
@@ -930,8 +1417,12 @@ export function iniciar(clave: string): void {
     location.href = `${location.pathname}?revision=salir${location.hash}`;
   }
 
+  // Al volver a la pestaña se actualiza: el otro rol pudo haber respondido.
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && estado.rol && !estado.enviando) void cargar();
+  });
+
   pintarDock();
-  pintarMarcadores();
   ubicar();
   void cargar();
 }

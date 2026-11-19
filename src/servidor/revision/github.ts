@@ -6,8 +6,10 @@ export interface Entorno {
   GITHUB_TOKEN?: string;
   /** "propietario/repositorio", p. ej. "janoboxCL/huracan-web". */
   GITHUB_REPO?: string;
-  /** Clave que va en el enlace de revisión que se le envía al cliente. */
+  /** Clave del enlace del club (rol cliente): crea observaciones, veredictos y responde. */
   REVISION_CLAVE?: string;
+  /** Clave del equipo de desarrollo (rol equipo): responde y decide; no crea observaciones. */
+  REVISION_CLAVE_EQUIPO?: string;
   /** Solo para pruebas locales con el simulador (scripts/revision-simulador.mjs). */
   GITHUB_API_URL?: string;
 }
@@ -110,12 +112,20 @@ export class GitHub {
     return this.pedir<Issue>('POST', '/issues', datos);
   }
 
-  editarIssue(numero: number, datos: { body?: string; title?: string }): Promise<Issue> {
+  editarIssue(
+    numero: number,
+    datos: { body?: string; title?: string; state?: 'open' | 'closed'; state_reason?: 'completed' | 'not_planned' | 'reopened' },
+  ): Promise<Issue> {
     return this.pedir<Issue>('PATCH', `/issues/${numero}`, datos);
   }
 
   agregarEtiquetas(numero: number, etiquetas: string[]): Promise<unknown> {
     return this.pedir('POST', `/issues/${numero}/labels`, { labels: etiquetas });
+  }
+
+  /** Reemplaza todas las etiquetas del issue. */
+  reemplazarEtiquetas(numero: number, etiquetas: string[]): Promise<unknown> {
+    return this.pedir('PUT', `/issues/${numero}/labels`, { labels: etiquetas });
   }
 
   comentar(numero: number, texto: string): Promise<unknown> {

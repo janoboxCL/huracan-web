@@ -8,6 +8,7 @@ import type {
   EstadoSeccionRegistrado,
   IdEstadoSeccion,
   Respuesta,
+  RespuestaNueva,
 } from '../data/revision';
 
 export class ErrorApi extends Error {
@@ -52,6 +53,7 @@ export function crearApi(clave: string) {
       pedir<EstadoSeccionRegistrado>('POST', 'secciones', d),
     entregar: (d: { ronda: number; revisor: string; mensaje: string }) => pedir<Entrega>('POST', 'entregar', d),
     respuestas: (numero: number) => pedir<Respuesta[]>('GET', `respuestas/${numero}`),
+    responder: (numero: number, r: RespuestaNueva) => pedir<Comentario>('POST', `respuestas/${numero}`, r),
   };
 }
 

@@ -635,8 +635,8 @@ textarea.rv-input--corto {
   margin: 0;
 }
 
-.rv-comentario--resuelto,
-.rv-comentario--descartado {
+.rv-comentario--implementada,
+.rv-comentario--rechazada {
   background: var(--rv-fondo-2);
 }
 
@@ -645,7 +645,7 @@ textarea.rv-input--corto {
   word-break: break-word;
 }
 
-.rv-comentario--descartado .rv-comentario__texto {
+.rv-comentario--rechazada > .rv-comentario__texto {
   color: var(--rv-tinta-3);
 }
 
@@ -718,17 +718,204 @@ textarea.rv-input--corto {
 .rv-chip--pendiente {
   color: #525252;
 }
-.rv-chip--en-curso {
-  color: #1d4ed8;
+.rv-chip--aclaracion {
+  color: #b45309;
 }
-.rv-chip--pospuesto {
-  color: #6d28d9;
-}
-.rv-chip--resuelto {
+.rv-chip--aceptada {
   color: #15803d;
 }
-.rv-chip--descartado {
+.rv-chip--pospuesta {
+  color: #6d28d9;
+}
+.rv-chip--rechazada {
   color: #b91c1c;
+}
+.rv-chip--implementada {
+  border-color: #15803d;
+  background: #15803d;
+  color: #fff;
+}
+
+/* Turno, hilo y respuestas */
+.rv-comentario--turno {
+  border-color: #b91c1c;
+  box-shadow: inset 4px 0 0 #b91c1c;
+}
+
+.rv-comentario__seccion {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--rv-tinta-3);
+}
+
+.rv-chip--alerta {
+  background: #b91c1c;
+  color: #fff;
+}
+
+.rv-chip--turno {
+  border-color: #a3a3a3;
+  background: #fff;
+  color: var(--rv-tinta-3);
+}
+
+.rv-cambio {
+  padding: 0.55rem 0.7rem;
+  border-left: 4px solid var(--rv-ok);
+  border-radius: 0 0.4rem 0.4rem 0;
+  background: #f0fdf4;
+  font-size: 0.875rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.rv-hilo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  margin: 0.25rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.rv-mensaje {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-width: 92%;
+  padding: 0.55rem 0.7rem;
+  border-radius: 0.6rem;
+  font-size: 0.875rem;
+}
+
+.rv-mensaje p {
+  margin: 0;
+}
+
+.rv-mensaje--cliente {
+  align-self: flex-start;
+  background: var(--rv-fondo-2);
+  border: 1px solid var(--rv-borde);
+}
+
+.rv-mensaje--equipo {
+  align-self: flex-end;
+  background: #eff6ff;
+  border: 1px solid #bfdbfe;
+}
+
+.rv-mensaje__autor {
+  font-size: 0.75rem;
+  color: var(--rv-tinta-3);
+}
+
+.rv-mensaje__autor strong {
+  color: var(--rv-tinta);
+}
+
+.rv-mensaje__cambio {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.rv-respuesta-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.7rem;
+  border-radius: 0.5rem;
+  background: var(--rv-fondo-2);
+}
+
+.rv-respuesta-form .rv-fila .rv-boton {
+  flex: 1;
+  width: auto;
+  min-height: 2.75rem;
+}
+
+.rv-boton--chico {
+  min-height: 2.5rem;
+  padding: 0 0.8rem;
+}
+
+.rv-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.rv-filtro {
+  min-height: 2.4rem;
+  padding: 0 0.75rem;
+  border: 1px solid #a3a3a3;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--rv-tinta);
+  font: 600 0.8125rem/1 var(--fuente-texto, system-ui, sans-serif);
+  cursor: pointer;
+}
+
+.rv-filtro[aria-pressed='true'] {
+  border-color: var(--rv-tinta);
+  background: var(--rv-tinta);
+  color: #fff;
+}
+
+.rv-pestana__n {
+  display: inline-block;
+  min-width: 1.3rem;
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 999px;
+  background: #b91c1c;
+  color: #fff;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.rv-pestana__n--neutro {
+  background: var(--rv-ok);
+}
+
+.rv-md {
+  margin: 0;
+  max-height: 55vh;
+  overflow: auto;
+  padding: 0.8rem;
+  border: 1px solid var(--rv-borde);
+  border-radius: 0.5rem;
+  background: var(--rv-fondo-2);
+  font: 400 0.78rem/1.5 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.rv-oculto {
+  position: fixed;
+  left: -9999px;
+  opacity: 0;
+}
+
+.rv-dock__pendientes {
+  min-width: 1.35rem;
+  padding: 0.1rem 0.35rem;
+  border-radius: 999px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.rv-dock__pendientes[hidden] {
+  display: none;
+}
+
+.rv-marca--alerta .rv-marca__n {
+  background: #ef4444;
+  color: #fff;
 }
 
 /* Resumen */

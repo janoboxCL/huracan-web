@@ -1,11 +1,28 @@
-/* GET /api/revision/respuestas/:numero → respuestas del equipo a un comentario. */
-import { endpoint, error, json } from '../../../../src/servidor/revision/http';
-import { leerRespuestas } from '../../../../src/servidor/revision/revision';
+/* Hilo de una observación.
+   GET  /api/revision/respuestas/:numero → respuestas del club y del equipo.
+   POST /api/revision/respuestas/:numero → agrega una respuesta; el equipo puede además decidir. */
+import { endpoint, error, json, leerJson, type Peticion } from '../../../../src/servidor/revision/http';
+import { leerRespuestas, responder } from '../../../../src/servidor/revision/revision';
 
-export const onRequestGet = endpoint(async (gh, ronda, { params }) => {
-  const numero = Number(params['numero']);
-  if (!Number.isInteger(numero) || numero < 1) return error('Número de comentario no válido.', 400);
-  const respuestas = await leerRespuestas(gh, ronda, numero);
-  if (!respuestas) return error('Ese comentario no pertenece a la ronda vigente.', 404);
-  return json(respuestas);
+function numeroDe({ contexto }: Peticion): number | null {
+  const numero = Number(contexto.params['numero']);
+  return Number.isInteger(numero) && numero > 0 ? numero : null;
+}
+
+const NO_ENCONTRADA = 'Esa observación no pertenece a la ronda vigente.';
+
+export const onRequestGet = endpoint(async (p) => {
+  const numero = numeroDe(p);
+  if (!numero) return error('Número de observación no válido.', 400);
+  const respuestas = await leerRespuestas(p.gh, p.ronda, numero);
+  return respuestas ? json(respuestas) : error(NO_ENCONTRADA, 404);
+});
+
+export const onRequestPost = endpoint(async (p) => {
+  const numero = numeroDe(p);
+  if (!numero) return error('Número de observación no válido.', 400);
+  const resultado = await responder(p.gh, p.ronda, p.rol, numero, await leerJson(p.contexto.request));
+  if (resultado === null) return error(NO_ENCONTRADA, 404);
+  if (typeof resultado === 'string') return error(resultado, 422);
+  return json(resultado);
 });

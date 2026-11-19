@@ -233,21 +233,32 @@ export const ESTADOS_SECCION = {
   rehacer: { nombre: 'Rehacer' },
 } as const;
 
-/** Estado de atención de cada comentario. Se deriva del issue en GitHub. */
-export const ESTADOS_COMENTARIO = {
-  pendiente: { nombre: 'Pendiente' },
-  'en-curso': { nombre: 'En curso' },
-  pospuesto: { nombre: 'Pospuesto' },
-  resuelto: { nombre: 'Resuelto' },
-  descartado: { nombre: 'Descartado' },
+/** Decisiones del equipo sobre una observación. Solo el equipo las toma. */
+export const DECISIONES = {
+  aclaracion: { nombre: 'Requiere aclaración', ayuda: 'Se le pregunta algo al club antes de decidir.' },
+  aceptada: { nombre: 'Aceptada', ayuda: 'Se hará. Define el cambio acordado: es lo que va al consolidado.' },
+  pospuesta: { nombre: 'Pospuesta', ayuda: 'Válida, pero para una etapa posterior.' },
+  rechazada: { nombre: 'Rechazada', ayuda: 'No se hará. Explica el motivo al club.' },
+  implementada: { nombre: 'Implementada', ayuda: 'El cambio ya está publicado.' },
 } as const;
+
+/** Estado de cada observación: «Por responder» mientras el equipo no decide. */
+export const ESTADOS_COMENTARIO = {
+  pendiente: { nombre: 'Por responder' },
+  ...DECISIONES,
+} as const;
+
+/** Quién usa el modo revisión: lo determina la clave del enlace. */
+export type Rol = 'cliente' | 'equipo';
+export const ROLES = { cliente: 'Club', equipo: 'Equipo' } as const;
 
 export type IdTipo = keyof typeof TIPOS;
 export type IdPrioridad = keyof typeof PRIORIDADES;
 export type IdEstadoSeccion = keyof typeof ESTADOS_SECCION;
 export type IdEstadoComentario = keyof typeof ESTADOS_COMENTARIO;
+export type IdDecision = keyof typeof DECISIONES;
 
-export const LIMITES = { comentario: 4000, revisor: 80, nota: 1000, elemento: 400 } as const;
+export const LIMITES = { comentario: 4000, revisor: 80, nota: 1000, elemento: 400, respuesta: 4000, cambio: 2000 } as const;
 
 export function buscarSeccion(id: string): SeccionRevision | undefined {
   return SECCIONES.find((s) => s.id === id);
@@ -282,10 +293,14 @@ export interface Comentario {
   tipo: IdTipo | null;
   prioridad: IdPrioridad | null;
   estado: IdEstadoComentario;
+  /** Quién debe responder ahora; `null` si nadie (cerrada o decisión informada). */
+  turno: Rol | null;
   comentario: string;
   revisor: string;
   elemento: string | null;
   fecha: string;
+  /** Cambio acordado por el equipo al aceptar: es lo que entra al consolidado. */
+  cambio: string;
   respuestas: number;
 }
 
@@ -304,6 +319,7 @@ export interface Entrega {
 
 export interface EstadoRonda {
   ronda: number;
+  rol: Rol;
   issueRonda: { numero: number; enlace: string } | null;
   secciones: Record<string, EstadoSeccionRegistrado>;
   entregada: Entrega | null;
@@ -311,7 +327,20 @@ export interface EstadoRonda {
 }
 
 export interface Respuesta {
+  rol: Rol;
   autor: string;
   fecha: string;
   texto: string;
+  decision: IdDecision | null;
+  cambio: string;
+}
+
+export interface RespuestaNueva {
+  ronda: number;
+  autor: string;
+  texto: string;
+  /** Solo equipo. */
+  decision?: IdDecision;
+  /** Solo equipo, con decisión «aceptada». */
+  cambio?: string;
 }

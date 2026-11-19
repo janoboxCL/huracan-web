@@ -5,16 +5,12 @@
      node scripts/revision-simulador.mjs            # escucha en http://127.0.0.1:8789
      PUERTO=9000 node scripts/revision-simulador.mjs
 
-   En .dev.vars (para `npm run revision:local`):
-     GITHUB_API_URL=http://127.0.0.1:8789
-     GITHUB_TOKEN=simulado
-     GITHUB_REPO=janoboxCL/huracan-web
-     REVISION_CLAVE=prueba
+   En .dev.vars (para `npm run revision:local`): ver .dev.vars.example.
 
    Extras para probar el lado del desarrollador:
      POST /_simular/cerrar/:numero   {"motivo":"completed"|"not_planned"}
      POST /_simular/responder/:numero {"texto":"..."}
-     POST /_simular/etiquetar/:numero {"etiqueta":"en-curso"}
+     POST /_simular/etiquetar/:numero {"etiqueta":"decision:aceptada"}
      GET  /_simular/estado            (todo el almacén) */
 
 import { createServer } from 'node:http';
@@ -116,6 +112,11 @@ const servidor = createServer(async (req, res) => {
         comentarios.get(issue.number).push({ body: cuerpo.body, created_at: ahora(), user: { login: 'bot-revision' } });
         issue.comments++;
         return responder(res, 201, {});
+      }
+      if (m[2] === '/labels' && metodo === 'PUT') {
+        const cuerpo = await leer(req);
+        issue.labels = cuerpo.labels.map(etiqueta);
+        return responder(res, 200, issue.labels);
       }
       if (m[2] === '/labels' && metodo === 'POST') {
         const cuerpo = await leer(req);
