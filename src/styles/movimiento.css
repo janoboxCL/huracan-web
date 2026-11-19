@@ -97,7 +97,7 @@
 /* Cortina del hero. */
 .cortina {
   position: fixed;
-  inset: 0;
+  inset: -10% -40%; /* más ancha que la pantalla: el skew no deja esquinas sin cubrir */
   z-index: var(--z-cortina);
   background: var(--amarillo);
   pointer-events: none;

@@ -1,0 +1,45 @@
+---
+/* Tornado: 8 elipses con trazo discontinuo que giran a distinta velocidad.
+   Decorativo. Por defecto negro (se usa sobre amarillo). */
+interface Props {
+  color?: 'negro' | 'amarillo';
+  class?: string;
+}
+
+const { color = 'negro', class: clase } = Astro.props;
+
+const elipses = [
+  { cx: 230, cy: 60, rx: 190, ry: 34, grosor: 7, trazo: '150 60', dur: 2.2 },
+  { cx: 222, cy: 125, rx: 158, ry: 28, grosor: 6, trazo: '120 50', dur: 1.9 },
+  { cx: 212, cy: 185, rx: 128, ry: 23, grosor: 6, trazo: '100 40', dur: 1.6 },
+  { cx: 200, cy: 240, rx: 100, ry: 19, grosor: 5, trazo: '80 34', dur: 1.4 },
+  { cx: 186, cy: 292, rx: 76, ry: 15, grosor: 5, trazo: '60 26', dur: 1.2 },
+  { cx: 172, cy: 340, rx: 54, ry: 12, grosor: 4, trazo: '44 20', dur: 1 },
+  { cx: 160, cy: 382, rx: 36, ry: 9, grosor: 4, trazo: '30 14', dur: 0.85 },
+  { cx: 150, cy: 418, rx: 20, ry: 6, grosor: 3, trazo: '18 10', dur: 0.7 },
+];
+---
+
+<svg class:list={['tornado', clase]} viewBox="0 0 420 520" aria-hidden="true" focusable="false">
+  {
+    elipses.map((e) => (
+      <ellipse
+        class="tornado-elipse"
+        cx={e.cx}
+        cy={e.cy}
+        rx={e.rx}
+        ry={e.ry}
+        fill="none"
+        stroke-linecap="round"
+        style={`stroke: var(--${color}); stroke-width: ${e.grosor}px; stroke-dasharray: ${e.trazo}; --dur-tornado: ${e.dur}s`}
+      />
+    ))
+  }
+</svg>
+
+<style>
+  .tornado {
+    width: 100%;
+    height: auto;
+  }
+</style>

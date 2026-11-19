@@ -1,0 +1,50 @@
+---
+/* 2 · Cintas cruzadas: logros en amarillo (−2,5°, 30 s) y lema en contorno
+   sobre oscuro (+2°, sentido inverso, 38 s). */
+import { contenido } from '../../data/contenido';
+import Cinta from '../ui/Cinta.astro';
+
+const { logrosCinta, club } = contenido;
+---
+
+<section class="cintas" aria-label="Logros del club">
+  <Cinta class="cintas__cinta cintas__cinta--logros" textos={logrosCinta} duracion={30} />
+  <Cinta
+    class="cintas__cinta cintas__cinta--lema"
+    textos={[club.lema.toUpperCase()]}
+    separador="///"
+    variante="oscura"
+    inversa
+    decorativa
+    duracion={38}
+    repeticiones={8}
+  />
+</section>
+
+<style>
+  .cintas {
+    position: relative;
+    height: 13rem;
+    background: var(--negro);
+    overflow: hidden;
+  }
+
+  .cintas :global(.cintas__cinta) {
+    position: absolute;
+    left: -5%;
+    right: -5%;
+  }
+
+  .cintas :global(.cintas__cinta--logros) {
+    top: 2.5rem;
+    z-index: 2;
+    transform: rotate(-2.5deg);
+    box-shadow: 0 10px 0 var(--negro);
+  }
+
+  .cintas :global(.cintas__cinta--lema) {
+    top: 6.25rem;
+    z-index: 1;
+    transform: rotate(2deg);
+  }
+</style>

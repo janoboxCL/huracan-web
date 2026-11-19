@@ -1,35 +1,13 @@
 ---
-/* Página de inicio provisoria: solo verifica que layout, tokens y contenido
-   funcionan. Las 12 secciones de docs/diseno/README.md la reemplazarán. */
+/* Inicio. Las secciones se van sumando en el orden de docs/diseno/README.md. */
 import Base from '../layouts/Base.astro';
-import { contenido } from '../data/contenido';
-
-const { club } = contenido;
+import Header from '../components/secciones/Header.astro';
+import Hero from '../components/secciones/Hero.astro';
+import Cintas from '../components/secciones/Cintas.astro';
 ---
 
 <Base>
-  <div class="contenedor provisoria">
-    <h1 class="disp">{club.nombre}</h1>
-    <p>{club.lema} · Temporada {contenido._temporada}</p>
-  </div>
+  <Header slot="header" />
+  <Hero />
+  <Cintas />
 </Base>
-
-<style>
-  .provisoria {
-    display: grid;
-    gap: var(--esp-4);
-    place-content: center;
-    min-height: 100vh;
-    text-align: center;
-  }
-
-  h1 {
-    font-size: var(--t-3xl);
-    color: var(--amarillo);
-  }
-
-  p {
-    color: var(--texto-2);
-    font-size: var(--t-md);
-  }
-</style>
