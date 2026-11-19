@@ -1,6 +1,6 @@
 # Especificación de diseño · Inicio v2 "Ráfaga"
 
-Referencia: `referencia/MainV2.dc.html` (inicio), `referencia/Agenda.dc.html` (flujo de evaluación, etapa 3) y `referencia/Crm.dc.html` (editor de contenido, etapa 5). Imágenes en `assets/`.
+Referencia: `referencia/MainV2.dc.html` (inicio), `referencia/Agenda.dc.html` (flujo de evaluación, etapa 3) y `referencia/Crm.dc.html` (editor de contenido, etapa 5). Imágenes en `src/assets/img/` (movidas desde `docs/diseno/assets/`; las referencias `.dc.html` aún las nombran con la ruta antigua).
 
 Concepto: **el viento como motor**. Energía deportiva, alternancia constante negro / amarillo / foto, diagonales y movimiento que "sopla" el contenido hacia adentro.
 

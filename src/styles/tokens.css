@@ -1,0 +1,82 @@
+/* Tokens de marca · Huracán All Stars · v2 "Ráfaga".
+   Única fuente de colores, tipografía, espacios y curvas del sitio. */
+
+:root {
+  /* Colores de marca */
+  --negro: #0a0a0a;
+  --amarillo: #fff30b;
+  --blanco: #ffffff;
+
+  /* Superficies sobre negro */
+  --superficie-1: #141414;
+  --superficie-2: #1a1a1a;
+
+  /* Texto sobre negro (AA sobre --negro y --superficie-*) */
+  --texto: var(--blanco);
+  --texto-2: #d4d4d4;
+  --texto-3: #a3a3a3;
+
+  /* Líneas y velos */
+  --linea: rgb(255 255 255 / 0.14);
+  --linea-oscura: rgb(10 10 10 / 0.18);
+  --velo-negro: rgb(10 10 10 / 0.55);
+
+  /* Tipografía */
+  --fuente-texto: 'Barlow', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --fuente-titulo: 'Barlow Condensed', 'Arial Narrow', 'Barlow', sans-serif;
+
+  --t-xs: 0.8125rem; /* 13 px */
+  --t-sm: 0.875rem; /* 14 px */
+  --t-base: 1rem; /* 16 px */
+  --t-md: 1.125rem; /* 18 px */
+  --t-lg: 1.25rem; /* 20 px */
+  --t-xl: clamp(1.625rem, 2.4vw, 2rem);
+  --t-2xl: clamp(2rem, 4vw, 3.5rem);
+  --t-3xl: clamp(3.5rem, 6.5vw, 6.25rem); /* títulos de sección */
+  --t-hero: clamp(4rem, 8vw, 8rem); /* titular del hero y números gigantes */
+
+  --interlineado-texto: 1.55;
+  --interlineado-titulo: 0.92;
+
+  /* Espacios */
+  --esp-1: 0.25rem;
+  --esp-2: 0.5rem;
+  --esp-3: 0.75rem;
+  --esp-4: 1rem;
+  --esp-5: 1.5rem;
+  --esp-6: 2rem;
+  --esp-7: 3rem;
+  --esp-8: 4.5rem;
+  --esp-9: 7.5rem;
+
+  /* Maqueta */
+  --contenedor: 85rem; /* 1360 px */
+  --margen: clamp(1.25rem, 4vw, 2rem);
+  --seccion-y: clamp(4.5rem, 9vw, 7.5rem);
+  --alto-header: 4.5rem;
+
+  /* Gestos de marca */
+  --inclinacion: -8deg; /* skewX base de tarjetas y botones */
+  --inclinacion-fuerte: -16deg; /* bloques diagonales del hero */
+  --corte-diagonal: 5vw; /* altura del corte entre secciones (clip-path) */
+  --sombra-dura: 8px 8px 0 var(--negro);
+  --sombra-dura-amarilla: 8px 8px 0 var(--amarillo);
+  --sombra-dura-blanca: 8px 8px 0 var(--blanco);
+
+  /* Foco visible (AA sobre negro y sobre amarillo) */
+  --foco: 3px solid var(--blanco);
+  --foco-sobre-amarillo: 3px solid var(--negro);
+
+  /* Movimiento */
+  --curva-soplo: cubic-bezier(0.16, 1, 0.3, 1);
+  --curva-suave: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-rapida: 0.18s;
+  --dur-media: 0.45s;
+  --dur-entrada: 0.9s;
+
+  /* Capas */
+  --z-fondo: -1;
+  --z-contenido: 1;
+  --z-header: 50;
+  --z-cortina: 100;
+}
