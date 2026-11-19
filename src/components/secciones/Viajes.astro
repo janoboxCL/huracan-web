@@ -1,0 +1,202 @@
+---
+/* 11 · 09 Viajes (foto `bg-playa` en grises, parallax, velo negro).
+   Datos solo del JSON: `viajes` y `_notaViajes`. Sin fechas, precios ni equipos por
+   destino (no existen en la fuente). Cada destino es un pasaje amarillo con línea
+   punteada; la nota (p. ej. «Disney») solo aparece cuando el JSON la trae.
+   Reveal: `.soplo` en el <li>; el skew vive en el pasaje (hijo). */
+import { Image } from 'astro:assets';
+import playa from '../../assets/img/bg-playa.jpg';
+import { contenido } from '../../data/contenido';
+import Corrientes from '../ui/Corrientes.astro';
+import Etiqueta from '../ui/Etiqueta.astro';
+
+const { viajes, _notaViajes } = contenido;
+
+const corrientes = [
+  { d: 'M-100,90 C300,20 640,170 1000,80 S1400,20 1600,70', color: 'amarillo' as const, grosor: 3, largo: 280, duracion: 3.8 },
+  { d: 'M-100,230 C320,170 680,290 1040,210 S1420,150 1600,190', color: 'amarillo' as const, grosor: 2, largo: 200, duracion: 4.6, retardo: -1.5 },
+];
+---
+
+<section class="viajes sobre-negro" id="viajes" aria-labelledby="viajes-titulo">
+  <div class="viajes__foto-caja" aria-hidden="true">
+    <Image
+      class="viajes__foto parallax"
+      src={playa}
+      alt=""
+      widths={[640, 1120, 1600]}
+      sizes="100vw"
+      loading="lazy"
+      decoding="async"
+    />
+  </div>
+  <div class="viajes__velo" aria-hidden="true"></div>
+  <div class="viajes__viento" aria-hidden="true">
+    <Corrientes trazos={corrientes} viewBox="0 0 1440 300" />
+  </div>
+
+  <div class="viajes__cuerpo contenedor">
+    <div class="viajes__cabecera soplo">
+      <Etiqueta variante="seccion" class="viajes__etiqueta">09 · Viajes internacionales</Etiqueta>
+      <h2 id="viajes-titulo" class="disp viajes__titulo">El viento<br /><span>cruza fronteras</span></h2>
+      <p class="viajes__nota">{_notaViajes}</p>
+    </div>
+
+    <ul role="list" class="pasajes">
+      {
+        viajes.map((v) => (
+          <li class="pasaje-ancla soplo">
+            <article class="pasaje">
+              <div class="pasaje__arriba">
+                <p class="pasaje__rotulo">Destino</p>
+                <h3 class="disp pasaje__ciudad">{v.ciudad}</h3>
+              </div>
+              <div class="pasaje__abajo">
+                <span>{v.pais}</span>
+                {v.nota && <span class="pasaje__sello">{v.nota}</span>}
+              </div>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .viajes {
+    position: relative;
+    background: var(--negro);
+    color: var(--blanco);
+    overflow: clip;
+  }
+
+  .viajes__foto-caja {
+    position: absolute;
+    inset: 0;
+    overflow: clip;
+  }
+
+  /* Más alta que la sección para que el parallax (±9 %) no deje bordes. */
+  .viajes :global(.viajes__foto) {
+    position: absolute;
+    left: 0;
+    top: -12%;
+    width: 100%;
+    height: 124%;
+    object-fit: cover;
+    filter: grayscale(1) contrast(1.3) brightness(0.6);
+  }
+
+  .viajes__velo {
+    position: absolute;
+    inset: 0;
+    background: rgb(10 10 10 / 0.4);
+  }
+
+  /* Franja inferior (la de los pasajes): la corriente nunca cruza el título ni la nota. */
+  .viajes__viento {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 38%;
+    pointer-events: none;
+  }
+
+  .viajes__cuerpo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-7);
+    padding-block: var(--seccion-y);
+  }
+
+  .viajes__cabecera {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--esp-4);
+    max-width: 47.5rem;
+  }
+
+  .viajes :global(.viajes__etiqueta) {
+    color: var(--amarillo);
+  }
+
+  .viajes__titulo {
+    font-size: clamp(3.5rem, 8vw, 8rem);
+    line-height: 0.86;
+  }
+
+  .viajes__titulo span {
+    color: var(--amarillo);
+  }
+
+  .viajes__nota {
+    font-size: var(--t-md);
+    line-height: 1.6;
+    color: var(--blanco);
+  }
+
+  /* Pasajes amarillos */
+  .pasajes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 15.5rem), 1fr));
+    gap: var(--esp-4);
+    margin: 0;
+    padding-inline: 0.375rem;
+  }
+
+  .pasaje-ancla {
+    display: flex;
+  }
+
+  .pasaje {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    background: var(--amarillo);
+    color: var(--negro);
+    transform: skewX(-4deg);
+  }
+
+  .pasaje__arriba {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-1);
+    padding: 1.25rem 1.375rem 1rem;
+  }
+
+  .pasaje__rotulo {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+  }
+
+  .pasaje__ciudad {
+    font-size: 3rem;
+    overflow-wrap: anywhere;
+  }
+
+  .pasaje__abajo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--esp-2);
+    margin-top: auto;
+    padding: 0.75rem 1.375rem 1rem;
+    border-top: 3px dashed var(--negro);
+    font-size: var(--t-sm);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .pasaje__sello {
+    padding: 0.125rem 0.625rem;
+    background: var(--negro);
+    color: var(--amarillo);
+  }
+</style>

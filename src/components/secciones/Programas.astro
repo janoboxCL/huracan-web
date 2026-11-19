@@ -72,7 +72,7 @@ const tarjetas = programas.map((p, i) => ({
   .programas {
     position: relative;
     margin-top: -1px; /* tapa la línea tenue entre los hitos y la sección */
-    overflow: hidden;
+    overflow: clip;
     background: var(--negro);
   }
 
@@ -80,7 +80,7 @@ const tarjetas = programas.map((p, i) => ({
   .programas__foto-caja {
     position: absolute;
     inset: 0;
-    overflow: hidden;
+    overflow: clip;
   }
 
   .programas :global(.programas__foto) {
@@ -163,7 +163,7 @@ const tarjetas = programas.map((p, i) => ({
   .carta {
     --sombra-carta: var(--sombra-dura-blanca);
     position: relative;
-    overflow: hidden;
+    overflow: clip;
     display: flex;
     flex: 1;
     flex-direction: column;

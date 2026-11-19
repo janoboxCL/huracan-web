@@ -132,3 +132,23 @@ _(se completa bloque a bloque)_
 - **Capturas 1440 px:** `.revision/inicio-1440-mov-10.png`, `.revision/inicio-1440-mov-11.png`
 
 ---
+
+## Bloque 8 · Staff + Viajes
+
+- **Veredicto final:** Rechazado en la ronda 2 por un Importante residual (sin Bloqueantes). Se agotaron las 2 rondas; el residuo se anota aquí y se verifica con el bloque 9. Build y `astro check` sin errores.
+- **Ronda 1 (Rechazado, Bloqueante):** los reveals por scroll quedaban atascados a medio animar en Staff y Viajes. Causa: `overflow: hidden` en la sección la convertía en contenedor de scroll del `animation-timeline: view()`. Corregido cambiando a `overflow: clip` en Staff, Viajes y, tras auditar, también en Club, Cómo funciona, Equipos, Horarios, Programas y Temporada (los rieles con scroll horizontal propio no se tocaron). Los 55 elementos con reveal completan la animación a 390, 1024 y 1440 px; sin regresiones de recorte, parallax ni layout.
+- **Ronda 1 (Importante):** la corriente amarilla de Viajes cruzaba el título a 1440 px; corregida (ahora ocupa solo la franja inferior; bbox verificado de 390 a 1920 px). Foto de Viajes subida a brillo 0,6 y velo 0,4; contraste AA medido sobre la foto renderizada: mínimo 5,41:1.
+- **Pendiente (Importante, ronda 2):** el último pasaje (Cancún) queda a medio reveal (opacidad ~0,83, desplazado ~19 px) al llegar al fondo de la página en 360-1024 px, porque el scroll máximo no alcanza el final del `view()` timeline. En 1280 px o más termina bien y con reduced-motion está completo. Debe resolverse solo al construir el Cierre (deja de ser lo último de la página); si no, sobrescribir `animation-range: entry 0% entry 70%` en `.pasaje-ancla`. **Verificar tras el bloque 9.**
+- **Pendientes (Menor):**
+  - La corriente amarilla inferior de Viajes casi no se percibe (hilo de 2-3 px); subir grosor a 4-5 px.
+  - «STAFF» gigante en contorno compite un poco con los chips de Asistentes; bajar a 0,07 o desplazarlo.
+  - Medallones con iniciales (FP, MC) pueden leerse como avatares de relleno; reemplazar cuando haya fotos autorizadas.
+  - Hover de las tarjetas de dirección sin ser clicables (incoherente con coaches y pasajes).
+  - El header no enlaza `#horarios`, `#staff` ni `#viajes`.
+- **Decisiones de contenido a validar:** «Quién entrena a tus hijos», «08 · Staff», «Coaches», «Asistentes», «09 · Viajes internacionales», «El viento cruza fronteras», rótulo «Destino» y las iniciales de los medallones.
+- **Datos pendientes del club:** fotos del staff (pendientes; no se atribuyen fotos sin confirmar quién es quién); qué detalle corresponde a cada coach (`_notaCoaches`: las columnas del PDF no se alinean con certeza; la advertencia NO se publica); detalle de Christopher González («[Detalle por confirmar]» visible).
+- **Marcadores `[así]`:** «[Detalle por confirmar]» (viene del JSON).
+- **Capturas 390 px:** `.revision/inicio-390-mov-17.png`, `.revision/inicio-390-mov-20.png`, `.revision/inicio-390-mov-21.png`
+- **Capturas 1440 px:** `.revision/inicio-1440-mov-13.png`, `.revision/inicio-1440-mov-14.png`, `.revision/inicio-1440-mov-15.png`
+
+---

@@ -1,0 +1,270 @@
+---
+/* 10 · 08 Staff (amarillo, corte diagonal superior como Equipos).
+   Datos solo del JSON: `staff.direccion`, `staff.coaches`, `staff.asistentes`.
+   Fotos del staff: PENDIENTES. No se usan fotos ni recortes de personas; las
+   tarjetas de dirección llevan un medallón con las iniciales del nombre.
+   Pendiente interno (no se publica): `staff._notaCoaches` advierte que en el PDF las
+   columnas de detalle de los coaches no están alineadas con certeza a cada nombre;
+   se publican tal como el JSON las asigna y debe confirmarse con el club.
+   Reveal: `.soplo` en el contenedor; el skew vive en el hijo. */
+import { contenido } from '../../data/contenido';
+import Etiqueta from '../ui/Etiqueta.astro';
+
+const { direccion, coaches, asistentes } = contenido.staff;
+
+const iniciales = (nombre: string) =>
+  nombre
+    .split(/\s+/)
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join('')
+    .toUpperCase();
+---
+
+<section class="staff sobre-amarillo" id="staff" aria-labelledby="staff-titulo">
+  <div class="staff__fondo disp" aria-hidden="true">Staff</div>
+
+  <div class="staff__cuerpo contenedor">
+    <div class="staff__cabecera soplo">
+      <Etiqueta variante="seccion">08 · Staff</Etiqueta>
+      <h2 id="staff-titulo" class="disp staff__titulo">Quién entrena<br />a tus hijos</h2>
+    </div>
+
+    <ul role="list" class="direccion">
+      {
+        direccion.map((d) => (
+          <li class="direccion__item soplo">
+            <article class="directivo hover-marca" aria-labelledby={`dir-${iniciales(d.nombre)}`}>
+              <div class="directivo__medallon" aria-hidden="true">
+                <span class="disp">{iniciales(d.nombre)}</span>
+              </div>
+              <div class="directivo__texto">
+                <p class="directivo__rol">{d.rol}</p>
+                <h3 class="disp directivo__nombre" id={`dir-${iniciales(d.nombre)}`}>
+                  {d.nombre}
+                </h3>
+                <ul role="list" class="directivo__detalle">
+                  {d.detalle.map((linea) => (
+                    <li>{linea}</li>
+                  ))}
+                </ul>
+              </div>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="coaches">
+      <h3 class="disp coaches__titulo soplo">Coaches</h3>
+      <ul role="list" class="coaches__lista">
+        {
+          coaches.map((c) => (
+            <li class="coach-ancla soplo">
+              <article class="coach">
+                <h4 class="disp coach__nombre">{c.nombre}</h4>
+                <p class="coach__detalle">{c.detalle}</p>
+              </article>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="asistentes soplo">
+      <h3 class="disp coaches__titulo">Asistentes</h3>
+      <ul role="list" class="asistentes__lista">
+        {asistentes.map((a) => <li>{a}</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .staff {
+    position: relative;
+    background: var(--amarillo);
+    color: var(--negro);
+    clip-path: polygon(0 0, 100% var(--corte-diagonal), 100% 100%, 0 100%);
+    overflow: clip;
+  }
+
+  .staff__fondo {
+    position: absolute;
+    left: -1.5rem;
+    bottom: -2rem;
+    font-size: clamp(10rem, 28vw, 22.5rem);
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 3px var(--negro);
+    opacity: 0.1;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  .staff__cuerpo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-6);
+    padding-block: calc(var(--corte-diagonal) + var(--seccion-y)) var(--seccion-y);
+  }
+
+  .staff__cabecera {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--esp-4);
+  }
+
+  .staff__titulo {
+    font-size: clamp(3.5rem, 8vw, 7.5rem);
+    line-height: 0.86;
+  }
+
+  /* Dirección: tarjetas negras */
+  .direccion {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--esp-5);
+    margin: 0;
+  }
+
+  .direccion__item {
+    flex: 1 1 20rem;
+    min-width: 0;
+    display: flex;
+  }
+
+  .direccion__item:first-child {
+    flex-basis: 32rem;
+  }
+
+  .directivo {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--esp-5);
+    align-items: flex-start;
+    min-width: 0;
+    padding: clamp(1.25rem, 3vw, 2rem);
+    background: var(--negro);
+    color: var(--blanco);
+    --sombra-hover: var(--sombra-dura-blanca);
+  }
+
+  .directivo__medallon {
+    display: flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 6.5rem;
+    height: 6.5rem;
+    border: 6px solid var(--amarillo);
+    border-radius: 50%;
+    background: var(--superficie-2);
+    color: var(--amarillo);
+    font-size: 2.5rem;
+  }
+
+  .directivo__texto {
+    flex: 1 1 16rem;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-2);
+  }
+
+  .directivo__rol {
+    color: var(--amarillo);
+    font-size: var(--t-xs);
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .directivo__nombre {
+    font-size: clamp(2.75rem, 5vw, 3.5rem);
+  }
+
+  .directivo__detalle {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-2);
+    margin-top: var(--esp-2);
+    color: var(--texto-2);
+    font-size: var(--t-base);
+    line-height: 1.5;
+  }
+
+  .directivo__detalle li {
+    padding-left: 0.875rem;
+    border-left: 3px solid var(--amarillo);
+  }
+
+  /* Coaches: tarjetas de contorno negro, inclinadas */
+  .coaches {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-4);
+  }
+
+  .coaches__titulo {
+    font-size: 2.25rem;
+  }
+
+  .coaches__lista {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 15rem), 1fr));
+    gap: var(--esp-3);
+    margin: 0;
+    padding-inline: 0.375rem;
+  }
+
+  .coach-ancla {
+    display: flex;
+  }
+
+  .coach {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-2);
+    min-width: 0;
+    padding: 1.125rem;
+    border: 3px solid var(--negro);
+    transform: skewX(-4deg);
+  }
+
+  .coach__nombre {
+    font-size: 1.875rem;
+    overflow-wrap: anywhere;
+  }
+
+  .coach__detalle {
+    font-size: var(--t-sm);
+    font-weight: 500;
+    line-height: 1.45;
+  }
+
+  /* Asistentes: solo nombres */
+  .asistentes {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-3);
+  }
+
+  .asistentes__lista {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--esp-2);
+    margin: 0;
+  }
+
+  .asistentes__lista li {
+    padding: 0.375rem 0.875rem;
+    border: 2px solid var(--negro);
+    font-size: var(--t-sm);
+    font-weight: 700;
+  }
+</style>

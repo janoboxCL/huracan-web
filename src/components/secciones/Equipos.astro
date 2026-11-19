@@ -111,7 +111,7 @@ const tarjetas = equipos.map((e) => ({
     background: var(--amarillo);
     color: var(--negro);
     clip-path: polygon(0 0, 100% var(--corte-diagonal), 100% 100%, 0 100%);
-    overflow: hidden;
+    overflow: clip;
   }
 
   .equipos :global(.equipos__flyer) {

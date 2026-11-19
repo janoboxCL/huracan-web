@@ -63,7 +63,7 @@ const { sistema, club } = contenido;
   .funciona {
     position: relative;
     isolation: isolate; /* el multiply de la foto se mezcla solo con el amarillo de la sección */
-    overflow: hidden;
+    overflow: clip;
     background: var(--amarillo);
     color: var(--negro);
   }
@@ -71,7 +71,7 @@ const { sistema, club } = contenido;
   .funciona__foto-caja {
     position: absolute;
     inset: 0;
-    overflow: hidden;
+    overflow: clip;
   }
 
   /* Más alta que la sección para que el parallax (±9 %) no deje bordes. */
