@@ -42,3 +42,18 @@ _(se completa bloque a bloque)_
 - **Capturas 1440 px:** `.revision/inicio-1440-sin-movimiento.png`, `.revision/inicio-1440-mov-00.png`, `.revision/inicio-1440-mov-01.png`
 
 ---
+
+## Bloque 3 · Programas
+
+- **Veredicto final:** Aprobado con cambios (1 ronda, sin Bloqueantes). Build y `astro check` sin errores.
+- **Corregido:** nombre «International» desbordaba su caja en escritorio (ahora `12cqi`, sin desborde a 390, 1280, 1440 y 1920 px); detalle duplicado en Novice y Prep (se quitó el chip «Open» y queda el `detalle` del JSON tal cual); foto de fondo casi invisible (filtro `contrast(1.2) brightness(0.45)`, velo 45 %); línea tenue entre hitos y Programas (`margin-top: -1px`).
+- **Pendientes / decisiones a validar con el club (Menor):**
+  - Textos que no salen del JSON: la bajada «Cuatro niveles, un mismo camino: del juego y la motricidad a la élite internacional.», el «al mes» junto al precio y el prefijo «Desde N años» (todos vienen de la maqueta v2).
+  - «Hasta Senior» no se explica en la sección; el JSON lo trae así.
+  - Las tarjetas muestran descripción y detalle completos del JSON, más largos que los resúmenes de la v2.
+  - Tarjeta de Recreativo con vacío central a 1440 px (altura igualada).
+- **Marcadores `[así]`:** ninguno.
+- **Capturas 390 px:** `.revision/inicio-390-sin-movimiento.png`, `.revision/inicio-390-mov-00.png`, `.revision/inicio-390-mov-01.png`
+- **Capturas 1440 px:** `.revision/inicio-1440-sin-movimiento.png`, `.revision/inicio-1440-mov-00.png`, `.revision/inicio-1440-mov-01.png`, `.revision/prog-check.png` (sección Programas con la foto cargada)
+
+---
