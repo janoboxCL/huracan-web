@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<title>CRM Huracán · Contenido del sitio</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@1,800&amp;family=Barlow:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F4F4F2}
+a{color:#0A0A0A}a:hover{color:#4A4A4A}
+.f{display:flex;flex-direction:column;gap:6px;flex:1 1 260px;min-width:0}
+.f label{font-size:13px;font-weight:700;color:#3A3A3A}
+.f input,.f textarea,.f select{font-family:'Barlow',sans-serif;font-size:15px;padding:10px 12px;border:1px solid #CFCFCB;background:#FFFFFF;color:#111111;min-height:44px;box-sizing:border-box;border-radius:6px}
+.f small{font-size:12px;color:#5A5A5A}
+</style>
+</helmet>
+<div style="font-family: 'Barlow', sans-serif; color: #111111; background: #F4F4F2; min-height: 1000px; display: flex; flex-wrap: wrap">
+
+<nav aria-label="CRM" style="flex: 1 1 240px; max-width: 280px; background: #0A0A0A; color: #FFFFFF; padding: 24px 18px; box-sizing: border-box; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; align-items: center; gap: 10px; padding: 0 8px 22px">
+<img src="/_blob/74bc1aebb165b01a0b9ef8d22487973d" alt="" style="width: 34px; height: auto">
+<span style="font-family: 'Barlow Condensed', sans-serif; font-style: italic; font-weight: 800; font-size: 22px; text-transform: uppercase">Huracán · CRM</span>
+</div>
+<sc-for list="{{menu}}" as="m" hint-placeholder-count="8">
+<a href="#" style="{{m.estilo}}">{{m.label}}<span style="margin-left: auto; font-size: 12px; color: {{m.badgeColor}}">{{m.badge}}</span></a>
+</sc-for>
+<div style="margin-top: auto; padding: 14px 10px 0; border-top: 1px solid #262626; font-size: 13px; color: #A3A3A3">Franco Pinto · Administrador</div>
+</nav>
+
+<main style="flex: 999 1 900px; min-width: 0; padding: 28px 36px; box-sizing: border-box; display: flex; flex-direction: column; gap: 22px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 14px">
+<div style="display: flex; flex-direction: column; gap: 2px">
+<span style="font-size: 13px; color: #5A5A5A; font-weight: 600">Sitio web · huracanallstars.cl</span>
+<h1 style="margin: 0; font-size: 28px; font-weight: 700">Contenido del sitio</h1>
+</div>
+<div style="margin-left: auto; display: flex; flex-wrap: wrap; gap: 10px">
+<button type="button" style="min-height: 44px; padding: 0 16px; border: 1px solid #CFCFCB; background: #FFFFFF; font-family: 'Barlow', sans-serif; font-weight: 600; font-size: 15px; border-radius: 6px; cursor: pointer">Vista previa</button>
+<button type="button" style="min-height: 44px; padding: 0 18px; border: 0; background: #0A0A0A; color: #FFF30B; font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 15px; border-radius: 6px; cursor: pointer">Publicar cambios (2)</button>
+</div>
+</div>
+
+<div role="tablist" aria-label="Páginas" style="display: flex; flex-wrap: wrap; gap: 6px; border-bottom: 1px solid #DCDCD8">
+<sc-for list="{{tabs}}" as="t" hint-placeholder-count="6">
+<button type="button" role="tab" aria-selected="{{t.sel}}" style="{{t.estilo}}">{{t.label}}</button>
+</sc-for>
+</div>
+
+<div style="display: flex; flex-wrap: wrap; gap: 22px; align-items: flex-start">
+<section aria-label="Secciones del inicio" style="flex: 1 1 340px; max-width: 420px; background: #FFFFFF; border: 1px solid #DCDCD8; border-radius: 10px; padding: 18px; box-sizing: border-box; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline">
+<h2 style="margin: 0; font-size: 17px; font-weight: 700">Secciones del inicio</h2>
+<span style="font-size: 12px; color: #5A5A5A">Arrastra para ordenar</span>
+</div>
+<sc-for list="{{secciones}}" as="s" hint-placeholder-count="11">
+<div style="{{s.estilo}}">
+<span aria-hidden="true" style="color: #9A9A9A; font-size: 16px; letter-spacing: -2px">⋮⋮</span>
+<span style="font-weight: 700; font-size: 13px; color: #6A6A6A; min-width: 22px">{{s.n}}</span>
+<span style="flex: 1; font-size: 15px; font-weight: 600">{{s.nombre}}</span>
+<span style="font-size: 12px; color: #5A5A5A">{{s.fuente}}</span>
+<span role="switch" aria-checked="{{s.visible}}" aria-label="Visible" style="{{s.switchEstilo}}"><span style="{{s.knob}}"></span></span>
+</div>
+</sc-for>
+</section>
+
+<section aria-label="Editar portada" style="flex: 999 1 520px; min-width: 0; background: #FFFFFF; border: 1px solid #DCDCD8; border-radius: 10px; padding: 22px 24px; box-sizing: border-box; display: flex; flex-direction: column; gap: 18px">
+<div style="display: flex; flex-wrap: wrap; align-items: center; gap: 10px">
+<h2 style="margin: 0; font-size: 20px; font-weight: 700">Portada (hero)</h2>
+<span style="font-size: 12px; font-weight: 700; padding: 4px 10px; border-radius: 999px; background: #FFF6A8; color: #4A4300">Borrador sin publicar</span>
+<span style="margin-left: auto; font-size: 13px; color: #5A5A5A">Publicado hoy 18:40 · <a href="#">Historial (3)</a></span>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 14px">
+<div class="f"><label for="c1">Etiqueta superior</label><input id="c1" value="Temporada 2027 · Inscripciones abiertas"></div>
+<div class="f"><label for="c2">Estado de inscripciones</label><select id="c2"><option>Abiertas · muestra el botón de agenda</option><option>Lista de espera</option><option>Cerradas</option></select></div>
+</div>
+<div class="f" style="flex-basis: 100%"><label for="c3">Titular</label><input id="c3" value="The power from the *wind*"><small>Las palabras entre asteriscos se destacan en amarillo.</small></div>
+<div class="f" style="flex-basis: 100%"><label for="c4">Bajada</label><textarea id="c4" rows="3">Club de cheerleading All Star en Santiago desde 2002. Formamos deportistas desde los 3 años y sin límite de edad, del primer salto a la competencia internacional.</textarea><small>Máximo 200 caracteres · 163 usados</small></div>
+<div style="display: flex; flex-wrap: wrap; gap: 14px">
+<div class="f"><label for="c5">Botón principal</label><input id="c5" value="Agenda tu evaluación"></div>
+<div class="f"><label for="c6">Lleva a</label><select id="c6"><option>Agenda de evaluación 2027</option><option>Clase de prueba Recreativo</option><option>WhatsApp del club</option></select></div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 14px; align-items: stretch">
+<div style="flex: 1 1 240px; border: 2px dashed #CFCFCB; border-radius: 8px; padding: 14px; display: flex; gap: 14px; align-items: center">
+<img src="/_blob/6b4a1439428fc63067e17c34e1f3648c" alt="Imagen actual de la portada" style="width: 64px; height: 96px; object-fit: contain; background: #FFF30B; border-radius: 6px">
+<div style="display: flex; flex-direction: column; gap: 4px; font-size: 14px"><strong>Imagen o video de portada</strong><span style="color: #5A5A5A">PNG recortado o MP4 hasta 8 MB</span><a href="#">Reemplazar</a></div>
+</div>
+<div class="f"><label for="c7">Destacado sobre la foto</label><input id="c7" value="1° lugar · Internacional · The Experience 2026"><small>Se toma de «Logros»; elige cuál mostrar.</small></div>
+</div>
+<div style="background: #F7F7F4; border: 1px solid #E4E4E0; border-radius: 8px; padding: 14px 16px; display: flex; flex-direction: column; gap: 10px">
+<strong style="font-size: 14px">Contenido que viene de tablas del CRM</strong>
+<div style="display: flex; flex-wrap: wrap; gap: 8px">
+<sc-for list="{{tablas}}" as="t" hint-placeholder-count="7">
+<a href="#" style="text-decoration: none; font-size: 14px; font-weight: 600; padding: 8px 12px; border: 1px solid #DCDCD8; border-radius: 6px; background: #FFFFFF; color: #111111">{{t.label}} <span style="color: #5A5A5A; font-weight: 500">· {{t.n}}</span></a>
+</sc-for>
+</div>
+</div>
+<div style="display: flex; flex-wrap: wrap; gap: 10px">
+<button type="button" style="min-height: 44px; padding: 0 18px; border: 1px solid #CFCFCB; background: #FFFFFF; font-family: 'Barlow', sans-serif; font-weight: 600; font-size: 15px; border-radius: 6px; cursor: pointer">Guardar borrador</button>
+<button type="button" style="min-height: 44px; padding: 0 18px; border: 0; background: #0A0A0A; color: #FFF30B; font-family: 'Barlow', sans-serif; font-weight: 700; font-size: 15px; border-radius: 6px; cursor: pointer">Publicar portada</button>
+</div>
+</section>
+</div>
+</main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  renderVals() {
+    const item = (label, activo, badge) => ({
+      label, badge: badge || '', badgeColor: activo ? '#0A0A0A' : '#FFF30B',
+      estilo: 'display: flex; align-items: center; gap: 8px; padding: 11px 12px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 15px; color: ' + (activo ? '#0A0A0A' : '#E8E8E8') + '; background: ' + (activo ? '#FFF30B' : 'transparent') + ';'
+    });
+    const tab = (label, sel) => ({ label, sel: sel ? 'true' : 'false', estilo: 'min-height: 44px; padding: 0 16px; border: 0; background: transparent; font-family: \'Barlow\', sans-serif; font-weight: ' + (sel ? '700' : '600') + '; font-size: 15px; color: ' + (sel ? '#111111' : '#5A5A5A') + '; border-bottom: 3px solid ' + (sel ? '#0A0A0A' : 'transparent') + '; cursor: pointer;' });
+    const sec = (n, nombre, fuente, visible, activo) => ({
+      n, nombre, fuente, visible: visible ? 'true' : 'false',
+      estilo: 'display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; border: 1px solid ' + (activo ? '#0A0A0A' : '#E4E4E0') + '; background: ' + (activo ? '#FFFBD1' : '#FFFFFF') + '; opacity: ' + (visible ? '1' : '.55') + ';',
+      switchEstilo: 'position: relative; width: 38px; height: 22px; border-radius: 999px; flex-shrink: 0; background: ' + (visible ? '#0A0A0A' : '#CFCFCB') + ';',
+      knob: 'position: absolute; top: 3px; left: ' + (visible ? '19px' : '3px') + '; width: 16px; height: 16px; border-radius: 50%; background: ' + (visible ? '#FFF30B' : '#FFFFFF') + ';'
+    });
+    return {
+      menu: [item('Inicio'), item('Familias y deportistas'), item('Evaluaciones y clases', false, '38'), item('Equipos 2027'), item('Pagos'), item('Comunicaciones'), item('Contenido del sitio', true), item('Configuración')],
+      tabs: [tab('Inicio', true), tab('El club y staff'), tab('Programas y equipos'), tab('Temporada 2027'), tab('Valores y promociones'), tab('Reglamento')],
+      secciones: [
+        sec('01', 'Portada (hero)', 'Texto', true, true),
+        sec('02', 'Franja de logros', 'Logros', true),
+        sec('03', 'El club e hitos', 'Texto + hitos', true),
+        sec('04', 'Programas', 'Programas', true),
+        sec('05', '¿Qué equipo es para ti?', 'Equipos', true),
+        sec('06', 'Cómo funciona', 'Texto', true),
+        sec('07', 'Temporada 2027', 'Calendario', true),
+        sec('08', 'Horarios', 'Horarios', true),
+        sec('09', 'Valores y promociones', 'Valores', true),
+        sec('10', 'Staff', 'Staff', true),
+        sec('11', 'Viajes internacionales', 'Texto', false)
+      ],
+      tablas: [
+        { label: 'Programas', n: 4 }, { label: 'Equipos', n: 14 }, { label: 'Horarios', n: 23 },
+        { label: 'Calendario', n: 12 }, { label: 'Valores', n: 11 }, { label: 'Promociones', n: 7 }, { label: 'Staff', n: 18 }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>
