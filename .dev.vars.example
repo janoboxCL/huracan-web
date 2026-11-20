@@ -1,0 +1,10 @@
+# Variables para probar el modo revisión en local (npm run revision:local).
+# Copia este archivo como .dev.vars (ignorado por git).
+# Con el simulador (npm run revision:simulador) no se toca GitHub:
+GITHUB_API_URL=http://127.0.0.1:8789
+GITHUB_TOKEN=simulado
+GITHUB_REPO=janoboxCL/huracan-web
+# Enlace del club:   http://localhost:8788/?revision=prueba
+REVISION_CLAVE=prueba
+# Enlace del equipo: http://localhost:8788/?revision=equipo-prueba
+REVISION_CLAVE_EQUIPO=equipo-prueba

@@ -15,7 +15,7 @@ Idioma del proyecto: **español de Chile, registro profesional**. Textos, coment
 ## Stack
 
 - **Astro 5 + TypeScript** (salida estática). Componentes `.astro`; islas de JS mínimas solo donde hay interacción (buscador de equipos, agenda).
-- **Cloudflare Pages** (build `npm run build`, salida `dist`), con **Pages Functions** en `functions/` para todo lo que escribe datos (desde la etapa 3).
+- **Cloudflare Pages** (build `npm run build`, salida `dist`), con **Pages Functions** en `functions/` para todo lo que escribe datos (desde la etapa 3). Excepción ya activa: `functions/api/revision/` (modo revisión con el club).
 - **Supabase** (Postgres + Auth + RLS + Storage) desde la etapa 2. **Resend** para correos desde el dominio del club (etapa 3).
 
 ## Estructura objetivo
@@ -70,6 +70,17 @@ Hay dos subagentes en `.claude/agents/`:
 - `npm run dev` · `npm run build` · `npm run preview`
 - `npm run capturas` → capturas en `.revision/` a 390, 820 y 1440 px, con y sin movimiento (requiere `npm run preview` corriendo).
 - `npx astro check` antes de cada commit.
+- `npm run revision:simulador` + `npm run revision:local` → modo revisión en local con GitHub simulado (club: `http://localhost:8788/?revision=prueba`; equipo: `?revision=equipo-prueba`; requiere `.dev.vars`, ver `.dev.vars.example`).
+
+## Modo revisión (control de cambios con el club)
+
+El club revisa el sitio real con `?revision=<clave>` y crea **observaciones** (issues con `revision`, `ronda-N`, `seccion:*`, `tipo:*`, `prioridad:*`). El equipo responde y decide desde el mismo sitio con su propia clave. Las decisiones quedan como `decision:aclaracion|aceptada|pospuesta`; además, cerrar como completado = implementada y cerrar como no planificado = rechazada. El turno se marca con `esperando:equipo|cliente`. Detalle en `docs/revision-cliente.md`.
+
+- Solo se implementan observaciones **aceptadas**, según su **cambio acordado** (está en el cuerpo del issue y en el consolidado que pega Jano), no según el texto original del club.
+- Al terminar cada una: `gh issue close <n> --reason completed --comment "<qué cambió>"`. El club lee ese comentario en el panel, así que hay que escribirlo para él.
+- Si no se puede hacer como está acordado, no se cierra: se comenta en el issue la duda o el impedimento.
+- No crear observaciones nuevas ni cambiar etiquetas `decision:*` o `esperando:*` a mano.
+- Si se agrega o renombra una sección del inicio, actualizar `SECCIONES` en `src/data/revision.ts`. Nueva ronda: subir `RONDA_ACTUAL`.
 
 ## Etapas
 
