@@ -1,0 +1,54 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { MAX_TEXTO_BANNER } from '../../lib/admin/ajustes';
+---
+
+<Admin titulo="Ajustes" activo="ajustes">
+  <div class="adm-aviso adm-aviso--info" data-carga role="status">Verificando sesión…</div>
+
+  <div data-contenido hidden>
+    <h1 class="adm-titulo">Ajustes del sitio</h1>
+    <p class="adm-alerta">
+      Estos ajustes se guardan en la base de datos, pero el sitio público todavía no los lee: el banner y el estado de las inscripciones aparecerán en el sitio cuando se conecte esa parte.
+    </p>
+
+    <section class="adm-tarjeta" aria-labelledby="a-banner">
+      <h2 id="a-banner" class="adm-h2">Banner del inicio</h2>
+      <form data-banner novalidate>
+        <div class="adm-campo adm-campo--casilla">
+          <label class="adm-casilla"><input type="checkbox" name="visible" /> Mostrar banner</label>
+        </div>
+        <div class="adm-campo">
+          <label for="b-texto">Texto</label>
+          <input id="b-texto" name="texto" type="text" maxlength={MAX_TEXTO_BANNER} aria-describedby="b-texto-ayuda" />
+          <p class="adm-ayuda" id="b-texto-ayuda">Hasta {MAX_TEXTO_BANNER} caracteres.</p>
+          <p class="adm-error" data-error-texto></p>
+        </div>
+        <div class="adm-campo">
+          <label for="b-enlace">Enlace (opcional)</label>
+          <input id="b-enlace" name="enlace" type="text" inputmode="url" autocomplete="off" placeholder="/postula o https://…" />
+          <p class="adm-error" data-error-enlace></p>
+        </div>
+        <div class="adm-aviso" data-aviso-banner role="status" aria-live="polite" hidden></div>
+        <button type="submit" class="adm-btn adm-btn--primario" data-guardar-banner>Guardar banner</button>
+      </form>
+    </section>
+
+    <section class="adm-tarjeta" aria-labelledby="a-insc">
+      <h2 id="a-insc" class="adm-h2">Inscripciones</h2>
+      <form data-inscripciones novalidate>
+        <fieldset class="adm-opciones">
+          <legend>Estado de las inscripciones</legend>
+          <label class="adm-casilla"><input type="radio" name="estado" value="abiertas" /> Abiertas</label>
+          <label class="adm-casilla"><input type="radio" name="estado" value="cerradas" /> Cerradas</label>
+        </fieldset>
+        <div class="adm-aviso" data-aviso-insc role="status" aria-live="polite" hidden></div>
+        <button type="submit" class="adm-btn adm-btn--primario" data-guardar-insc>Guardar estado</button>
+      </form>
+    </section>
+  </div>
+
+  <script>
+    import '../../components/admin/ajustes.ts';
+  </script>
+</Admin>

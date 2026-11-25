@@ -8,7 +8,7 @@ const site = process.env.SITE_URL ?? 'https://huracan-web.pages.dev';
 
 export default defineConfig({
   site,
-  integrations: [sitemap()],
+  integrations: [sitemap({ filter: (pagina) => !pagina.includes('/postula') && !pagina.includes('/admin') })],
   output: 'static',
   trailingSlash: 'ignore',
   build: { inlineStylesheets: 'auto' },

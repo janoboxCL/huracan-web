@@ -9,14 +9,18 @@ interface Props {
   tamano?: 'normal' | 'grande';
   type?: 'button' | 'submit';
   class?: string;
+  /** Botón inactivo (solo `<button>`). */
+  disabled?: boolean;
+  /** Enlace que abre en otra pestaña (WhatsApp, descargas). */
+  externo?: boolean;
   /** Nombre accesible cuando el mismo texto se repite en varios botones (debe empezar por el texto visible). */
   etiqueta?: string;
 }
 
-const { href, variante = 'amarillo', tamano = 'normal', type = 'button', class: clase, etiqueta } = Astro.props;
+const { href, variante = 'amarillo', tamano = 'normal', type = 'button', class: clase, etiqueta, disabled = false, externo = false } = Astro.props;
 const Elemento = href ? 'a' : 'button';
 const atributos = {
-  ...(href ? { href } : { type }),
+  ...(href ? { href, ...(externo ? { target: '_blank', rel: 'noopener noreferrer' } : {}) } : { type, ...(disabled ? { disabled: true } : {}) }),
   ...(etiqueta ? { 'aria-label': etiqueta } : {}),
 };
 ---
@@ -59,6 +63,7 @@ const atributos = {
   }
 
   .boton--contorno {
+    background: transparent; /* un <button> trae fondo gris del navegador */
     color: var(--blanco);
     border-color: var(--blanco);
   }
@@ -106,6 +111,22 @@ const atributos = {
     .boton--borde:hover {
       box-shadow: var(--sombra-dura-amarilla);
     }
+  }
+
+  /* Inactivo: sin elevación ni brillo. */
+  .boton:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .boton:disabled,
+  .boton:disabled:hover {
+    transform: skewX(-10deg);
+    box-shadow: none;
+  }
+
+  .boton:disabled::after {
+    display: none;
   }
 
   /* Pulsado: el botón vuelve a su sitio y pierde la sombra. */

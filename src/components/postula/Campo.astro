@@ -1,0 +1,44 @@
+---
+/* Campo de texto con etiqueta, ayuda opcional y error junto al campo.
+   La isla escribe el mensaje en `#error-{id}` y ajusta `aria-describedby`/`aria-invalid`.
+   `id` coincide con la clave de `DatosPostulacion` (nombre del campo). */
+interface Props {
+  id: string;
+  etiqueta: string;
+  tipo?: 'text' | 'date' | 'tel' | 'email' | 'number';
+  autocomplete?: string;
+  inputmode?: 'text' | 'numeric' | 'tel' | 'email';
+  ayuda?: string;
+  placeholder?: string;
+  opcional?: boolean;
+  maxlength?: number;
+  min?: string;
+  max?: string;
+  class?: string;
+}
+
+const { id, etiqueta, tipo = 'text', autocomplete = 'off', inputmode, ayuda, placeholder, opcional = false, maxlength, min, max, class: clase } = Astro.props;
+---
+
+<div class:list={['campo', clase]} data-campo={id}>
+  <label for={`f-${id}`}>{etiqueta}{opcional && <span class="campo__opc"> (opcional)</span>}</label>
+  <input
+    id={`f-${id}`}
+    name={id}
+    type={tipo}
+    autocomplete={autocomplete}
+    inputmode={inputmode}
+    placeholder={placeholder}
+    maxlength={maxlength}
+    min={min}
+    max={max}
+    aria-required={opcional ? undefined : 'true'}
+    data-describe={ayuda ? `ayuda-${id}` : ''}
+    aria-describedby={ayuda ? `ayuda-${id}` : undefined}
+    autocapitalize={tipo === 'text' ? 'words' : 'off'}
+    spellcheck="false"
+  />
+  {ayuda && <p class="campo__ayuda" id={`ayuda-${id}`}>{ayuda}</p>}
+  <slot />
+  <p class="campo__error" id={`error-${id}`} hidden></p>
+</div>

@@ -1,11 +1,10 @@
 ---
 /* 12 · 10 Cierre (amarillo, corte diagonal superior como Horarios en la v2).
-   `id="cierre"` es el destino de `enlaces.agenda` (CTA del hero, header, equipos y cómo funciona).
+   `id="cierre"` marca el fin de la página para el acceso flotante (AgendaFlotante); los CTA de agenda van a `/postula`.
    Textos: título, etiqueta y botones vienen de la v2. La bajada usa la frase de la v2 y no
    sale del JSON (decisión a validar con el club).
-   Reglamento: `documentos.reglamento` solo dice «ver informativo-2027.txt (desde la página 33)»;
-   no hay URL ni archivo publicable. Se muestra como botón inactivo con marcador visible
-   `[enlace por confirmar]`, sin destino falso.
+   Reglamento: el club confirmó (observación #26) que es el mismo informativo PDF, y el
+   reglamento interno parte en la página 33; el botón abre ese PDF.
    El tornado vive dentro de la escena del recorte (no cruza texto). Reveal: `.soplo` en
    contenedores; el recorte flota en el <img> (hijo) para no mezclar transforms. */
 import { Image } from 'astro:assets';
@@ -26,10 +25,10 @@ import Tornado from '../ui/Tornado.astro';
       </p>
       <div class="cierre__botones">
         <Boton href={enlaces.agenda} variante="negro" tamano="grande">Agenda tu evaluación →</Boton>
-        <button type="button" class="reglamento" aria-disabled="true" aria-describedby="reglamento-nota">
+        <a class="reglamento" href="/documentos/informativo-huracan-2027.pdf" target="_blank" rel="noopener">
           <span>Reglamento 2027</span>
-          <span class="reglamento__marca" id="reglamento-nota">[enlace por confirmar]</span>
-        </button>
+          <span class="reglamento__marca">Informativo oficial · PDF (desde la página 33)</span>
+        </a>
       </div>
     </div>
 
@@ -109,15 +108,16 @@ import Tornado from '../ui/Tornado.astro';
     gap: 0.125rem;
     min-height: 3.75rem;
     padding: 0.75rem 1.5rem;
-    border: 3px dashed var(--negro);
+    border: 3px solid var(--negro);
     background: var(--blanco);
     color: var(--negro);
+    text-decoration: none;
     font: inherit;
     font-weight: 800;
     font-size: var(--t-lg);
     line-height: 1.15;
     text-align: center;
-    cursor: not-allowed;
+    cursor: pointer;
     transform: skewX(-10deg);
   }
 

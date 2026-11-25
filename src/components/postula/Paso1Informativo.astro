@@ -1,0 +1,72 @@
+---
+/* Paso 1 · Informativo. Visor PDF (PDF.js se carga solo aquí, desde la isla) y check de lectura.
+   El check se habilita al llegar a la última página. Si el visor falla, la isla lo habilita igual
+   y deja el enlace de descarga como vía alternativa. */
+import Boton from '../ui/Boton.astro';
+import Etiqueta from '../ui/Etiqueta.astro';
+
+interface Props {
+  pdf: string;
+  paginas: number;
+  /** Tamaño legible, p. ej. `11,7 MB`. */
+  tamano: string;
+}
+const { pdf, paginas, tamano } = Astro.props;
+---
+
+<section class="paso" id="paso-1" data-paso="1" aria-labelledby="paso-1-titulo">
+  <Etiqueta variante="seccion" class="paso__etiqueta">01 · Informativo</Etiqueta>
+  <h2 id="paso-1-titulo" class="disp paso__titulo" tabindex="-1">Lee el informativo 2027</h2>
+  <p class="paso__intro">
+    Antes de postular, lee el documento completo, incluido el reglamento interno. Desplázate dentro del visor hasta la última página.
+  </p>
+
+  <p class="descarga">
+    <a href={pdf} download target="_blank" rel="noopener" class="js-enlace-pdf" data-tamano={tamano}>Descargar el PDF ({tamano})</a>
+  </p>
+
+  <div class="visor" id="visor">
+    <div class="visor__barra">
+      <p class="visor__estado" id="visor-estado">Cargando el informativo…</p>
+      <div class="visor__zoom" role="group" aria-label="Tamaño de las páginas">
+        <button type="button" class="visor__boton" id="zoom-menos" aria-label="Alejar" disabled>−</button>
+        <span class="visor__nivel" id="zoom-nivel" aria-live="off">100 %</span>
+        <button type="button" class="visor__boton" id="zoom-mas" aria-label="Acercar" disabled>+</button>
+      </div>
+      <button type="button" class="visor__boton visor__boton--texto" id="visor-completo" disabled>Ver a pantalla completa</button>
+      <a class="visor__descarga js-enlace-pdf" href={pdf} download target="_blank" rel="noopener" data-tamano={tamano}>Descargar el PDF ({tamano})</a>
+      <button type="button" class="visor__boton visor__boton--texto visor__cerrar" id="visor-cerrar" hidden>Cerrar pantalla completa</button>
+    </div>
+    <p class="visor__giro">Gira el teléfono para leer mejor.</p>
+    <div class="visor__scroll" id="visor-scroll" role="region" aria-label="Informativo 2027: páginas del documento" tabindex="0">
+      <ol class="visor__lista" id="visor-lista" role="list"></ol>
+      <p class="visor__vacio" id="visor-vacio">Cargando…</p>
+    </div>
+  </div>
+
+  <noscript>
+    <p class="aviso">Necesitas activar JavaScript para ver el visor y continuar con la postulación. Puedes leer el informativo con el enlace de descarga.</p>
+  </noscript>
+
+  <div class="avance">
+    <p class="avance__texto" id="visor-conteo">Páginas vistas: <strong id="vistas-n">0</strong> de <span id="vistas-total">{paginas}</span></p>
+    <div class="avance__barra" aria-hidden="true"><span id="avance-relleno"></span></div>
+  </div>
+  <p class="solo-lectores" id="visor-anuncio" aria-live="polite"></p>
+
+  <div class="aviso aviso--error" id="visor-aviso" role="alert" hidden>
+    <strong>No pudimos mostrar el visor.</strong> Puede ser tu conexión o tu navegador. Abre el informativo con el enlace «Abrir el PDF» y vuelve aquí: la casilla de confirmación se habilita cuando lo abras.
+  </div>
+
+  <div class="confirmacion">
+    <label class="opcion opcion--check" for="check-lectura">
+      <input type="checkbox" id="check-lectura" name="leido" aria-describedby="check-ayuda" disabled />
+      <span>Confirmo y acepto que he leído completamente este documento, incluido el reglamento interno</span>
+    </label>
+    <p class="campo__ayuda" id="check-ayuda">Se habilita cuando llegues a la última página del informativo.</p>
+  </div>
+
+  <div class="acciones">
+    <Boton type="button" tamano="grande" class="js-continuar-1" disabled>Continuar →</Boton>
+  </div>
+</section>

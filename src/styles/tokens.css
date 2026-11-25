@@ -11,6 +11,9 @@
   --superficie-1: #141414;
   --superficie-2: #1a1a1a;
 
+  /* Gris de programa Recreativo y de clases de gimnasia: texto negro 13,6:1 (AA) */
+  --gris-programa: #d4d4d4;
+
   /* Texto sobre negro (AA sobre --negro y --superficie-*) */
   --texto: var(--blanco);
   --texto-2: #d4d4d4;
@@ -20,6 +23,17 @@
   --linea: rgb(255 255 255 / 0.14);
   --linea-oscura: rgb(10 10 10 / 0.18);
   --velo-negro: rgb(10 10 10 / 0.55);
+
+  /* Formularios: borde de campo (3:1 sobre negro) y error (AA sobre --negro y --superficie-*) */
+  --borde-campo: #8a8a8a;
+  --error: #ff8f85;
+
+  /* Estados del CRM /admin (colores sólidos por estado; AA sobre --superficie-1 y --superficie-2) */
+  --estado-ok: #7be0a0;
+  --estado-info: #8ec5ff;
+  --estado-aviso: var(--amarillo);
+  --estado-error: var(--error);
+  --estado-neutro: var(--texto-2);
 
   /* Tipografía */
   --fuente-texto: 'Barlow', 'Barlow Fallback', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;

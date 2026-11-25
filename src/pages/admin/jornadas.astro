@@ -1,0 +1,79 @@
+---
+import Admin from '../../layouts/Admin.astro';
+import { GRUPOS } from '../../lib/admin/jornadas';
+import { ETIQUETA_GRUPO } from '../../lib/admin/formato';
+---
+
+<Admin titulo="Jornadas" activo="jornadas">
+  <div class="adm-aviso adm-aviso--info" data-carga role="status">Verificando sesión…</div>
+
+  <div data-contenido hidden>
+    <div class="adm-titulo-fila">
+      <h1 class="adm-titulo">Jornadas de evaluación</h1>
+      <div class="adm-acciones">
+        <span class="adm-tenue" data-actualizado aria-live="off"></span>
+        <button type="button" class="adm-btn" data-actualizar>Actualizar</button>
+        <button type="button" class="adm-btn adm-btn--primario" data-nueva>Nueva jornada</button>
+      </div>
+    </div>
+    <p class="adm-bajada">Las familias solo ven las jornadas abiertas y futuras, con sus cupos disponibles. La ocupación cuenta las postulaciones que no están canceladas y se actualiza sola cada 30 segundos.</p>
+
+    <section class="adm-tarjeta" aria-labelledby="j-form-titulo" data-panel hidden>
+      <h2 id="j-form-titulo" class="adm-h2" data-form-titulo>Nueva jornada</h2>
+      <form data-form class="adm-grilla-form" novalidate>
+        <div class="adm-campo">
+          <label for="j-fecha">Fecha</label>
+          <input id="j-fecha" name="fecha" type="date" required />
+          <p class="adm-error" data-error-fecha></p>
+        </div>
+        <div class="adm-campo">
+          <label for="j-inicio">Hora de inicio</label>
+          <input id="j-inicio" name="inicio" type="time" required />
+          <p class="adm-error" data-error-inicio></p>
+        </div>
+        <div class="adm-campo">
+          <label for="j-fin">Hora de término</label>
+          <input id="j-fin" name="fin" type="time" required />
+          <p class="adm-error" data-error-fin></p>
+        </div>
+        <div class="adm-campo">
+          <label for="j-grupo">Quién evalúa</label>
+          <select id="j-grupo" name="grupo" required>
+            {GRUPOS.map((g) => <option value={g}>{ETIQUETA_GRUPO[g]}</option>)}
+          </select>
+          <p class="adm-error" data-error-grupo></p>
+        </div>
+        <div class="adm-campo">
+          <label for="j-cupos">Cupos</label>
+          <input id="j-cupos" name="cupos" type="number" min="0" step="1" inputmode="numeric" aria-describedby="j-cupos-ayuda" />
+          <p class="adm-ayuda" id="j-cupos-ayuda">Déjalo vacío si no hay límite.</p>
+          <p class="adm-error" data-error-cupos></p>
+        </div>
+        <div class="adm-campo adm-campo--casilla">
+          <label class="adm-casilla"><input type="checkbox" name="abierta" checked /> Abierta a nuevas postulaciones</label>
+        </div>
+        <div class="adm-aviso" data-aviso-form role="status" aria-live="polite" hidden></div>
+        <div class="adm-acciones adm-grilla-form__acciones">
+          <button type="submit" class="adm-btn adm-btn--primario" data-guardar>Guardar jornada</button>
+          <button type="button" class="adm-btn adm-btn--tenue" data-cancelar>Cancelar</button>
+        </div>
+      </form>
+    </section>
+
+    <div class="adm-aviso" data-aviso-lista role="status" aria-live="polite" hidden></div>
+
+    <section aria-labelledby="j-proximas" class="adm-bloque">
+      <h2 id="j-proximas" class="adm-h2">Próximas</h2>
+      <div data-proximas></div>
+    </section>
+
+    <section aria-labelledby="j-pasadas" class="adm-bloque" data-bloque-pasadas hidden>
+      <h2 id="j-pasadas" class="adm-h2">Pasadas</h2>
+      <div data-pasadas></div>
+    </section>
+  </div>
+
+  <script>
+    import '../../components/admin/jornadas.ts';
+  </script>
+</Admin>

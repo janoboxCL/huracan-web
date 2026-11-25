@@ -1,0 +1,81 @@
+---
+/* Layout del CRM /admin: herramienta de trabajo, no landing. Siempre `noindex`, sin el header
+   ni el footer públicos, y fuera del sitemap (ver astro.config.mjs). Los datos que necesita la
+   isla (equipos, precios, nombres) viajan en un JSON del build; lo demás lo carga el navegador
+   desde Supabase tras comprobar la sesión. */
+import Base from './Base.astro';
+import { contenido } from '../data/contenido';
+import { HABILIDADES, preciosDesdeContenido } from '../lib/postulacion/reglas';
+import '../styles/admin.css';
+
+interface Props {
+  titulo: string;
+  /** Sección activa de la navegación. */
+  activo?: 'resumen' | 'postulaciones' | 'jornadas' | 'ajustes' | 'login';
+  /** El login no muestra la navegación ni exige sesión. */
+  sinNavegacion?: boolean;
+}
+
+const { titulo, activo, sinNavegacion = false } = Astro.props;
+
+const datos = {
+  equipos: contenido.equipos.map(({ nombre, programa, categoria, genero, edadMin, edadMax, inicio }) => ({
+    nombre,
+    programa,
+    categoria,
+    genero,
+    edadMin,
+    edadMax,
+    ...(inicio ? { inicio } : {}),
+  })),
+  precios: preciosDesdeContenido(contenido),
+  programas: Object.fromEntries(contenido.programas.map((p) => [p.id, p.nombre])),
+  promociones: contenido.promociones.map((p) => p.nombre),
+  habilidades: Object.fromEntries(HABILIDADES.map((h) => [h.id, h.texto])),
+  telefonoClub: contenido.contacto.whatsappHeadCoach.replace(/\D/g, ''),
+};
+
+const enlaces = [
+  { id: 'resumen', texto: 'Resumen', href: '/admin' },
+  { id: 'postulaciones', texto: 'Postulaciones', href: '/admin/postulaciones' },
+  { id: 'jornadas', texto: 'Jornadas', href: '/admin/jornadas' },
+  { id: 'ajustes', texto: 'Ajustes', href: '/admin/ajustes' },
+] as const;
+---
+
+<Base titulo={`${titulo} · Administración`} descripcion="Administración interna del club." noindex>
+  <header slot="header" class="adm-cabecera">
+    <div class="adm-cabecera__fila">
+      <a class="adm-marca" href={sinNavegacion ? '/admin/login' : '/admin'}>
+        <span class="adm-marca__nombre">Huracán</span>
+        <span class="adm-marca__rol">Administración</span>
+      </a>
+      <div class="adm-sesion" data-sesion hidden>
+        <span class="adm-sesion__usuario" data-usuario></span>
+        <button type="button" class="adm-btn adm-btn--tenue" data-salir>Cerrar sesión</button>
+      </div>
+    </div>
+    {
+      !sinNavegacion && (
+        <nav class="adm-nav" aria-label="Administración">
+          <ul role="list">
+            {enlaces.map((e) => (
+              <li>
+                <a href={e.href} aria-current={activo === e.id ? 'page' : undefined}>
+                  {e.texto}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      )
+    }
+    <p class="adm-demo" data-aviso-demo hidden></p>
+  </header>
+
+  <div class="adm">
+    <slot />
+  </div>
+
+  <script type="application/json" id="admin-datos" set:html={JSON.stringify(datos)} />
+</Base>

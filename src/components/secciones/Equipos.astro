@@ -1,7 +1,7 @@
 ---
 /* 5 · 03 Equipos (amarillo, corte diagonal superior): buscador por edad.
    Única isla con JS de la etapa 1, con mejora progresiva: el servidor pinta los
-   16 equipos con sus rangos en `data-edad-min` / `data-edad-max`; el script solo
+   equipos con sus rangos en `data-edad-min` / `data-edad-max`; el script solo
    muestra u oculta tarjetas. Sin JS se ve el listado completo; los botones de
    edad y el resumen (que dependen del script) permanecen ocultos. */
 import { Image } from 'astro:assets';
@@ -11,11 +11,11 @@ import { enlaces } from '../../data/enlaces';
 import Boton from '../ui/Boton.astro';
 import Etiqueta from '../ui/Etiqueta.astro';
 
-const { equipos, _temporada } = contenido;
+const { equipos, programas, _temporada } = contenido;
 
-/* Botones: de 3 años (edad mínima del club) a 20. El último, «20+», agrupa
+/* Botones: de 4 años (edad mínima del club) a 20. El último, «20+», agrupa
    20 años o más y se resuelve con la regla `edadMax === null` del JSON. */
-const EDAD_MIN = 3;
+const EDAD_MIN = 4;
 const EDAD_TOPE = 20;
 /* Edad inicial de la maqueta (10): muestra de entrada un resultado útil. */
 const EDAD_INICIAL = 10;
@@ -30,8 +30,19 @@ const generos = { mixto: 'Mixto', damas: 'Damas' } as const;
 const iniciales = equiposPorEdad(EDAD_INICIAL);
 const textoInicial = `${iniciales.length} equipos para ${EDAD_INICIAL} años`;
 
+/* Equipos con inicio diferido (Spirit, Team Parent): la etiqueta es la primera frase de la nota
+   del JSON («Comienza en abril de 2027»); el resto de la nota va como detalle breve. */
+function avisoInicio(e: (typeof equipos)[number]): { etiqueta: string; detalle: string } | null {
+  if (!e.inicio && !e.nota) return null;
+  if (!e.nota) return { etiqueta: `Inicio: ${e.inicio}`, detalle: '' };
+  const corte = e.nota.indexOf('. ');
+  const primera = corte === -1 ? e.nota : e.nota.slice(0, corte + 1);
+  return { etiqueta: primera.replace(/\.$/, ''), detalle: corte === -1 ? '' : e.nota.slice(corte + 2) };
+}
+
 const tarjetas = equipos.map((e) => ({
   ...e,
+  aviso: avisoInicio(e),
   programaNombre: programaPorId(e.programa).nombre,
   genero: generos[e.genero],
   visible: iniciales.includes(e),
@@ -84,16 +95,22 @@ const tarjetas = equipos.map((e) => ({
       <Boton href={enlaces.agenda} variante="negro" tamano="grande" etiqueta="Agenda tu evaluación, desde equipos"><span data-cta-texto>Agenda tu evaluación →</span></Boton>
     </div>
 
+    <ul role="list" class="equipos__leyenda" aria-label="Color por programa">
+      {programas.map((p) => <li><span class={`equipos__muestra equipos__muestra--${p.id}`} aria-hidden="true"></span>{p.nombre}</li>)}
+    </ul>
+
     <ul role="list" class="equipos__lista" data-lista>
       {
         tarjetas.map((t) => (
           <li class="equipo" data-edad-min={t.edadMin} data-edad-max={t.edadMax ?? ''}>
-            <article class="equipo__tarjeta">
+            <article class={`equipo__tarjeta equipo__tarjeta--${t.programa}`}>
               <p class="equipo__tipo">
-                {t.programaNombre} · {t.categoria}
+                {t.categoria.toLowerCase().startsWith(t.programaNombre.toLowerCase()) ? t.categoria : `${t.programaNombre} · ${t.categoria}`}
               </p>
               <h3 class="disp equipo__nombre">{t.nombre}</h3>
               <p class="equipo__rango">{t.rango}</p>
+              {t.aviso && <p class="equipo__inicio">{t.aviso.etiqueta}</p>}
+              {t.aviso?.detalle && <p class="equipo__nota">{t.aviso.detalle}</p>}
               <p class="equipo__genero">{t.genero}</p>
             </article>
           </li>
@@ -248,10 +265,79 @@ const tarjetas = equipos.map((e) => ({
     gap: var(--esp-2);
     min-width: 0;
     padding: 1.375rem;
+    border: 3px solid var(--negro); /* separa la tarjeta amarilla (Prep) del fondo amarillo */
     background: var(--negro);
     color: var(--blanco);
     transform: skewX(-4deg);
   }
+
+  /* Color por programa (igual que 02 · Programas). Texto negro sobre gris #d4d4d4 (13,6:1), blanco y amarillo. */
+  .equipo__tarjeta--recreativo {
+    background: var(--gris-programa);
+    color: var(--negro);
+  }
+
+  .equipo__tarjeta--novice {
+    background: var(--blanco);
+    color: var(--negro);
+  }
+
+  .equipo__tarjeta--prep {
+    background: var(--amarillo);
+    color: var(--negro);
+  }
+
+  .equipo__tarjeta--recreativo .equipo__tipo,
+  .equipo__tarjeta--novice .equipo__tipo,
+  .equipo__tarjeta--prep .equipo__tipo,
+  .equipo__tarjeta--recreativo .equipo__rango,
+  .equipo__tarjeta--novice .equipo__rango,
+  .equipo__tarjeta--prep .equipo__rango,
+  .equipo__tarjeta--recreativo .equipo__nota,
+  .equipo__tarjeta--novice .equipo__nota,
+  .equipo__tarjeta--prep .equipo__nota {
+    color: var(--negro);
+  }
+
+  /* Etiqueta de inicio: sobre negro, amarilla; sobre los demás, negra con texto blanco. */
+  .equipo__tarjeta--recreativo .equipo__inicio,
+  .equipo__tarjeta--novice .equipo__inicio,
+  .equipo__tarjeta--prep .equipo__inicio {
+    background: var(--negro);
+    color: var(--blanco);
+  }
+
+  .equipo__tarjeta--recreativo .equipo__genero,
+  .equipo__tarjeta--novice .equipo__genero,
+  .equipo__tarjeta--prep .equipo__genero {
+    border-color: var(--negro);
+    color: var(--negro);
+  }
+
+  .equipos__leyenda {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--esp-2) var(--esp-5);
+    margin: 0;
+    padding: 0 0.5rem;
+    list-style: none;
+    font-size: var(--t-sm);
+    font-weight: 700;
+  }
+
+  .equipos__muestra {
+    display: inline-block;
+    width: 1.125rem;
+    height: 0.875rem;
+    margin-right: 0.5rem;
+    vertical-align: -1px;
+    border: 2px solid var(--negro);
+  }
+
+  .equipos__muestra--recreativo { background: var(--gris-programa); }
+  .equipos__muestra--novice { background: var(--blanco); }
+  .equipos__muestra--prep { background: var(--amarillo); }
+  .equipos__muestra--international { background: var(--negro); }
 
   .equipo__tipo {
     color: var(--amarillo);
@@ -269,6 +355,24 @@ const tarjetas = equipos.map((e) => ({
   .equipo__rango {
     font-size: 0.9375rem;
     color: var(--texto-2);
+  }
+
+  /* Inicio diferido: etiqueta amarilla sobre la tarjeta negra (AA) y nota breve. */
+  .equipo__inicio {
+    align-self: flex-start;
+    padding: 0.2rem 0.625rem;
+    background: var(--amarillo);
+    color: var(--negro);
+    font-size: var(--t-xs);
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .equipo__nota {
+    color: var(--texto-2);
+    font-size: var(--t-sm);
+    line-height: 1.45;
   }
 
   .equipo__genero {
@@ -349,16 +453,25 @@ const tarjetas = equipos.map((e) => ({
     const cta = seccion.querySelector<HTMLElement>('[data-cta-texto]');
     const edades = botones.map((b) => Number(b.dataset.edad));
 
-    /* Altura de la lista = la del peor caso entre todas las edades, medida en el
-       navegador (no hardcodeada), para que el CTA y lo siguiente no salten. */
+    /* Reserva de altura para que el CTA y lo siguiente no salten (medida en el
+       navegador). En móvil la fila es deslizable y estable: se reserva el peor caso.
+       En tablet y escritorio se limita a 2 filas de tarjetas, para no dejar un vacío
+       enorme con pocas tarjetas; un salto moderado al cambiar de edad es aceptable. */
+    const movil = matchMedia('(max-width: 39.99rem)');
     const reservar = () => {
       lista.style.minHeight = '0px';
       let peor = 0;
+      let tarjetaMax = 0;
       for (const e of edades) {
-        for (const li of tarjetas) li.hidden = !coincideCon(li, e);
+        for (const li of tarjetas) {
+          li.hidden = !coincideCon(li, e);
+          if (!li.hidden) tarjetaMax = Math.max(tarjetaMax, li.offsetHeight);
+        }
         peor = Math.max(peor, lista.offsetHeight);
       }
-      lista.style.minHeight = `${peor}px`;
+      const dosFilas = tarjetaMax * 2 + 14;
+      const alto = movil.matches ? peor : Math.min(peor, dosFilas);
+      lista.style.minHeight = `${alto}px`;
       if (actual !== null) for (const li of tarjetas) li.hidden = !coincideCon(li, actual);
     };
 
@@ -382,7 +495,9 @@ const tarjetas = equipos.map((e) => ({
     /* La lista solo entra en el orden del teclado cuando realmente desborda (fila
        deslizable en móvil); así no hay una parada de Tab sin nada que desplazar. */
     function enfocable() {
-      if (lista.scrollWidth > lista.clientWidth + 1) lista.tabIndex = 0;
+      const desborda =
+        getComputedStyle(lista).overflowX !== 'visible' && lista.scrollWidth > lista.clientWidth + 16;
+      if (desborda) lista.tabIndex = 0;
       else lista.removeAttribute('tabindex');
     }
 

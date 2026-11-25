@@ -176,6 +176,25 @@
   }
 }
 
+/* ── Flujo de postulación: entrada de cada paso ────────────── */
+
+@media (prefers-reduced-motion: no-preference) {
+  .paso-entra {
+    animation: paso-entra var(--dur-media) var(--curva-soplo) both;
+  }
+}
+
+@keyframes paso-entra {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 /* ── Movimiento reducido ───────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {

@@ -10,11 +10,19 @@ import Boton from '../ui/Boton.astro';
 
 const { nombre } = contenido.club;
 const [primera, ...resto] = nombre.split(' ');
+
+/* Las anclas son del inicio: fuera de él se les antepone `/`. */
+const raiz = Astro.url.pathname === '/' ? '' : '/';
+
+/* En /postula el CTA de agenda no aporta (ya se está en el flujo) y la navegación se reduce
+   a pocos enlaces, para que quepa sin desplazarse. */
+const enPostula = Astro.url.pathname.startsWith('/postula');
+const items = enPostula ? navegacion.filter((i) => ['#equipos', '#horarios', '#valores'].includes(i.href)) : navegacion;
 ---
 
 <header class="header">
   <div class="header__interior contenedor">
-    <a class="marca" href={enlaces.inicio} aria-label={`${nombre}, inicio`}>
+    <a class="marca" href={`${raiz}${enlaces.inicio}`} aria-label={`${nombre}, inicio`}>
       <Image src={logo} alt="" width={50} densities={[1, 2]} loading="eager" class="marca__logo" />
       <span class="disp marca__nombre">{primera}<br /><span class="marca__sub">{resto.join(' ')}</span></span>
     </a>
@@ -22,16 +30,16 @@ const [primera, ...resto] = nombre.split(' ');
     <nav class="nav" aria-label="Principal">
       <ul role="list" class="nav__lista">
         {
-          navegacion.map((item) => (
+          items.map((item) => (
             <li>
-              <a href={item.href}>{item.texto}</a>
+              <a href={`${raiz}${item.href}`}>{item.texto}</a>
             </li>
           ))
         }
       </ul>
     </nav>
 
-    <Boton href={enlaces.agenda} variante="borde" class="header__cta" etiqueta="Agenda tu evaluación, desde el menú">Agenda tu evaluación</Boton>
+    {!enPostula && <Boton href={enlaces.agenda} variante="borde" class="header__cta" etiqueta="Agenda tu evaluación, desde el menú">Agenda tu evaluación</Boton>}
   </div>
 </header>
 

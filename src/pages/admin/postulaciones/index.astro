@@ -1,0 +1,48 @@
+---
+import Admin from '../../../layouts/Admin.astro';
+---
+
+<Admin titulo="Postulaciones" activo="postulaciones">
+  <div class="adm-aviso adm-aviso--info" data-carga role="status">Verificando sesión…</div>
+
+  <div data-contenido hidden>
+    <div class="adm-titulo-fila">
+      <h1 class="adm-titulo">Postulaciones</h1>
+      <button type="button" class="adm-btn" data-actualizar>Actualizar</button>
+    </div>
+
+    <form class="adm-filtros" data-filtros role="search" aria-label="Filtrar postulaciones">
+      <div class="adm-campo adm-campo--busqueda">
+        <label for="f-q">Buscar por nombre o código</label>
+        <input id="f-q" name="q" type="search" autocomplete="off" placeholder="Ana Pérez o HUR-4K7P2X" />
+      </div>
+      <div class="adm-campo">
+        <label for="f-estado">Estado</label>
+        <select id="f-estado" name="estado"></select>
+      </div>
+      <div class="adm-campo">
+        <label for="f-jornada">Jornada</label>
+        <select id="f-jornada" name="jornada"></select>
+      </div>
+      <div class="adm-campo">
+        <label for="f-programa">Programa</label>
+        <select id="f-programa" name="programa"></select>
+      </div>
+      <div class="adm-campo">
+        <label for="f-orden">Orden por fecha</label>
+        <select id="f-orden" name="orden">
+          <option value="recientes">Más recientes primero</option>
+          <option value="antiguas">Más antiguas primero</option>
+        </select>
+      </div>
+      <button type="button" class="adm-btn adm-btn--tenue" data-limpiar>Limpiar filtros</button>
+    </form>
+
+    <p class="adm-resumen-lista" data-conteo role="status" aria-live="polite"></p>
+    <div data-lista></div>
+  </div>
+
+  <script>
+    import '../../../components/admin/postulaciones.ts';
+  </script>
+</Admin>

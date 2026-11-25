@@ -12,6 +12,9 @@ import { contenido, enlaceInstagram, enlaceWhatsapp } from '../../data/contenido
 
 const { club, contacto, _temporada } = contenido;
 
+/* Las anclas son del inicio: fuera de él se les antepone `/`. */
+const raiz = Astro.url.pathname === '/' ? '' : '/';
+
 const familias = [
   { texto: 'Cómo funciona el ingreso', href: '#como-funciona' },
   { texto: 'Programas', href: '#programas' },
@@ -54,8 +57,8 @@ const familias = [
     <nav class="pie__col" aria-labelledby="pie-familias">
       <h2 class="pie__rotulo" id="pie-familias">Familias</h2>
       <ul role="list" class="pie__lista">
-        {familias.map((f) => <li><a href={f.href}>{f.texto}</a></li>)}
-        <li><span>Reglamento y protocolos · [enlace por confirmar]</span></li>
+        {familias.map((f) => <li><a href={`${raiz}${f.href}`}>{f.texto}</a></li>)}
+        <li><a href="/documentos/informativo-huracan-2027.pdf" target="_blank" rel="noopener">Reglamento y protocolos (PDF)</a></li>
       </ul>
     </nav>
   </div>

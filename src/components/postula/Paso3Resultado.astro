@@ -1,0 +1,78 @@
+---
+/* Paso 3 · Resultado. El armazón es estático; la isla (`postula.ts`) pinta equipos, jornadas y monto
+   con `evaluarPostulacion` (reglas.ts).
+   Antes de confirmar NO se guarda nada: se muestra una vista previa y el botón «Confirmar mi preinscripción».
+   Al confirmar (una sola vez, con la jornada ya elegida) aparecen el código, el cómo pagar y WhatsApp.
+   Sin datos bancarios: llegan por correo. */
+import Boton from '../ui/Boton.astro';
+import Etiqueta from '../ui/Etiqueta.astro';
+---
+
+<section class="paso" id="paso-3" data-paso="3" aria-labelledby="paso-3-titulo" hidden>
+  <Etiqueta variante="seccion" class="paso__etiqueta">03 · Resultado</Etiqueta>
+  <h2 id="paso-3-titulo" class="disp paso__titulo" tabindex="-1">Tu resultado</h2>
+  <p class="prueba" id="aviso-prueba" hidden>Datos de prueba: aún no se guardan</p>
+  <p class="paso__intro" id="res-resumen"></p>
+
+  <div class="aviso" id="aviso-cambios" role="status" hidden>
+    Tu preinscripción ya quedó registrada, así que no se crea otra. Si cambiaste algún dato, coordínalo con el head coach por WhatsApp. Abajo ves lo que registramos.
+  </div>
+
+  <!-- Después de confirmar -->
+  <section class="confirmada" id="res-confirmada" aria-labelledby="res-confirmada-titulo" hidden>
+    <h3 class="bloque__titulo" id="res-confirmada-titulo" tabindex="-1">Preinscripción confirmada</h3>
+    <div class="codigo" aria-labelledby="codigo-etiqueta">
+      <p class="codigo__etiqueta" id="codigo-etiqueta">Tu código de postulación</p>
+      <p class="codigo__valor disp" id="res-codigo"></p>
+      <p class="campo__ayuda" id="res-codigo-ayuda">Guárdalo: lo necesitas al enviar el comprobante.</p>
+    </div>
+    <div class="bloque" aria-labelledby="res-pago-titulo">
+      <h3 class="bloque__titulo" id="res-pago-titulo">Cómo pagar</h3>
+      <p id="res-correo"></p>
+      <p id="res-pago-texto">Paga y envía el comprobante al head coach.</p>
+    </div>
+    <div class="acciones acciones--pila">
+      <Boton href="#" externo tamano="grande" class="js-whatsapp"><span id="whatsapp-texto">Enviar comprobante por WhatsApp</span></Boton>
+      <p class="campo__ayuda" id="whatsapp-estado" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <div class="resultado">
+    <section class="bloque" aria-labelledby="res-equipos-titulo">
+      <h3 class="bloque__titulo" id="res-equipos-titulo">Equipos sugeridos</h3>
+      <div id="res-equipos"></div>
+      <p class="bloque__nota" id="res-equipos-nota">El coach confirma tu equipo final en la evaluación.</p>
+    </section>
+
+    <section class="bloque" aria-labelledby="res-jornada-titulo">
+      <h3 class="bloque__titulo" id="res-jornada-titulo">Evaluación</h3>
+      <div id="res-jornada" aria-live="polite"></div>
+    </section>
+
+    <section class="bloque" aria-labelledby="res-monto-titulo">
+      <h3 class="bloque__titulo" id="res-monto-titulo">Monto estimado de ingreso</h3>
+      <div id="res-monto"></div>
+    </section>
+  </div>
+
+  <!-- Antes de confirmar -->
+  <section class="bloque confirmar" id="res-previa" aria-labelledby="res-confirmar-titulo">
+    <h3 class="bloque__titulo" id="res-confirmar-titulo">Confirma tu preinscripción</h3>
+    <p id="res-confirmar-texto">Al confirmar guardamos tu preinscripción y reservamos tu jornada. Después te mostramos cómo pagar.</p>
+    <div class="aviso aviso--error" id="res-error" role="alert" tabindex="-1" hidden></div>
+    <div class="acciones acciones--pila">
+      <Boton type="button" tamano="grande" class="js-confirmar" disabled>Confirmar mi preinscripción</Boton>
+      <p class="campo__ayuda" id="confirmar-ayuda"></p>
+      <div id="res-alt" hidden>
+        <Boton href="#" externo variante="contorno" class="js-whatsapp-alt">Escribir al head coach por WhatsApp</Boton>
+      </div>
+    </div>
+  </section>
+
+  <div class="acciones">
+    <div class="acciones__fila">
+      <Boton type="button" variante="contorno" class="js-atras-3">← Atrás</Boton>
+      <Boton type="button" variante="contorno" class="js-otra">Inscribir a otra deportista</Boton>
+    </div>
+  </div>
+</section>

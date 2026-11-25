@@ -84,6 +84,10 @@ export interface Equipo {
   /** `null`: sin límite de edad. */
   edadMax: number | null;
   rango: string;
+  /** Grupos que no parten en la evaluación de diciembre (p. ej. «abril de 2027»). */
+  inicio?: string;
+  /** Aviso para mostrar junto al equipo (inicio, definición del grupo). */
+  nota?: string;
 }
 
 export type TipoBloque = 'equipo' | 'extra' | 'gimnasia';

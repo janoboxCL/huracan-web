@@ -1,6 +1,6 @@
 ---
 /* 4 · 02 Programas: foto oscura con velo y parallax + 4 tarjetas inclinadas
-   que alternan amarillo / negro. Todos los datos salen del JSON (`programas`). */
+   por color de programa (Recreativo gris, Novice blanco, Prep amarillo, International negro). Todos los datos salen del JSON (`programas`). */
 import { Image } from 'astro:assets';
 import modelos from '../../assets/img/bg-models.jpg';
 import { contenido, formatearPesos } from '../../data/contenido';
@@ -8,11 +8,10 @@ import Etiqueta from '../ui/Etiqueta.astro';
 
 const { programas } = contenido;
 
-/* Numeración 01–04 según el orden del JSON; la alternancia de color, por posición. */
+/* Numeración 01–04 según el orden del JSON; el color de fondo sale del id del programa. */
 const tarjetas = programas.map((p, i) => ({
   ...p,
   numero: String(i + 1).padStart(2, '0'),
-  amarilla: i % 2 === 0,
   precio: formatearPesos(p.mensualidad),
 }));
 ---
@@ -36,17 +35,17 @@ const tarjetas = programas.map((p, i) => ({
       <div class="programas__titulos">
         <Etiqueta variante="seccion" class="programas__etiqueta">02 · Programas</Etiqueta>
         <h2 id="programas-titulo" class="disp programas__titulo">
-          Sube de<br /><span>categoría</span>
+          Cada nivel,<br /><span>un nuevo desafío</span>
         </h2>
       </div>
-      <p class="programas__bajada">Cuatro niveles, un mismo camino: del juego y la motricidad a la élite internacional.</p>
+      <p class="programas__bajada">Contamos con programas recreativos, formativos y competitivos, adaptados a tu edad, experiencia y habilidades.</p>
     </div>
 
     <ul role="list" class="programas__lista">
       {
         tarjetas.map((t) => (
           <li class="programas__item soplo">
-            <article class:list={['carta', t.amarilla ? 'carta--amarilla' : 'carta--negra']}>
+            <article class={`carta carta--${t.id}`}>
               <span class="disp carta__numero" aria-hidden="true">
                 {t.numero}
               </span>
@@ -178,13 +177,24 @@ const tarjetas = programas.map((p, i) => ({
       box-shadow var(--dur-rapida) var(--curva-suave);
   }
 
-  .carta--amarilla {
-    --sombra-carta: var(--sombra-dura-blanca);
+  /* Color por programa. Texto negro sobre gris (#d4d4d4, 13,6:1), blanco y amarillo;
+     blanco sobre negro (19,6:1). Nunca texto amarillo sobre claro. */
+  .carta--recreativo {
+    background: var(--gris-programa);
+    color: var(--negro);
+  }
+
+  .carta--novice {
+    background: var(--blanco);
+    color: var(--negro);
+  }
+
+  .carta--prep {
     background: var(--amarillo);
     color: var(--negro);
   }
 
-  .carta--negra {
+  .carta--international {
     --sombra-carta: var(--sombra-dura-amarilla);
     background: var(--negro);
     color: var(--blanco);
@@ -203,15 +213,17 @@ const tarjetas = programas.map((p, i) => ({
     right: -0.4rem;
     font-size: 10.5rem;
     color: transparent;
-    opacity: 0.2;
+    opacity: 0.12;
     pointer-events: none;
   }
 
-  .carta--amarilla .carta__numero {
+  .carta--recreativo .carta__numero,
+  .carta--novice .carta__numero,
+  .carta--prep .carta__numero {
     -webkit-text-stroke: 2px var(--negro);
   }
 
-  .carta--negra .carta__numero {
+  .carta--international .carta__numero {
     -webkit-text-stroke: 2px var(--amarillo);
   }
 
@@ -244,7 +256,7 @@ const tarjetas = programas.map((p, i) => ({
     border-top: 2px solid currentColor;
   }
 
-  .carta--negra .carta__pie {
+  .carta--international .carta__pie {
     border-top-color: var(--amarillo);
   }
 

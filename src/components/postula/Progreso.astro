@@ -1,0 +1,24 @@
+---
+/* Indicador de progreso del flujo de postulación: 3 pasos, el actual con `aria-current="step"`.
+   La isla (`postula.ts`) actualiza `data-estado` (pendiente · actual · hecho) y el texto de anuncio. */
+const pasos = [
+  { n: '01', texto: 'Informativo' },
+  { n: '02', texto: 'Preinscripción' },
+  { n: '03', texto: 'Resultado' },
+];
+---
+
+<nav class="progreso" aria-label="Progreso de la postulación" id="progreso">
+  <p class="solo-lectores" id="progreso-texto">Paso 1 de 3: Informativo</p>
+  <ol role="list" class="progreso__lista">
+    {
+      pasos.map((p, i) => (
+        <li class="progreso__paso" data-indicador={i + 1} data-estado={i === 0 ? 'actual' : 'pendiente'} aria-current={i === 0 ? 'step' : undefined}>
+          <span class="disp progreso__n" aria-hidden="true">{p.n}</span>
+          <span class="progreso__texto">{p.texto}</span>
+          <span class="solo-lectores progreso__hecho" hidden>, completado</span>
+        </li>
+      ))
+    }
+  </ol>
+</nav>

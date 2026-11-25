@@ -1,10 +1,11 @@
 /* Destinos internos del sitio. Un solo lugar para cambiarlos cuando existan
-   las páginas definitivas (la agenda llega en la etapa 3). */
+   las páginas definitivas. Las anclas (#...) son del inicio: en otras páginas el
+   header y el footer les anteponen `/`. */
 
 export const enlaces = {
   inicio: '#inicio',
-  /** Lleva al cierre, que tiene el botón de agenda. Pasará a `/agenda` en la etapa 3. */
-  agenda: '#cierre',
+  /** Flujo de postulación: informativo, preinscripción y resultado. */
+  agenda: '/postula',
   equipos: '#equipos',
   staff: '#staff',
 } as const;

@@ -1,0 +1,42 @@
+---
+/* Grupo de opciones excluyentes (radios) con leyenda, ayuda y error.
+   `nombre` coincide con la clave de `DatosPostulacion`. El error va en `#error-{nombre}`. */
+interface Opcion {
+  valor: string;
+  texto: string;
+}
+interface Props {
+  nombre: string;
+  leyenda: string;
+  opciones: Opcion[];
+  ayuda?: string;
+  opcional?: boolean;
+  /** Valor marcado de inicio. */
+  valorInicial?: string;
+  /** Opciones en columna (textos largos). */
+  columna?: boolean;
+}
+
+const { nombre, leyenda, opciones, ayuda, opcional = false, valorInicial, columna = false } = Astro.props;
+---
+
+<fieldset
+  class:list={['grupo-opciones', { 'grupo-opciones--columna': columna }]}
+  id={`grupo-${nombre}`}
+  data-describe={ayuda ? `ayuda-${nombre}` : ''}
+  aria-describedby={ayuda ? `ayuda-${nombre}` : undefined}
+>
+  <legend>{leyenda}{opcional && <span class="campo__opc"> (opcional)</span>}</legend>
+  {ayuda && <p class="campo__ayuda" id={`ayuda-${nombre}`}>{ayuda}</p>}
+  <div class="grupo-opciones__lista">
+    {
+      opciones.map((o) => (
+        <label class="opcion">
+          <input type="radio" name={nombre} value={o.valor} checked={o.valor === valorInicial} />
+          <span>{o.texto}</span>
+        </label>
+      ))
+    }
+  </div>
+  <p class="campo__error" id={`error-${nombre}`} hidden></p>
+</fieldset>

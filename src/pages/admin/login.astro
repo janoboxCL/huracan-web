@@ -1,0 +1,30 @@
+---
+import Admin from '../../layouts/Admin.astro';
+---
+
+<Admin titulo="Iniciar sesión" activo="login" sinNavegacion>
+  <div class="adm-login">
+    <h1 class="adm-titulo">Iniciar sesión</h1>
+    <p class="adm-bajada">Acceso exclusivo para el equipo del club.</p>
+
+    <div class="adm-aviso adm-aviso--info" data-mensaje role="status" hidden></div>
+
+    <form class="adm-formulario" data-formulario novalidate>
+      <div class="adm-campo">
+        <label for="correo">Correo electrónico</label>
+        <input id="correo" name="correo" type="email" autocomplete="username" inputmode="email" required />
+      </div>
+      <div class="adm-campo">
+        <label for="clave">Contraseña</label>
+        <input id="clave" name="clave" type="password" autocomplete="current-password" required />
+      </div>
+      <div class="adm-aviso adm-aviso--error" data-error role="alert" hidden></div>
+      <button type="submit" class="adm-btn adm-btn--primario" data-enviar>Entrar</button>
+    </form>
+
+    <p class="adm-nota" data-nota-demo hidden></p>
+  </div>
+  <script>
+    import '../../components/admin/login.ts';
+  </script>
+</Admin>

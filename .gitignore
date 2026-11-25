@@ -7,3 +7,7 @@ dist/
 .env.*
 !.env.example
 .DS_Store
+.dev.vars
+
+# Decodificadores de PDF.js copiados por scripts/copiar-pdfjs.mjs
+public/pdfjs/

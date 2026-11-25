@@ -1,0 +1,19 @@
+---
+/* Detalle de una postulación. El sitio es estático: el código viaja en `?codigo=` y la isla
+   carga la fila desde Supabase en el navegador. */
+import Admin from '../../../layouts/Admin.astro';
+---
+
+<Admin titulo="Postulación" activo="postulaciones">
+  <div class="adm-aviso adm-aviso--info" data-carga role="status">Verificando sesión…</div>
+
+  <div data-contenido hidden>
+    <p class="adm-migas"><a href="/admin/postulaciones" data-volver>← Volver a postulaciones</a></p>
+    <div data-no-encontrada hidden class="adm-aviso adm-aviso--error" role="alert"></div>
+    <div data-detalle></div>
+  </div>
+
+  <script>
+    import '../../../components/admin/detalle.ts';
+  </script>
+</Admin>

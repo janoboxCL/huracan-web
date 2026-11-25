@@ -1,0 +1,41 @@
+---
+import Admin from '../../layouts/Admin.astro';
+---
+
+<Admin titulo="Resumen" activo="resumen">
+  <div class="adm-aviso adm-aviso--info" data-carga role="status">Verificando sesión…</div>
+
+  <div data-contenido hidden>
+    <div class="adm-titulo-fila">
+      <h1 class="adm-titulo">Resumen</h1>
+      <button type="button" class="adm-btn" data-actualizar>Actualizar</button>
+    </div>
+
+    <p class="adm-alerta" data-pendientes hidden></p>
+
+    <section aria-labelledby="r-estados" class="adm-bloque">
+      <h2 id="r-estados" class="adm-h2">Postulaciones por estado</h2>
+      <ul class="adm-cifras" role="list" data-estados></ul>
+    </section>
+
+    <section aria-labelledby="r-jornadas" class="adm-bloque">
+      <div class="adm-titulo-fila">
+        <h2 id="r-jornadas" class="adm-h2">Próximas jornadas de evaluación</h2>
+        <a class="adm-enlace" href="/admin/jornadas">Gestionar jornadas</a>
+      </div>
+      <div data-jornadas></div>
+    </section>
+
+    <section aria-labelledby="r-recientes" class="adm-bloque">
+      <div class="adm-titulo-fila">
+        <h2 id="r-recientes" class="adm-h2">Últimas postulaciones</h2>
+        <a class="adm-enlace" href="/admin/postulaciones">Ver todas</a>
+      </div>
+      <div data-recientes></div>
+    </section>
+  </div>
+
+  <script>
+    import '../../components/admin/resumen.ts';
+  </script>
+</Admin>

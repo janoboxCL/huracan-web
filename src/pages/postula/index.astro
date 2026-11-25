@@ -1,0 +1,82 @@
+---
+/* /postula · flujo de postulación de 3 pasos: informativo, preinscripción y resultado.
+   El servidor entrega a la isla solo lo necesario (equipos, precios derivados, jornadas, teléfono
+   de contacto); PDF.js se carga únicamente aquí, de forma dinámica, desde `postula.ts`.
+   Por ahora no se indexa (`noindex`) y no guarda datos (ver `src/lib/postulacion/api.ts`). */
+import { statSync } from 'node:fs';
+import { join } from 'node:path';
+import { contenido } from '../../data/contenido';
+import { JORNADAS_INICIALES, preciosDesdeContenido } from '../../lib/postulacion/reglas';
+import { PROMOCIONES_DECLARABLES } from '../../lib/postulacion/formulario';
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/secciones/Header.astro';
+import Footer from '../../components/secciones/Footer.astro';
+import Progreso from '../../components/postula/Progreso.astro';
+import Paso1Informativo from '../../components/postula/Paso1Informativo.astro';
+import Paso2Preinscripcion from '../../components/postula/Paso2Preinscripcion.astro';
+import Paso3Resultado from '../../components/postula/Paso3Resultado.astro';
+import '../../styles/postula.css';
+
+const PDF_URL = '/documentos/informativo-huracan-2027.pdf';
+/* Páginas del informativo (verificado con pdfinfo). El visor usa el número real del documento. */
+const PAGINAS_PDF = 41;
+const bytes = statSync(join(process.cwd(), 'public', 'documentos', 'informativo-huracan-2027.pdf')).size;
+const tamano = `${(bytes / 1_000_000).toFixed(1).replace('.', ',')} MB`;
+
+const equipos = contenido.equipos.map(({ nombre, programa, categoria, genero, edadMin, edadMax, rango, inicio, nota }) => ({
+  nombre,
+  programa,
+  categoria,
+  genero,
+  edadMin,
+  edadMax,
+  rango,
+  ...(inicio ? { inicio } : {}),
+  ...(nota ? { nota } : {}),
+}));
+
+/* Las 4 promociones declarables van primero en el JSON (el resto son becas por habilidades). */
+const promociones = PROMOCIONES_DECLARABLES.map((id, i) => {
+  const p = contenido.promociones[i];
+  if (!p) throw new Error(`Falta la promoción declarable "${id}" en el contenido`);
+  return { id, nombre: p.nombre, texto: p.texto };
+});
+
+const datosIsla = {
+  pdf: PDF_URL,
+  paginas: PAGINAS_PDF,
+  equipos,
+  precios: preciosDesdeContenido(contenido),
+  jornadas: JORNADAS_INICIALES,
+  telefono: contenido.contacto.whatsappHeadCoach.replace(/\D/g, ''),
+  programas: Object.fromEntries(contenido.programas.map((p) => [p.id, p.nombre])),
+};
+---
+
+<Base titulo="Postula a la temporada 2027" descripcion="Lee el informativo, completa la preinscripción y conoce tus equipos sugeridos, la jornada de evaluación y el monto estimado de ingreso." noindex>
+  <Header slot="header" />
+
+  <div class="postula">
+    <header class="postula__intro contenedor">
+      <p class="postula__sello" aria-hidden="true">Temporada {contenido._temporada}</p>
+      <h1 class="disp postula__titulo">Postula a <span>Huracán</span></h1>
+      <p class="postula__bajada">Tres pasos, unos 10 minutos: lees el informativo, nos cuentas de la deportista y recibes tus equipos sugeridos y tu jornada de evaluación.</p>
+    </header>
+
+    <div class="postula__cuerpo contenedor">
+      <Progreso />
+      <div class="postula__paneles">
+        <Paso1Informativo pdf={PDF_URL} paginas={PAGINAS_PDF} tamano={tamano} />
+        <Paso2Preinscripcion equipos={equipos} promociones={promociones} />
+        <Paso3Resultado />
+      </div>
+    </div>
+  </div>
+
+  <script type="application/json" id="postula-datos" set:html={JSON.stringify(datosIsla)} />
+  <script>
+    import '../../components/postula/postula.ts';
+  </script>
+
+  <Footer slot="footer" />
+</Base>

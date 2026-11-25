@@ -1,0 +1,204 @@
+---
+/* Paso 2 · Preinscripción breve. Un solo formulario con validación en español (en `postula.ts`).
+   No pide RUT, salud, tallas ni autorizaciones: eso es la ficha definitiva (etapa posterior).
+   Habilidades: se generan desde `HABILIDADES` (reglas.ts). */
+import { HABILIDADES } from '../../lib/postulacion/reglas';
+import { ETIQUETAS_FORMA, ETIQUETAS_PARENTESCO, ETIQUETAS_POSICION } from '../../lib/postulacion/formulario';
+import Boton from '../ui/Boton.astro';
+import Campo from './Campo.astro';
+import Etiqueta from '../ui/Etiqueta.astro';
+import GrupoOpciones from './GrupoOpciones.astro';
+
+interface Props {
+  equipos: { nombre: string }[];
+  promociones: { id: string; nombre: string; texto: string }[];
+}
+const { equipos, promociones } = Astro.props;
+
+const delTipo = (tipo: string, nivel?: number) => HABILIDADES.filter((h) => h.tipo === tipo && (nivel === undefined || h.nivel === nivel));
+const gruposHabilidades = [
+  { leyenda: 'Gimnasia individual · nivel 2', lista: delTipo('individual', 2) },
+  { leyenda: 'Gimnasia individual · nivel 3', lista: delTipo('individual', 3) },
+  { leyenda: 'Gimnasia individual · nivel 4', lista: delTipo('individual', 4) },
+  { leyenda: 'Grupo de elevación · nivel 3 (deben manejarse todas)', lista: delTipo('grupo', 3) },
+  { leyenda: 'Grupo de elevación · nivel 4 (deben manejarse todas)', lista: delTipo('grupo', 4) },
+  { leyenda: 'Dupla coed', lista: delTipo('dupla') },
+];
+---
+
+<section class="paso" id="paso-2" data-paso="2" aria-labelledby="paso-2-titulo" hidden>
+  <Etiqueta variante="seccion" class="paso__etiqueta">02 · Preinscripción</Etiqueta>
+  <h2 id="paso-2-titulo" class="disp paso__titulo" tabindex="-1">Cuéntanos de la deportista</h2>
+  <p class="paso__intro">
+    Con estos datos sugerimos equipos y una jornada de evaluación. Todos los campos son obligatorios, salvo los marcados como opcionales.
+  </p>
+
+  <form id="form-preinscripcion" class="formulario" novalidate autocomplete="on">
+    <div class="aviso" id="aviso-confirmada" role="status" hidden></div>
+
+    <div class="aviso aviso--error" id="resumen-errores" role="alert" tabindex="-1" hidden>
+      Revisa los campos marcados: faltan datos o hay un error.
+    </div>
+
+    <fieldset class="seccion-form">
+      <legend>La deportista</legend>
+      <div class="rejilla">
+        <Campo id="nombre" etiqueta="Nombre de la deportista" autocomplete="off" maxlength={60} />
+        <Campo id="apellido" etiqueta="Apellido" autocomplete="off" maxlength={60} />
+      </div>
+      <Campo id="fechaNacimiento" etiqueta="Fecha de nacimiento" tipo="date" autocomplete="off" min="1930-01-01" ayuda="Día, mes y año.">
+        <p class="edad" id="edad-2027" aria-live="polite" hidden>Edad que cumple en 2027: <strong id="edad-2027-n"></strong></p>
+      </Campo>
+      <GrupoOpciones
+        nombre="sexo"
+        leyenda="Sexo"
+        ayuda="Se usa para sugerir equipos: algunos son solo de damas."
+        opciones={[
+          { valor: 'dama', texto: 'Dama' },
+          { valor: 'varon', texto: 'Varón' },
+        ]}
+      />
+      <Campo id="comuna" etiqueta="Comuna" autocomplete="address-level2" maxlength={60} />
+      <GrupoOpciones
+        nombre="esAntiguo"
+        leyenda="¿Es atleta antigua o antiguo de Huracán?"
+        opciones={[
+          { valor: 'si', texto: 'Sí' },
+          { valor: 'no', texto: 'No' },
+        ]}
+      />
+    </fieldset>
+
+    <fieldset class="seccion-form">
+      <legend>Experiencia</legend>
+      <GrupoOpciones
+        nombre="experiencia"
+        leyenda="¿Ha practicado cheerleading?"
+        opciones={[
+          { valor: 'ninguna', texto: 'No, parte desde cero' },
+          { valor: 'con', texto: 'Sí' },
+        ]}
+      />
+      <div class="si-experiencia" id="bloque-experiencia" hidden>
+        <div class="rejilla">
+          <Campo id="clubAnterior" etiqueta="Club anterior" autocomplete="off" maxlength={80} />
+          <Campo id="aniosExperiencia" etiqueta="Años de experiencia" tipo="text" inputmode="numeric" autocomplete="off" maxlength={2} />
+        </div>
+        <div class="campo" data-campo="posicion">
+          <label for="f-posicion">Posición <span class="campo__opc">(opcional)</span></label>
+          <select id="f-posicion" name="posicion" autocomplete="off">
+            <option value="">Sin definir</option>
+            {Object.entries(ETIQUETAS_POSICION).map(([v, t]) => <option value={v}>{t}</option>)}
+          </select>
+        </div>
+
+        <details class="habilidades" id="habilidades">
+          <summary>
+            <span>Habilidades que manejas</span> <span class="campo__opc">(opcional)</span>
+            <span class="habilidades__conteo" id="habilidades-conteo"></span>
+          </summary>
+          <p class="campo__ayuda">Marca las que manejas hoy. El coach las valida en la evaluación.</p>
+          {
+            gruposHabilidades.map((g) => (
+              <fieldset class="habilidades__grupo">
+                <legend>{g.leyenda}</legend>
+                {g.lista.map((h) => (
+                  <label class="opcion opcion--check">
+                    <input type="checkbox" name="habilidades" value={h.id} />
+                    <span>{h.texto}</span>
+                  </label>
+                ))}
+              </fieldset>
+            ))
+          }
+        </details>
+      </div>
+    </fieldset>
+
+    <details class="habilidades desplegable" id="det-equipo">
+      <summary>
+        <span>Equipo y modalidad</span> <span class="campo__opc">(opcional)</span>
+      </summary>
+      <div class="habilidades__cuerpo">
+      <div class="campo" data-campo="modalidad">
+        <label for="f-modalidad">Modalidad deseada</label>
+        <select id="f-modalidad" name="modalidad" autocomplete="off">
+          <option value="auto" selected>Que el sistema lo sugiera</option>
+          <option value="recreativo">Recreativa</option>
+          <option value="novice">Novice</option>
+          <option value="prep">Prep</option>
+          <option value="international">International</option>
+        </select>
+      </div>
+      <div class="campo" data-campo="equipoInteres">
+        <label for="f-equipoInteres">Equipo de interés <span class="campo__opc">(opcional)</span></label>
+        <select id="f-equipoInteres" name="equipoInteres" autocomplete="off">
+          <option value="">Sin preferencia</option>
+          {equipos.map((e) => <option value={e.nombre}>{e.nombre}</option>)}
+        </select>
+      </div>
+      <GrupoOpciones
+        nombre="forma"
+        leyenda="¿Postula individualmente, con dupla coed o con grupo de elevación?"
+        valorInicial="individual"
+        columna
+        opciones={Object.entries(ETIQUETAS_FORMA).map(([valor, texto]) => ({ valor, texto }))}
+      />
+      </div>
+    </details>
+
+    <details class="habilidades desplegable" id="det-promos">
+      <summary>
+        <span>Promociones que declaras</span> <span class="campo__opc">(opcional)</span>
+      </summary>
+      <div class="habilidades__cuerpo">
+      <fieldset class="grupo-opciones grupo-opciones--columna" id="grupo-promociones" data-describe="ayuda-promociones" aria-describedby="ayuda-promociones">
+        <legend>Promociones que declara <span class="campo__opc">(opcional)</span></legend>
+        <p class="campo__ayuda" id="ayuda-promociones">Es solo informativo: el coach las valida y confirma el monto final.</p>
+        <div class="grupo-opciones__lista">
+          {
+            promociones.map((p) => (
+              <label class="opcion opcion--check">
+                <input type="checkbox" name="promociones" value={p.id} />
+                <span>
+                  {p.nombre}
+                  <small>{p.texto}</small>
+                </span>
+              </label>
+            ))
+          }
+        </div>
+      </fieldset>
+      </div>
+    </details>
+
+    <fieldset class="seccion-form">
+      <legend id="legenda-contacto">Datos de contacto</legend>
+      <p class="campo__ayuda" id="ayuda-contacto">Si la deportista es menor de 18 años, aquí van los datos de su apoderado.</p>
+      <div id="bloque-apoderado" hidden>
+        <Campo id="contactoNombre" etiqueta="Nombre y apellido del apoderado" autocomplete="name" maxlength={80} />
+        <div class="campo" data-campo="parentesco">
+          <label for="f-parentesco">Parentesco</label>
+          <select id="f-parentesco" name="parentesco" autocomplete="off" aria-required="true" data-describe="">
+            <option value="">Selecciona</option>
+            {Object.entries(ETIQUETAS_PARENTESCO).map(([v, t]) => <option value={v}>{t}</option>)}
+          </select>
+          <p class="campo__error" id="error-parentesco" hidden></p>
+        </div>
+      </div>
+      <div class="rejilla">
+        <Campo id="telefono" etiqueta="Celular" tipo="tel" inputmode="tel" autocomplete="tel" placeholder="+56 9 1234 5678" maxlength={20} />
+        <Campo id="correo" etiqueta="Correo" tipo="email" inputmode="email" autocomplete="email" placeholder="nombre@correo.cl" maxlength={100} />
+      </div>
+    </fieldset>
+
+    <div class="trampa" aria-hidden="true">
+      <input type="text" name="sitioWeb" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <div class="acciones acciones--doble">
+      <Boton type="button" variante="contorno" tamano="grande" class="js-atras-2">← Atrás</Boton>
+      <Boton type="submit" tamano="grande" class="js-enviar-2">Ver mi resultado →</Boton>
+    </div>
+  </form>
+</section>

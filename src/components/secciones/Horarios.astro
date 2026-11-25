@@ -37,6 +37,7 @@ const tipos = { equipo: 'Equipo', extra: 'Clase extra', gimnasia: 'Gimnasia' } a
       <li><span class="muestra muestra--extra" aria-hidden="true"></span>Clase extra</li>
       <li><span class="muestra muestra--gimnasia" aria-hidden="true"></span>Gimnasia por nivel</li>
     </ul>
+    <p class="horarios__aclaracion">Los colores de esta tabla indican el tipo de clase, no el programa.</p>
 
     <p class="horarios__pista" data-pista>Desliza para ver todos los días.</p>
 
@@ -157,7 +158,14 @@ const tipos = { equipo: 'Equipo', extra: 'Clase extra', gimnasia: 'Gimnasia' } a
   }
 
   .muestra--gimnasia {
+    background: var(--gris-programa);
     border-style: dashed;
+  }
+
+  .horarios__aclaracion {
+    margin: calc(var(--esp-2) * -1) 0 0;
+    font-size: var(--t-sm);
+    font-weight: 600;
   }
 
   .horarios__pista[hidden] {
@@ -231,7 +239,9 @@ const tipos = { equipo: 'Equipo', extra: 'Clase extra', gimnasia: 'Gimnasia' } a
     color: var(--blanco);
   }
 
+  /* Clases de gimnasia (tipo `gimnasia`): gris; clases extras (tipo `extra`): blanco. */
   .bloque--gimnasia {
+    background: var(--gris-programa);
     border-style: dashed;
   }
 

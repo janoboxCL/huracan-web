@@ -1,0 +1,10 @@
+# Copia este archivo a `.dev.vars` (ignorado por git) para probar las Functions en local
+# con `npx wrangler pages dev dist`. En producción se cargan como variables cifradas en
+# Cloudflare Pages. NUNCA subas valores reales al repositorio.
+SUPABASE_URL=https://TU-PROYECTO.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=
+RESEND_API_KEY=
+CORREO_ORIGEN="Huracán All Stars <correo@dominio-verificado>"
+CORREO_COACH=
+# Datos de transferencia: varias líneas con \n. Solo viajan en el correo, no en el sitio.
+DATOS_TRANSFERENCIA=
