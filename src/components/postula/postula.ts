@@ -30,6 +30,7 @@ import {
   validarTodo,
   type DatosPostulacion,
 } from '../../lib/postulacion/formulario.ts';
+import { COMUNA_OTRA, esComunaDeLista } from '../../lib/postulacion/comunas.ts';
 import { CAMPO_API_A_FORMULARIO, cargarJornadas, enviarPostulacion, modoApiActivo, type JornadaCupo, type ResultadoEnvio } from '../../lib/postulacion/api.ts';
 
 /* ── Datos del servidor ─────────────────────────────────────── */
@@ -49,7 +50,7 @@ const datosPagina = JSON.parse(document.getElementById('postula-datos')?.textCon
 const QUIEN_JORNADA: Record<string, string> = {
   'youth-junior-senior-prep': 'Youth, Junior y Senior Prep',
   open: 'Open, Open Coed Novice, Prep e International',
-  'sin-experiencia-7-19': 'Atletas sin experiencia de 7 a 19 años',
+  'sin-experiencia-7-19': 'Atletas sin experiencia (evaluación Novice)',
 };
 
 /* ── Estado y almacenamiento de la sesión ───────────────────── */
@@ -526,6 +527,7 @@ function leerFormulario(): DatosPostulacion {
     fechaNacimiento: v('fechaNacimiento'),
     sexo: v('sexo') as DatosPostulacion['sexo'],
     comuna: v('comuna'),
+    comunaOtra: v('comunaOtra'),
     esAntiguo: v('esAntiguo') as DatosPostulacion['esAntiguo'],
     experiencia: v('experiencia') as DatosPostulacion['experiencia'],
     clubAnterior: v('clubAnterior'),
@@ -544,9 +546,15 @@ function leerFormulario(): DatosPostulacion {
   };
 }
 
-function escribirFormulario(d: DatosPostulacion): void {
+function escribirFormulario(original: DatosPostulacion): void {
   const f = form();
-  const texto = ['nombre', 'apellido', 'fechaNacimiento', 'comuna', 'clubAnterior', 'aniosExperiencia', 'posicion', 'modalidad', 'equipoInteres', 'contactoNombre', 'parentesco', 'telefono', 'correo'] as const;
+  /* Sesiones guardadas con la comuna como texto libre: lo que no está en la lista pasa a «Otra». */
+  const d = { ...original, comunaOtra: original.comunaOtra ?? '' };
+  if (d.comuna !== '' && d.comuna !== COMUNA_OTRA && !esComunaDeLista(d.comuna)) {
+    d.comunaOtra = d.comuna;
+    d.comuna = COMUNA_OTRA;
+  }
+  const texto = ['nombre', 'apellido', 'fechaNacimiento', 'comuna', 'comunaOtra', 'clubAnterior', 'aniosExperiencia', 'posicion', 'modalidad', 'equipoInteres', 'contactoNombre', 'parentesco', 'telefono', 'correo'] as const;
   for (const k of texto) {
     const el = f.elements.namedItem(k) as HTMLInputElement | HTMLSelectElement | null;
     if (el) el.value = d[k];
@@ -591,6 +599,7 @@ function actualizarDependencias(d: DatosPostulacion): void {
   if (edad !== null && edad >= 0) $('#edad-2027-n').textContent = String(edad);
 
   $('#bloque-experiencia').hidden = d.experiencia !== 'con';
+  $('#bloque-comuna-otra').hidden = d.comuna !== COMUNA_OTRA;
 
   const fechaValida = edad !== null && edad >= 0;
   const menor = fechaValida && esMenorDeEdad(d.fechaNacimiento);
@@ -622,7 +631,7 @@ function configurarPaso2(): void {
     /* Corrige en vivo solo los campos que ya mostraron error. */
     for (const campo of CAMPOS_VALIDABLES) {
       if (!tocados.has(campo)) continue;
-      const aplica = el.name === campo || campo === 'fechaNacimiento' || (campo === 'clubAnterior' || campo === 'aniosExperiencia' ? el.name === 'experiencia' : false);
+      const aplica = el.name === campo || campo === 'fechaNacimiento' || (campo === 'clubAnterior' || campo === 'aniosExperiencia' ? el.name === 'experiencia' : campo === 'comunaOtra' ? el.name === 'comuna' : false);
       if (!aplica) continue;
       mostrarError(campo, validarCampo(campo, estado.datos, hoyISO()));
     }

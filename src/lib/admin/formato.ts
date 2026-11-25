@@ -16,7 +16,7 @@ export function esc(valor: unknown): string {
 export const ETIQUETA_GRUPO: Record<GrupoJornadaClave, string> = {
   'youth-junior-senior-prep': 'Youth, Junior y Senior Prep',
   open: 'Open, Open Coed Novice, Prep e International',
-  'sin-experiencia-7-19': 'Sin experiencia, 7 a 19 años',
+  'sin-experiencia-7-19': 'Sin experiencia (evaluación Novice)',
 };
 
 export const ETIQUETA_PROGRAMA: Record<ProgramaClave, string> = {

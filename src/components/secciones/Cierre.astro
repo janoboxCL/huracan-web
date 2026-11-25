@@ -9,6 +9,7 @@
    contenedores; el recorte flota en el <img> (hijo) para no mezclar transforms. */
 import { Image } from 'astro:assets';
 import duo from '../../assets/img/cut-duo.png';
+import { contenido } from '../../data/contenido';
 import { enlaces } from '../../data/enlaces';
 import Boton from '../ui/Boton.astro';
 import Etiqueta from '../ui/Etiqueta.astro';
@@ -21,15 +22,21 @@ import Tornado from '../ui/Tornado.astro';
       <Etiqueta variante="seccion">11 · Tu ingreso</Etiqueta>
       <h2 id="cierre-titulo" class="disp cierre__titulo">Sé parte<br />de Huracán</h2>
       <p class="cierre__bajada">
-        Agenda la evaluación, lee el reglamento interno y prepárate para tu primera temporada. Deportista y apoderado se comprometen con su equipo de inicio a fin.
+        Realiza tu inscripción, lee el reglamento interno y prepárate para tu primera temporada. Deportista y apoderado se comprometen con su equipo de inicio a fin.
       </p>
       <div class="cierre__botones">
-        <Boton href={enlaces.agenda} variante="negro" tamano="grande">Agenda tu evaluación →</Boton>
+        <Boton href={enlaces.agenda} variante="negro" tamano="grande">Realiza tu inscripción →</Boton>
         <a class="reglamento" href="/documentos/informativo-huracan-2027.pdf" target="_blank" rel="noopener">
           <span>Reglamento 2027</span>
           <span class="reglamento__marca">Informativo oficial · PDF (desde la página 33)</span>
         </a>
       </div>
+      {contenido.contacto.comoLlegar && (
+        <div class="llegar">
+          <h3 class="llegar__titulo">Cómo llegar · {contenido.contacto.direccion}</h3>
+          <ol class="llegar__pasos">{contenido.contacto.comoLlegar.map((paso) => <li>{paso}</li>)}</ol>
+        </div>
+      )}
     </div>
 
     <div class="cierre__escena soplo-der">
@@ -91,6 +98,31 @@ import Tornado from '../ui/Tornado.astro';
     font-size: var(--t-lg);
     font-weight: 500;
     line-height: 1.6;
+  }
+
+  .llegar {
+    margin-top: var(--esp-6);
+    padding: var(--esp-4) var(--esp-5);
+    background: var(--negro);
+    color: var(--blanco);
+    border-left: 6px solid var(--blanco);
+  }
+
+  .llegar__titulo {
+    margin: 0 0 var(--esp-3);
+    font-size: var(--t-base);
+    font-weight: 800;
+    color: var(--amarillo);
+  }
+
+  .llegar__pasos {
+    margin: 0;
+    padding-left: 1.25rem;
+    line-height: 1.5;
+  }
+
+  .llegar__pasos li + li {
+    margin-top: 0.25rem;
   }
 
   .cierre__botones {

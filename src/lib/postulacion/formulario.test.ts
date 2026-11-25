@@ -1,8 +1,10 @@
 /* Pruebas de la lógica del formulario de preinscripción (`npm test`). */
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { COMUNAS_RM, COMUNA_OTRA } from './comunas.ts';
 import {
   ALFABETO_CODIGO,
+  comunaEfectiva,
   datosVacios,
   edadAl,
   edadTemporada,
@@ -107,4 +109,26 @@ test('mensaje de WhatsApp para grupos de inicio diferido no habla de comprobante
   assert.match(m, /HUR-ABC234/);
   assert.match(m, /Inicio: Spirit en abril de 2027/);
   assert.doesNotMatch(m, /comprobante|Jornada/);
+});
+
+test('la lista de comunas tiene las 52 de la Región Metropolitana, ordenadas y sin repetidas', () => {
+  assert.equal(COMUNAS_RM.length, 52);
+  assert.equal(new Set(COMUNAS_RM).size, 52);
+  assert.deepEqual([...COMUNAS_RM], [...COMUNAS_RM].sort((a, b) => a.localeCompare(b, 'es')));
+  for (const c of ['Ñuñoa', 'Peñalolén', 'Maipú', 'Peñaflor', 'San Joaquín', 'Conchalí']) assert.ok((COMUNAS_RM as readonly string[]).includes(c), c);
+});
+
+test('comuna: exige una de la lista u «Otra comuna o región» con texto', () => {
+  const d = datosVacios();
+  assert.equal(validarCampo('comuna', d, '2026-11-25'), 'Selecciona la comuna.');
+  assert.equal(validarCampo('comuna', { ...d, comuna: 'Ñuñoa' }, '2026-11-25'), null);
+  assert.equal(validarCampo('comuna', { ...d, comuna: 'Texto libre' }, '2026-11-25'), 'Selecciona la comuna.');
+  assert.equal(validarCampo('comunaOtra', { ...d, comuna: 'Ñuñoa' }, '2026-11-25'), null);
+  assert.ok(validarCampo('comunaOtra', { ...d, comuna: COMUNA_OTRA, comunaOtra: '  ' }, '2026-11-25'));
+  assert.equal(validarCampo('comunaOtra', { ...d, comuna: COMUNA_OTRA, comunaOtra: 'Rancagua' }, '2026-11-25'), null);
+});
+
+test('comunaEfectiva envía la lista o el texto de «¿Cuál?»', () => {
+  assert.equal(comunaEfectiva({ comuna: 'Maipú', comunaOtra: 'ignorado' }), 'Maipú');
+  assert.equal(comunaEfectiva({ comuna: COMUNA_OTRA, comunaOtra: ' Rancagua, O’Higgins ' }), 'Rancagua, O’Higgins');
 });

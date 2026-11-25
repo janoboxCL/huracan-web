@@ -7,7 +7,7 @@
    Las funciones nunca lanzan al enviar: devuelven un resultado tipado para que la interfaz
    muestre un mensaje claro y no pierda lo escrito. */
 
-import { esMenorDeEdad, generarCodigo, type DatosPostulacion } from './formulario.ts';
+import { comunaEfectiva, esMenorDeEdad, generarCodigo, type DatosPostulacion } from './formulario.ts';
 import { JORNADAS_INICIALES, type GrupoJornada } from './reglas.ts';
 
 /* ── Modo ───────────────────────────────────────────────────── */
@@ -65,7 +65,7 @@ export function armarCuerpo(d: DatosPostulacion, jornadaId: string | null): Cuer
     atletaApellido: d.apellido.trim(),
     fechaNacimiento: d.fechaNacimiento,
     sexo: d.sexo,
-    comuna: d.comuna.trim(),
+    comuna: comunaEfectiva(d),
     esAntiguo: d.esAntiguo === 'si',
     experiencia: d.experiencia,
     clubAnterior: con ? d.clubAnterior.trim() : '',

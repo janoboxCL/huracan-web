@@ -42,6 +42,12 @@ const familias = [
         <li>
           <address class="pie__direccion">{contacto.direccion}</address>
         </li>
+        {contacto.comoLlegar && (
+          <li>
+            <p class="pie__subrotulo">Cómo llegar</p>
+            <ol class="pie__llegar">{contacto.comoLlegar.map((paso) => <li>{paso}</li>)}</ol>
+          </li>
+        )}
       </ul>
     </div>
 
@@ -67,6 +73,23 @@ const familias = [
 </footer>
 
 <style>
+  .pie__subrotulo {
+    margin: var(--esp-3) 0 var(--esp-2);
+    font-weight: 800;
+    color: var(--blanco);
+  }
+
+  .pie__llegar {
+    margin: 0;
+    padding-left: 1.25rem;
+    color: #d4d4d4;
+    line-height: 1.5;
+  }
+
+  .pie__llegar li + li {
+    margin-top: 0.25rem;
+  }
+
   .pie {
     background: var(--negro);
     color: var(--blanco);

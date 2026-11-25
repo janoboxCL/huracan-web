@@ -16,11 +16,15 @@ export interface Club {
 export interface Contacto {
   whatsappHeadCoach: string;
   whatsappTexto: string;
+  /** Correo del club para recibir comprobantes de pago (flyer «Check in Pagos»). */
+  correoPagos?: string;
   instagram: string;
   facebook: string;
   tiktok: string;
   /** Puede ser un marcador `[así]` mientras el club no la confirme. */
   direccion: string;
+  /** Indicaciones desde el Metro Departamental, en orden (flyer «¿Cómo llegar?» del club). */
+  comoLlegar?: string[];
 }
 
 export interface Hito {

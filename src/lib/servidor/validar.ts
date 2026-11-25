@@ -1,6 +1,7 @@
 /* Validación de lo que envía el navegador. El servidor no confía en nada: normaliza,
    acota largos y descarta lo que no reconoce. Los montos, equipos y jornadas NO se leen
    del cuerpo: se recalculan con las reglas (src/lib/postulacion/reglas.ts). */
+import { COMUNA_OTRA } from '../postulacion/comunas.ts';
 import { HABILIDADES, type Experiencia, type Genero, type ProgramaId } from '../postulacion/reglas.ts';
 
 export const PROMOCIONES_DECLARABLES = ['hermanos', 'otra-region', 'varones-externos', 'familiar'] as const;
@@ -66,6 +67,13 @@ function fechaValida(v: unknown): string | null {
   return anio >= 1925 && anio <= 2026 ? v : null;
 }
 
+/** Una comuna de la lista o el texto libre de «Otra comuna o región». El navegador envía ese
+   texto como comuna, así que se acepta cualquier texto acotado, salvo la etiqueta sin completar. */
+function comunaValida(v: unknown): string | null {
+  const t = texto(v, 60);
+  return t === null || t === COMUNA_OTRA ? null : t;
+}
+
 export function validarPostulacion(cuerpo: unknown): ResultadoValidacion {
   if (typeof cuerpo !== 'object' || cuerpo === null || Array.isArray(cuerpo)) return { ok: false, campos: ['cuerpo'] };
   const c = cuerpo as Crudo;
@@ -100,7 +108,7 @@ export function validarPostulacion(cuerpo: unknown): ResultadoValidacion {
     atletaApellido: exigir('atletaApellido', texto(c['atletaApellido'], 60)),
     fechaNacimiento: exigir('fechaNacimiento', fechaValida(c['fechaNacimiento'])),
     sexo: exigir('sexo', enLista(c['sexo'], ['dama', 'varon'] as const)),
-    comuna: exigir('comuna', texto(c['comuna'], 60)),
+    comuna: exigir('comuna', comunaValida(c['comuna'])),
     esAntiguo: c['esAntiguo'] === true,
     experiencia: exigir('experiencia', enLista(c['experiencia'], ['ninguna', 'con'] as const)),
     clubAnterior: opcional(c['clubAnterior'], 80),

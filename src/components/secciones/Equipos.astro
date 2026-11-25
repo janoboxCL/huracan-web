@@ -92,7 +92,7 @@ const tarjetas = equipos.map((e) => ({
     <p class="equipos__resumen" aria-live="polite" hidden data-resumen>{textoInicial}</p>
 
     <div class="equipos__accion">
-      <Boton href={enlaces.agenda} variante="negro" tamano="grande" etiqueta="Agenda tu evaluación, desde equipos"><span data-cta-texto>Agenda tu evaluación →</span></Boton>
+      <Boton href={enlaces.agenda} variante="negro" tamano="grande" etiqueta="Realiza tu inscripción, desde equipos"><span data-cta-texto>Realiza tu inscripción →</span></Boton>
     </div>
 
     <ul role="list" class="equipos__leyenda" aria-label="Color por programa">
@@ -509,8 +509,8 @@ const tarjetas = equipos.map((e) => ({
     seccion.querySelector<HTMLElement>('[data-bajada-base]')!.hidden = true;
     seccion.querySelector<HTMLElement>('[data-bajada-js]')!.hidden = false;
     if (cta) {
-      cta.textContent = 'Agenda la evaluación para esta edad →';
-      cta.closest('a')?.setAttribute('aria-label', 'Agenda la evaluación para esta edad, desde equipos');
+      cta.textContent = 'Realiza tu inscripción para esta edad →';
+      cta.closest('a')?.setAttribute('aria-label', 'Realiza tu inscripción para esta edad, desde equipos');
     }
     lista.setAttribute('aria-label', 'Equipos para la edad elegida');
     reservar();

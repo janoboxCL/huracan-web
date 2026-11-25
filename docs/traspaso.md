@@ -1,6 +1,6 @@
 # Traspaso del proyecto · Huracán All Stars 2027
 
-Documento para retomar el trabajo en otra herramienta (por ejemplo ChatGPT). Última actualización: 25 de noviembre de 2026, 19:40 (respuestas de Franco 1 a 3 incorporadas). Reglas completas del proyecto en `CLAUDE.md`; flujo de postulación en `docs/flujo-postulacion.md`; pendientes en `docs/pendientes.md`.
+Documento para retomar el trabajo en otra herramienta (por ejemplo ChatGPT). Última actualización: 25 de noviembre de 2026, 21:00 (respuestas de Franco incorporadas; sitio publicado en main con la API activa y prueba real de preinscripción funcionando). Reglas completas del proyecto en `CLAUDE.md`; flujo de postulación en `docs/flujo-postulacion.md`; pendientes en `docs/pendientes.md`.
 
 ## Qué es
 
@@ -23,18 +23,13 @@ Sitio público del club Huracán All Stars (Santiago, Chile), temporada 2027. As
 
 Variables de las Functions (ver `.dev.vars.example`): `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY`, `CORREO_ORIGEN`, `CORREO_COACH`, `DATOS_TRANSFERENCIA`.
 
-## Pendientes del club (preguntas enviadas a Franco; 1 a 3 ya respondidas)
+## Pendientes del club (respondidas casi todas el 25 nov)
 
-1. (Respondida parcialmente) Primera práctica de los Tiny: día y hora confirmados (viernes 18:00 a 19:00 Pink Ladies y Baby Storm; sábado 12:00 a 13:00 Pink Ladies). Falta la fecha de inicio.
-2. (Respondida) Spirit paga inscripción y vestimenta; Team Parent solo vestimenta; valores más adelante.
-3. (Respondida) Recreativo: inscripción y ropa por transferencia además de la mensualidad en efectivo.
-4. Edades: informativo dice Runway Diva 15–19, Super Models 15–19, Xtreme Force 9–12; el sitio usa 12–19, 12–19 y 8–12.
-5. Mayores de 19 sin experiencia: ¿jornada Open? (supuesto actual).
-6. Five Elite: 3 o 4 habilidades de grupo (se usa el flyer: 3).
-7. Mes del viaje a Orlando (Franco dice que febrero no tiene evento).
-8. Botón principal: «Agenda tu clase» o «Realiza tu inscripción».
-9. Fecha del showcase de septiembre (el informativo dice «sábado 9», pero el 9 de septiembre de 2027 es jueves).
-10. Dirección del gimnasio y fechas y cupos de evaluación posteriores al 4 y 5 de diciembre.
+Respondidas e incorporadas: edades de Runway Diva y Super Models (12 a 19), mayores de 19 sin experiencia (evaluación Novice del sábado), Five Elite (4 habilidades), Orlando en marzo, botón «Realiza tu inscripción», showcase viernes 10 de septiembre 20:00 a 22:00, dirección (Carlos Walker Martínez 5520, San Miguel), pagos de Spirit, Team Parent y Recreativo, día y hora de los Tiny.
+
+Se agregó «Cómo llegar» (flyer del club, indicaciones desde el Metro Departamental) al pie, a la sección de cierre y al correo de confirmación. El correo `pagoshuracan@gmail.com` del flyer de pagos 2026 NO se usa: el flyer 2027 pide el comprobante por WhatsApp al head coach (confirmar con el club si el correo sigue vigente).
+
+Siguen pendientes: fecha de la primera práctica de los Tiny; valores de inscripción y vestimenta de Spirit y Team Parent; edad de Xtreme Force (8 a 12 en el sitio, 9 a 12 en el informativo); fecha del viernes de evaluación de enero y grupos de las jornadas de enero (miércoles 6, 18:00 a 20:00 y 20:00 a 22:00); cupos de las evaluaciones.
 
 ## Pendientes de Jano
 

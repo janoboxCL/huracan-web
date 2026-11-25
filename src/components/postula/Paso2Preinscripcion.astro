@@ -3,6 +3,7 @@
    No pide RUT, salud, tallas ni autorizaciones: eso es la ficha definitiva (etapa posterior).
    Habilidades: se generan desde `HABILIDADES` (reglas.ts). */
 import { HABILIDADES } from '../../lib/postulacion/reglas';
+import { COMUNAS_RM, COMUNA_OTRA } from '../../lib/postulacion/comunas';
 import { ETIQUETAS_FORMA, ETIQUETAS_PARENTESCO, ETIQUETAS_POSICION } from '../../lib/postulacion/formulario';
 import Boton from '../ui/Boton.astro';
 import Campo from './Campo.astro';
@@ -58,7 +59,18 @@ const gruposHabilidades = [
           { valor: 'varon', texto: 'Varón' },
         ]}
       />
-      <Campo id="comuna" etiqueta="Comuna" autocomplete="address-level2" maxlength={60} />
+      <div class="campo" data-campo="comuna">
+        <label for="f-comuna">Comuna</label>
+        <select id="f-comuna" name="comuna" autocomplete="address-level2" aria-required="true" data-describe="">
+          <option value="">Selecciona tu comuna</option>
+          {COMUNAS_RM.map((c) => <option value={c}>{c}</option>)}
+          <option value={COMUNA_OTRA}>{COMUNA_OTRA}</option>
+        </select>
+        <p class="campo__error" id="error-comuna" hidden></p>
+      </div>
+      <div id="bloque-comuna-otra" hidden>
+        <Campo id="comunaOtra" etiqueta="¿Cuál?" autocomplete="off" maxlength={60} ayuda="Escribe tu comuna y región." />
+      </div>
       <GrupoOpciones
         nombre="esAntiguo"
         leyenda="¿Es atleta antigua o antiguo de Huracán?"

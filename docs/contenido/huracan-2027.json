@@ -14,10 +14,17 @@
   "contacto": {
     "whatsappHeadCoach": "+56954959681",
     "whatsappTexto": "+56 9 5495 9681",
+    "correoPagos": "pagoshuracan@gmail.com",
     "instagram": "Huracan_Allstars.team",
     "facebook": "Huracán All Stars 2027",
     "tiktok": "Huracan ALL Stars",
-    "direccion": "[Dirección del gimnasio]"
+    "direccion": "Carlos Walker Martínez 5520, San Miguel · Metro Departamental",
+    "comoLlegar": [
+      "Sal del Metro Departamental (Línea 2).",
+      "Camina por Av. Departamental hacia el oriente (2 cuadras aprox.).",
+      "Gira a la derecha por Carlos Walker Martínez.",
+      "Avanza media cuadra y llegarás al gimnasio Huracán All Stars."
+    ]
   },
   "hitos": [
     { "anio": 2002, "texto": "Nace en el Colegio Filipense." },
@@ -182,15 +189,15 @@
   "calendario": [
     { "mes": "Noviembre 2026", "corto": "Nov", "evento": true, "hitos": ["Nacionales para equipos 2026", "Prácticas grupo Novice preparatorio", "Inscripciones temporada 2027"] },
     { "mes": "Diciembre 2026", "corto": "Dic", "evento": false, "hitos": ["Evaluación y postulación a equipos 2027", "Comienzo de prácticas de nivelación", "Inicio de prácticas del proceso de viaje Disney 2027", "Vacaciones de fin de año: 21 de diciembre al 3 de enero"] },
-    { "mes": "Enero 2027", "corto": "Ene", "evento": false, "hitos": ["Prácticas de nivelación", "Evaluación segunda etapa de postulaciones y nómina tentativa", "Prácticas de la delegación en viaje"] },
-    { "mes": "Febrero 2027", "corto": "Feb", "evento": false, "porConfirmar": "Mes del viaje a Orlando: el club indicó que en febrero no hay competencia ni evento, pero el PDF menciona una competencia en Orlando en febrero y Disney en enero y marzo. Confirmar mes del viaje y de la evaluación final con equipos oficiales.", "hitos": ["Evaluación final de postulaciones y equipos oficiales [confirmar mes]", "Prácticas de la delegación en viaje [confirmar mes del viaje]", "Vacaciones de verano: 14 al 28 de febrero"] },
-    { "mes": "Marzo 2027", "corto": "Mar", "evento": false, "hitos": ["Prácticas de nivelación, evaluación y tercera etapa de postulaciones, nómina tentativa", "Prácticas de la delegación en viaje"] },
+    { "mes": "Enero 2027", "corto": "Ene", "evento": false, "hitos": ["Prácticas de nivelación", "Evaluación segunda etapa de postulaciones y nómina tentativa", "Evaluaciones: miércoles 6 de enero y viernes [fecha por confirmar], 18:00–20:00 y 20:00–22:00", "Prácticas de la delegación en viaje"] },
+    { "mes": "Febrero 2027", "corto": "Feb", "evento": false, "porConfirmar": "Mes de la evaluación final con equipos oficiales.", "hitos": ["Evaluación final de postulaciones y equipos oficiales [confirmar mes]", "Prácticas de la delegación en viaje", "Vacaciones de verano: 14 al 28 de febrero"] },
+    { "mes": "Marzo 2027", "corto": "Mar", "evento": true, "hitos": ["Prácticas de nivelación, evaluación y tercera etapa de postulaciones, nómina tentativa", "Competencia en Orlando, Disney 2027"] },
     { "mes": "Abril 2027", "corto": "Abr", "evento": false, "hitos": ["Prácticas de equipos oficiales", "Montaje de elevaciones y pirámides"] },
     { "mes": "Mayo 2027", "corto": "May", "evento": false, "hitos": ["Montaje de coreografía de piso por equipo", "Sábado 1: Día del Trabajador, sin clases", "Viernes 21 y sábado 22: clases normales"] },
     { "mes": "Junio 2027", "corto": "Jun", "evento": false, "hitos": ["Montaje de la coreografía de competencia", "Vacaciones de invierno (fecha por confirmar)", "Lunes 21 y 28: clases normales"] },
     { "mes": "Julio 2027", "corto": "Jul", "evento": true, "hitos": ["Prácticas por secciones de coreografía", "Kick off / Show off internos: sábado 10 y 24, 16:00–18:00", "Viernes 16 y sábado 17: clases normales"] },
     { "mes": "Agosto 2027", "corto": "Ago", "evento": true, "hitos": ["Prácticas y full outs", "Kick off / Show off internos: sábado 14 y 28, 16:00–18:00"] },
-    { "mes": "Septiembre 2027", "corto": "Sep", "evento": true, "porConfirmar": "El PDF dice 'sábado 9', pero el 9 de septiembre de 2027 es jueves.", "hitos": ["Prácticas normales", "Showcase con público: [fecha por confirmar], 15:00–18:00", "Vacaciones de Fiestas Patrias: 13 al 19"] },
+    { "mes": "Septiembre 2027", "corto": "Sep", "evento": true, "hitos": ["Prácticas normales", "Showcase con público: viernes 10, 20:00–22:00", "Vacaciones de Fiestas Patrias: 13 al 19"] },
     { "mes": "Octubre 2027", "corto": "Oct", "evento": true, "hitos": ["Inicio de la temporada de competencias del circuito nacional e internacional"] },
     { "mes": "Noviembre 2027", "corto": "Nov", "evento": true, "hitos": ["Competencias nacionales e internacionales: Chile, Brasil, Colombia", "Inscripciones temporada 2028"] }
   ],

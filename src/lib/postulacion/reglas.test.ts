@@ -61,10 +61,10 @@ test('10 años con experiencia: solo Prep, jornada Youth/Junior/Senior', () => {
   assert.deepEqual(r.jornada, { tipo: 'jornadas', grupos: ['youth-junior-senior-prep'] });
 });
 
-test('varón de 25 sin experiencia: Ice Bullets en la jornada Open', () => {
+test('varón de 25 sin experiencia: Ice Bullets y evaluación Novice del sábado (sin experiencia)', () => {
   const r = evaluarPostulacion(equipos, precios, { edad: 25, genero: 'varon', experiencia: 'ninguna' });
   assert.deepEqual(nombres(r.equipos), ['Ice Bullets']);
-  assert.deepEqual(r.jornada, { tipo: 'jornadas', grupos: ['open'] });
+  assert.deepEqual(r.jornada, { tipo: 'jornadas', grupos: ['sin-experiencia-7-19'] });
   assert.equal(r.ingresoEstimado?.mensualidad, 32000);
   assert.equal(r.ingresoEstimado?.total, 15000 + 32000 + 25000);
 });

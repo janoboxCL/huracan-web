@@ -150,3 +150,9 @@ test('el cuerpo de un grupo de inicio diferido no lleva jornada', () => {
   assert.equal(c.modalidad, 'recreativo');
   assert.equal(c.contactoParentesco, 'propio');
 });
+
+test('con «Otra comuna o región» el cuerpo lleva el texto de «¿Cuál?» como comuna', () => {
+  const c = armarCuerpo({ ...menor, comuna: 'Otra comuna o región', comunaOtra: ' Rancagua ' }, null);
+  assert.equal(c.comuna, 'Rancagua');
+  assert.equal(armarCuerpo({ ...menor, comuna: 'Maipú', comunaOtra: 'x' }, null).comuna, 'Maipú');
+});

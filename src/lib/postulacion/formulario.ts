@@ -2,6 +2,7 @@
    formato de teléfono chileno, mayoría de edad, código de postulación y mensaje de WhatsApp.
    Se prueba con `npm test` y la usa la isla `src/components/postula/postula.ts`. */
 
+import { COMUNA_OTRA, esComunaDeLista } from './comunas.ts';
 import { edadEnTemporada } from './reglas.ts';
 
 /** Fecha de la primera jornada de evaluación: referencia para saber si hay que pedir apoderado. */
@@ -98,7 +99,10 @@ export interface DatosPostulacion {
   apellido: string;
   fechaNacimiento: string;
   sexo: '' | 'dama' | 'varon';
+  /** Una comuna de la lista o `COMUNA_OTRA`. */
   comuna: string;
+  /** Texto de «¿Cuál?», solo cuando `comuna` es `COMUNA_OTRA`. */
+  comunaOtra: string;
   esAntiguo: '' | 'si' | 'no';
   experiencia: '' | 'ninguna' | 'con';
   clubAnterior: string;
@@ -117,6 +121,11 @@ export interface DatosPostulacion {
   sitioWeb: string;
 }
 
+/** Comuna que se envía: la elegida o, con «Otra comuna o región», el texto escrito. */
+export function comunaEfectiva(d: Pick<DatosPostulacion, 'comuna' | 'comunaOtra'>): string {
+  return d.comuna === COMUNA_OTRA ? (d.comunaOtra ?? '').trim() : d.comuna.trim();
+}
+
 export function datosVacios(): DatosPostulacion {
   return {
     nombre: '',
@@ -124,6 +133,7 @@ export function datosVacios(): DatosPostulacion {
     fechaNacimiento: '',
     sexo: '',
     comuna: '',
+    comunaOtra: '',
     esAntiguo: '',
     experiencia: '',
     clubAnterior: '',
@@ -164,7 +174,9 @@ export function validarCampo(campo: keyof DatosPostulacion, d: DatosPostulacion,
     case 'sexo':
       return d.sexo === '' ? 'Selecciona una opción.' : null;
     case 'comuna':
-      return vacio(d.comuna) ? 'Indica la comuna.' : null;
+      return esComunaDeLista(d.comuna) || d.comuna === COMUNA_OTRA ? null : 'Selecciona la comuna.';
+    case 'comunaOtra':
+      return d.comuna === COMUNA_OTRA && vacio(d.comunaOtra) ? 'Escribe cuál es tu comuna o región.' : null;
     case 'esAntiguo':
       return d.esAntiguo === '' ? 'Indica si es atleta antigua o antiguo de Huracán.' : null;
     case 'experiencia':
@@ -202,6 +214,7 @@ export const CAMPOS_VALIDABLES: (keyof DatosPostulacion)[] = [
   'fechaNacimiento',
   'sexo',
   'comuna',
+  'comunaOtra',
   'esAntiguo',
   'experiencia',
   'clubAnterior',

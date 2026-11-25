@@ -264,7 +264,6 @@ export type ResultadoJornada =
   | { tipo: 'jornadas'; grupos: GrupoJornada[] };
 
 /** Edad hasta la que aplica la jornada «sin experiencia» del sábado. */
-const EDAD_MAX_JORNADA_SIN_EXPERIENCIA = 19;
 
 export function resolverJornada(p: Postulante, sugeridos: readonly EquipoBase[]): ResultadoJornada {
   if (p.edad <= EDAD_MAX_TINY) return { tipo: 'sin-evaluacion', motivo: 'tiny' };
@@ -272,10 +271,9 @@ export function resolverJornada(p: Postulante, sugeridos: readonly EquipoBase[])
     return { tipo: 'inicio-diferido', inicios: sugeridos.map((e) => ({ equipo: e.nombre, inicio: e.inicio ?? '' })) };
   }
   if (p.experiencia === 'ninguna') {
-    return {
-      tipo: 'jornadas',
-      grupos: p.edad <= EDAD_MAX_JORNADA_SIN_EXPERIENCIA ? ['sin-experiencia-7-19'] : ['open'],
-    };
+    /* El club confirmó (25 nov 2026) que los mayores de 19 sin experiencia también van a la
+       evaluación Novice del sábado, es decir, la jornada de atletas sin experiencia. */
+    return { tipo: 'jornadas', grupos: ['sin-experiencia-7-19'] };
   }
   const grupos = new Set<GrupoJornada>();
   for (const e of sugeridos) grupos.add(esOpen(e) || e.programa === 'international' ? 'open' : 'youth-junior-senior-prep');

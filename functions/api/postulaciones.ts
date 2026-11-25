@@ -124,6 +124,9 @@ export const onRequestPost = async ({ request, env }: ContextoFuncion): Promise<
         jornadaTexto,
         whatsappHeadCoach: contacto.whatsappHeadCoach,
         whatsappTexto: contacto.whatsappTexto,
+        direccion: contacto.direccion,
+        comoLlegar: contacto.comoLlegar,
+        correoPagos: contacto.correoPagos,
       });
     } catch (error) {
       console.error('Falló el envío de correo', error instanceof Error ? error.message : 'error');

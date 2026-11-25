@@ -53,7 +53,7 @@ Las edades se solapan (9 y 15 años); el sistema devuelve una lista de equipos p
 | Sábado 5 | 12:00 a 14:00 | Atletas sin experiencia de 7 a 19 años |
 | Sábado 5 | 14:00 a 16:00 | Open, Open Coed Novice, Prep, International |
 
-Mayores de 19 sin experiencia: jornada Open (supuesto, por confirmar). Las siguientes evaluaciones serán con los equipos reales, por día de entrenamiento (cupos y fechas desde el CRM).
+Mayores de 19 sin experiencia: van a la evaluación Novice del sábado (jornada de atletas sin experiencia), confirmado por el club el 25 nov 2026. Las siguientes evaluaciones serán con los equipos reales, por día de entrenamiento (cupos y fechas desde el CRM).
 
 ## Monto estimado de ingreso
 
@@ -107,16 +107,24 @@ Sin habilidades que califiquen, se muestra la mensualidad estándar del programa
 - Spirit paga inscripción y vestimenta; Team Parent solo vestimenta, por transferencia. Los valores se informarán más adelante (la interfaz y el correo lo indican).
 - Recreativo (Baby Storm): inscripción y ropa se pagan por transferencia, además de la mensualidad en efectivo (como asumía el motor).
 
+## Confirmado por el club (25 nov 2026, 20:40)
+
+- Edades: Runway Diva y Super Models son de 12 a 19 años (Xtreme Force sigue sin confirmar; el sitio usa 8 a 12).
+- Mayores de 19 sin experiencia: evaluación Novice del sábado.
+- Five Elite: 4 habilidades de grupo.
+- La competencia de Orlando es en marzo (febrero queda sin evento).
+- Botón principal: «Realiza tu inscripción» (aplicado en el sitio); el paso siguiente es asistir a la evaluación inicial.
+- Showcase: viernes 10 de septiembre de 2027, 20:00 a 22:00.
+- Dirección del gimnasio: Carlos Walker Martínez 5520, San Miguel (Metro Departamental).
+- Próximas evaluaciones (enero): miércoles 6, 18:00 a 20:00 y 20:00 a 22:00; viernes de la misma semana (fecha por confirmar), mismos horarios.
+
 ## Datos pendientes
 
-- Primera práctica de los Tiny: día y hora confirmados por el club con el flyer de horarios tentativos (viernes 18:00 a 19:00 Pink Ladies y Baby Storm; sábado 12:00 a 13:00 Pink Ladies). Falta la fecha de la primera práctica.
-- Mayores de 19 sin experiencia: confirmar que van a la jornada Open (supuesto).
-- Botón principal: el club pidió «Agenda tu clase» (#16) y «Realiza tu inscripción» (#27); falta que elija.
-- Fechas y cupos de las evaluaciones posteriores al 4 y 5 de diciembre.
-- Edades del JSON del sitio vs el PDF (págs. 16 y 17): el JSON dice Runway Diva 12 a 19, Super Models 12 a 19 y Xtreme Force 8 a 12; el PDF dice 15 a 19, 15 a 19 y 9 a 12. Los flyers de Titanium Black (12 a 19) sugieren que el JSON es el vigente; confirmar con el club.
-- Five Elite: el informativo lista 4 habilidades de grupo y el flyer 3; se usa el flyer.
-- Datos de transferencia: solo viajan en el correo (variable cifrada `DATOS_TRANSFERENCIA`), nunca en el sitio. Falta entregarlos, el remitente verificado en Resend y la dirección del gimnasio.
-- Proyecto Supabase de Huracán: no creado (puede tener costo mensual); esperar confirmación.
+- Fecha de la primera práctica de los Tiny (día y hora ya confirmados: viernes 18:00 a 19:00 Pink Ladies y Baby Storm; sábado 12:00 a 13:00 Pink Ladies).
+- Valores de inscripción y vestimenta de Spirit y Team Parent: el club los informará más adelante.
+- Edad de Xtreme Force: el informativo dice 9 a 12 y el sitio 8 a 12.
+- Fecha exacta del viernes de evaluación de enero y a qué grupos corresponde cada jornada de enero (para crearlas en el CRM).
+- Datos de transferencia, remitente verificado en Resend (dominio del club), proyecto `huracan_crm` sobrante por borrar en janobox.
 - Informativo en la web: el PDF comprimido pesa 11,6 MB; valorar bajarlo más o servirlo por páginas.
 - Antispam: la API tiene campo trampa y límite de tamaño; falta limitar por IP (regla de Cloudflare o Turnstile).
 
