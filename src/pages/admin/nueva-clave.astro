@@ -1,0 +1,30 @@
+---
+import Admin from '../../layouts/Admin.astro';
+---
+
+<Admin titulo="Nueva contraseña" activo="login" sinNavegacion>
+  <div class="adm-login">
+    <h1 class="adm-titulo">Nueva contraseña</h1>
+    <p class="adm-bajada">Define una contraseña de al menos 10 caracteres.</p>
+
+    <div class="adm-aviso adm-aviso--info" data-mensaje role="status" hidden></div>
+
+    <form class="adm-formulario" data-formulario novalidate hidden>
+      <div class="adm-campo">
+        <label for="clave">Nueva contraseña</label>
+        <input id="clave" name="clave" type="password" autocomplete="new-password" minlength="10" required />
+      </div>
+      <div class="adm-campo">
+        <label for="clave2">Repite la contraseña</label>
+        <input id="clave2" name="clave2" type="password" autocomplete="new-password" minlength="10" required />
+      </div>
+      <div class="adm-aviso adm-aviso--error" data-error role="alert" hidden></div>
+      <button type="submit" class="adm-btn adm-btn--primario" data-enviar>Guardar contraseña</button>
+    </form>
+
+    <p class="adm-nota"><a href="/admin/recuperar">Pedir un enlace nuevo</a> · <a href="/admin/login">Iniciar sesión</a></p>
+  </div>
+  <script>
+    import '../../components/admin/nueva-clave.ts';
+  </script>
+</Admin>

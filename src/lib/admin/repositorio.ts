@@ -10,6 +10,11 @@ export interface Repositorio {
   obtenerUsuario(): Promise<Usuario | null>;
   iniciarSesion(correo: string, clave: string): Promise<ResultadoLogin>;
   cerrarSesion(): Promise<void>;
+  /** Envía el correo con el enlace para definir una nueva contraseña. No revela si el correo existe. */
+  pedirRecuperacion(correo: string, volverA: string): Promise<'ok' | 'red' | 'otro'>;
+  /** Toma la sesión temporal que trae el enlace del correo. `false` si el enlace no es válido o venció. */
+  abrirSesionDeRecuperacion(): Promise<boolean>;
+  cambiarClave(clave: string): Promise<'ok' | 'debil' | 'red' | 'otro'>;
   /** Fila del usuario en `administradores`; `null` si no es administrador. */
   obtenerAdministrador(usuarioId: string): Promise<Administrador | null>;
 

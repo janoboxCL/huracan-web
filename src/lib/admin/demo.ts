@@ -204,6 +204,17 @@ export function crearRepositorioDemo(datos: DatosBase, almacen: Storage | null):
     async cerrarSesion() {
       almacen?.removeItem(CLAVE_ALMACEN);
     },
+    async pedirRecuperacion() {
+      await esperar();
+      return 'ok';
+    },
+    async abrirSesionDeRecuperacion() {
+      return true;
+    },
+    async cambiarClave() {
+      await esperar();
+      return 'ok';
+    },
     async obtenerAdministrador(usuarioId) {
       return { user_id: usuarioId, nombre: 'Persona de demostración', rol: 'head_coach' };
     },

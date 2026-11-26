@@ -83,6 +83,7 @@ export const MENSAJES_LOGIN: Record<string, string> = {
   vencida: 'Tu sesión venció. Inicia sesión de nuevo.',
   'no-admin': 'Tu cuenta no tiene acceso a la administración. Pídele al head coach que te habilite.',
   salio: 'Cerraste sesión.',
+  'clave-nueva': 'Tu contraseña se actualizó. Ingresa con la nueva.',
 };
 
 /** Arranque de una página protegida. Redirige al login si falta la sesión o el permiso. */

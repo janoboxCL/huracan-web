@@ -8,7 +8,7 @@ const formulario = consulta<HTMLFormElement>('[data-formulario]');
 const boton = consulta<HTMLButtonElement>('[data-enviar]');
 
 const motivo = params.get('motivo');
-if (motivo && MENSAJES_LOGIN[motivo]) avisar(mensaje, motivo === 'no-admin' ? 'error' : 'info', MENSAJES_LOGIN[motivo]);
+if (motivo && MENSAJES_LOGIN[motivo]) avisar(mensaje, motivo === 'no-admin' ? 'error' : motivo === 'clave-nueva' ? 'ok' : 'info', MENSAJES_LOGIN[motivo]);
 
 /** Solo se vuelve a rutas internas del admin (evita redirecciones a otros sitios). */
 function destino(): string {
@@ -27,7 +27,7 @@ async function iniciar(): Promise<void> {
     }
 
     /* Si ya hay una sesión válida de administrador, se entra directo. */
-    if (motivo !== 'salio' && motivo !== 'no-admin') {
+    if (motivo !== 'salio' && motivo !== 'no-admin' && motivo !== 'clave-nueva') {
       const usuario = await repo.obtenerUsuario().catch(() => null);
       if (usuario && (await repo.obtenerAdministrador(usuario.id).catch(() => null))) location.replace(destino());
     }

@@ -1,0 +1,26 @@
+---
+import Admin from '../../layouts/Admin.astro';
+---
+
+<Admin titulo="Recuperar contraseña" activo="login" sinNavegacion>
+  <div class="adm-login">
+    <h1 class="adm-titulo">Recuperar contraseña</h1>
+    <p class="adm-bajada">Escribe tu correo y te enviaremos un enlace para definir una nueva contraseña.</p>
+
+    <div class="adm-aviso adm-aviso--info" data-mensaje role="status" hidden></div>
+
+    <form class="adm-formulario" data-formulario novalidate>
+      <div class="adm-campo">
+        <label for="correo">Correo electrónico</label>
+        <input id="correo" name="correo" type="email" autocomplete="username" inputmode="email" required />
+      </div>
+      <div class="adm-aviso adm-aviso--error" data-error role="alert" hidden></div>
+      <button type="submit" class="adm-btn adm-btn--primario" data-enviar>Enviar enlace</button>
+    </form>
+
+    <p class="adm-nota"><a href="/admin/login">Volver a iniciar sesión</a></p>
+  </div>
+  <script>
+    import '../../components/admin/recuperar.ts';
+  </script>
+</Admin>

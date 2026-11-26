@@ -80,6 +80,42 @@ export async function crearRepositorioSupabase(url: string, clave: string): Prom
       await db.auth.signOut();
     },
 
+    async pedirRecuperacion(correo, volverA) {
+      try {
+        const { error } = await db.auth.resetPasswordForEmail(correo, { redirectTo: volverA });
+        if (!error) return 'ok';
+        return error.status === 0 || /fetch|network/i.test(error.message) ? 'red' : 'otro';
+      } catch {
+        return 'red';
+      }
+    },
+
+    async abrirSesionDeRecuperacion() {
+      /* El enlace del correo vuelve con los tokens en el fragmento (#access_token=…&type=recovery). */
+      const datos = new URLSearchParams(location.hash.replace(/^#/, ''));
+      const acceso = datos.get('access_token');
+      const renovacion = datos.get('refresh_token');
+      history.replaceState(null, '', location.pathname);
+      if (datos.get('type') !== 'recovery' || !acceso || !renovacion) return false;
+      try {
+        const { data, error } = await db.auth.setSession({ access_token: acceso, refresh_token: renovacion });
+        return !error && data.session !== null;
+      } catch {
+        return false;
+      }
+    },
+
+    async cambiarClave(clave) {
+      try {
+        const { error } = await db.auth.updateUser({ password: clave });
+        if (!error) return 'ok';
+        if (/password|contraseña/i.test(error.message) && error.status === 422) return 'debil';
+        return error.status === 0 || /fetch|network/i.test(error.message) ? 'red' : 'otro';
+      } catch {
+        return 'red';
+      }
+    },
+
     async obtenerAdministrador(usuarioId) {
       const r = await db.from('administradores').select('user_id,nombre,rol').eq('user_id', usuarioId).maybeSingle();
       return comprobar<Administrador>(r as never);
