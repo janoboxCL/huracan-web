@@ -244,6 +244,7 @@ class Detalle {
               <button type="submit" class="adm-btn" data-registrar>Registrar pago</button>
             </form>
           </section>
+          ${this.ctx.admin.rol === 'coach' ? '' : this.htmlEliminar()}
         </div>
       </div>`;
 
@@ -251,6 +252,65 @@ class Detalle {
     this.pintarPagos();
     this.conectar();
     activarPistas(this.raiz);
+  }
+
+  /* ── Eliminar (solo jefatura; RLS lo vuelve a exigir) ────────── */
+
+  private htmlEliminar(): string {
+    return `<section class="adm-tarjeta adm-peligro" aria-labelledby="d-eliminar">
+            <h2 id="d-eliminar" class="adm-h2">Eliminar inscripción</h2>
+            <p class="adm-tenue">Borra la inscripción y sus pagos de forma definitiva. Úsalo solo para pruebas o duplicados: no se puede deshacer.</p>
+            <button type="button" class="adm-btn adm-btn--peligro" data-eliminar-abrir>Eliminar esta inscripción…</button>
+            <form data-eliminar-form hidden novalidate>
+              <div class="adm-campo">
+                <label for="e-codigo">Para confirmar, escribe el código <strong>${esc(this.p.codigo)}</strong></label>
+                <input id="e-codigo" name="codigo" autocomplete="off" autocapitalize="characters" spellcheck="false" />
+              </div>
+              <div class="adm-aviso" data-aviso-eliminar role="alert" hidden></div>
+              <button type="submit" class="adm-btn adm-btn--peligro" data-eliminar-confirmar disabled>Eliminar definitivamente</button>
+              <button type="button" class="adm-btn adm-btn--tenue" data-eliminar-cancelar>Cancelar</button>
+            </form>
+          </section>`;
+  }
+
+  private conectarEliminar(): void {
+    const abrir = document.querySelector<HTMLButtonElement>('[data-eliminar-abrir]');
+    if (!abrir) return;
+    const form = consulta<HTMLFormElement>('[data-eliminar-form]');
+    const campo = consulta<HTMLInputElement>('#e-codigo');
+    const confirmar = consulta<HTMLButtonElement>('[data-eliminar-confirmar]');
+    const aviso = consulta<HTMLElement>('[data-aviso-eliminar]');
+    const coincide = () => campo.value.trim().toUpperCase() === this.p.codigo.toUpperCase();
+
+    abrir.addEventListener('click', () => {
+      form.hidden = false;
+      abrir.hidden = true;
+      campo.focus();
+    });
+    consulta('[data-eliminar-cancelar]').addEventListener('click', () => {
+      form.hidden = true;
+      abrir.hidden = false;
+      campo.value = '';
+      confirmar.disabled = true;
+      avisar(aviso, 'error', '');
+      abrir.focus();
+    });
+    campo.addEventListener('input', () => {
+      confirmar.disabled = !coincide();
+    });
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!coincide()) return;
+      const liberar = ocupar(confirmar, 'Eliminando…');
+      try {
+        await this.ctx.repo.eliminarPostulacion(this.p.id);
+        this.saliendo = true;
+        location.replace(`/admin/postulaciones${leerFiltrosGuardados()}`);
+      } catch (err) {
+        liberar();
+        avisar(aviso, 'error', err instanceof ErrorAdmin ? err.message : 'No se pudo eliminar la inscripción.');
+      }
+    });
   }
 
   /* ── Gestión ──────────────────────────────────────────────── */
@@ -504,6 +564,8 @@ class Detalle {
         else e.preventDefault();
       });
     }
+
+    this.conectarEliminar();
 
     consulta<HTMLFormElement>('[data-gestion]').addEventListener('submit', (e) => {
       e.preventDefault();

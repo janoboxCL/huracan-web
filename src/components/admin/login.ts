@@ -58,6 +58,10 @@ async function iniciar(): Promise<void> {
           return;
         }
         const usuario = await repo.obtenerUsuario();
+        if (usuario?.debeCambiarClave) {
+          location.replace('/admin/nueva-clave?primera=1');
+          return;
+        }
         const admin = usuario ? await repo.obtenerAdministrador(usuario.id) : null;
         if (!admin) {
           await repo.cerrarSesion().catch(() => undefined);

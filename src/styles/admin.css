@@ -390,6 +390,21 @@ a.adm-codigo {
   color: var(--texto-2);
 }
 
+.adm-btn--peligro {
+  background: transparent;
+  border-color: var(--estado-error);
+  color: var(--texto);
+}
+
+.adm-btn--peligro:hover:not(:disabled) {
+  background: var(--estado-error);
+  border-color: var(--estado-error);
+}
+
+.adm-peligro {
+  border-color: var(--estado-error);
+}
+
 .adm-btn--chico {
   min-height: 2.25rem;
   padding: 0.25rem var(--esp-3);

@@ -234,3 +234,9 @@ Consolidado al cierre de la etapa 1 (detalle por bloque más abajo):
 - **Edad de Team Parent:** la pieza dice «apoderados y parientes»; en el buscador se fijó 18 años o más (supuesto).
 - **Conflictos entre piezas del club:** Xtreme Force 8–12 años (pieza de equipos) frente a 9–12 (diapositiva); Runway Diva 12–19 años (pieza) frente a 15–19 (diapositiva); Super Models «damas y varones» (diapositiva) frente a mixto. Se usó la pieza «Equipos tentativos 2027».
 - `docs/contenido/huracan-2027.json` se modificó por pedido explícito del dueño del proyecto; `informativo-2027.txt` no se tocó y ya no coincide con equipos y horarios.
+
+## 2026-11-26 · CRM: eliminar inscripciones y crear usuarios
+
+- **Eliminar inscripción** (ficha, solo head coach y administración): pide escribir el código de la inscripción; borra también sus pagos. RLS: política `postulaciones: borrado de la jefatura` (`es_jefatura()`); el rol coach no puede borrar.
+- **Usuarios** (`/admin/usuarios`, solo jefatura): crea la cuenta mediante `POST /api/admin/usuarios` (Pages Function con la clave de servicio, que verifica la sesión y el rol de quien llama). La cuenta nace con `user_metadata.debe_cambiar_clave = true`; en el primer ingreso el CRM redirige a `/admin/nueva-clave?primera=1` hasta que la persona define su contraseña. La marca es una guía de uso; el acceso a datos lo sigue controlando RLS.
+- Migración `20261126000004_usuarios_y_borrado.sql` (aplicada): columna `administradores.correo`, `es_jefatura()`, políticas nuevas.

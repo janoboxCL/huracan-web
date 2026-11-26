@@ -7,7 +7,7 @@ import { leerBanner, leerInscripciones } from './ajustes.ts';
 import { ErrorAdmin, MENSAJE_CONFLICTO, traducirError } from './errores.ts';
 import { ocupacionPorJornada } from './jornadas.ts';
 import type { Repositorio } from './repositorio.ts';
-import type { Administrador, Ajustes, CambiosPostulacion, JornadaAdmin, Pago, Postulacion } from './tipos.ts';
+import type { Administrador, Ajustes, CambiosPostulacion, DatosNuevoUsuario, JornadaAdmin, Pago, Postulacion } from './tipos.ts';
 
 export const URL_SUPABASE_POR_DEFECTO = 'https://edvvueaduetlruiushvz.supabase.co';
 export const CLAVE_PUBLICABLE_POR_DEFECTO = 'sb_publishable_S7G3potppIsjlbFQ1sZmBw_y4AH2ToG';
@@ -20,6 +20,17 @@ const COLUMNAS_POSTULACION = [
   'contacto_telefono', 'contacto_correo', 'programa_sugerido', 'equipos_sugeridos', 'jornada_id', 'jornada_tipo', 'equipo_evaluacion',
   'monto_estimado', 'desglose', 'equipo_asignado', 'promocion_validada', 'notas_coach', 'creado_en', 'actualizado_en',
 ].join(',');
+
+const MENSAJES_CREAR_USUARIO: Record<string, string> = {
+  sin_sesion: 'Tu sesión venció. Vuelve a iniciar sesión.',
+  sin_permiso: 'Tu cuenta no tiene permiso para crear usuarios.',
+  correo_existente: 'Ya existe una cuenta con ese correo.',
+  correo_invalido: 'El correo no es válido.',
+  nombre_invalido: 'Escribe el nombre de la persona (entre 2 y 80 caracteres).',
+  rol_invalido: 'Elige un rol válido.',
+  clave_invalida: 'La contraseña temporal debe tener al menos 10 caracteres.',
+  clave_debil: 'Esa contraseña temporal es demasiado débil. Usa una más larga o genera una.',
+};
 
 const hora = (v: string) => v.slice(0, 5);
 
@@ -59,7 +70,7 @@ export async function crearRepositorioSupabase(url: string, clave: string): Prom
         /* getUser consulta al servidor: detecta sesiones revocadas, a diferencia de getSession. */
         const { data, error } = await db.auth.getUser();
         if (error || !data.user) return null;
-        return { id: data.user.id, correo: data.user.email ?? '' };
+        return { id: data.user.id, correo: data.user.email ?? '', debeCambiarClave: data.user.user_metadata?.['debe_cambiar_clave'] === true };
       } catch {
         throw new ErrorAdmin('No se pudo verificar tu sesión. Revisa tu conexión e inténtalo de nuevo.', 'red');
       }
@@ -107,7 +118,7 @@ export async function crearRepositorioSupabase(url: string, clave: string): Prom
 
     async cambiarClave(clave) {
       try {
-        const { error } = await db.auth.updateUser({ password: clave });
+        const { error } = await db.auth.updateUser({ password: clave, data: { debe_cambiar_clave: false } });
         if (!error) return 'ok';
         if (/password|contraseña/i.test(error.message) && error.status === 422) return 'debil';
         return error.status === 0 || /fetch|network/i.test(error.message) ? 'red' : 'otro';
@@ -119,6 +130,37 @@ export async function crearRepositorioSupabase(url: string, clave: string): Prom
     async obtenerAdministrador(usuarioId) {
       const r = await db.from('administradores').select('user_id,nombre,rol').eq('user_id', usuarioId).maybeSingle();
       return comprobar<Administrador>(r as never);
+    },
+
+    async listarAdministradores() {
+      const r = await db.from('administradores').select('user_id,nombre,rol,correo').order('creado_en', { ascending: true });
+      return (comprobar(r as never) ?? []) as Administrador[];
+    },
+
+    async crearUsuario(datos: DatosNuevoUsuario) {
+      const { data: sesion } = await db.auth.getSession();
+      const token = sesion.session?.access_token;
+      if (!token) throw new ErrorAdmin('Tu sesión venció. Vuelve a iniciar sesión.', 'permisos');
+      let respuesta: Response;
+      try {
+        respuesta = await fetch('/api/admin/usuarios', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ nombre: datos.nombre, correo: datos.correo, rol: datos.rol, clave: datos.claveTemporal }),
+        });
+      } catch {
+        throw new ErrorAdmin('No se pudo conectar con el servidor. Revisa tu conexión e inténtalo de nuevo.', 'red');
+      }
+      const cuerpo = (await respuesta.json().catch(() => ({}))) as { error?: string; administrador?: Administrador };
+      if (respuesta.ok && cuerpo.administrador) return cuerpo.administrador;
+      throw new ErrorAdmin(MENSAJES_CREAR_USUARIO[cuerpo.error ?? ''] ?? 'No se pudo crear la cuenta. Inténtalo de nuevo; si persiste, avisa a quien administra el sitio.', cuerpo.error === 'correo_existente' ? 'duplicado' : 'otro');
+    },
+
+    async eliminarPostulacion(id) {
+      /* `select` devuelve las filas borradas: si no hay ninguna, RLS no lo permitió o ya no existía. */
+      const r = await db.from('postulaciones').delete().eq('id', id).select('id');
+      const filas = (comprobar(r as never) ?? []) as { id: string }[];
+      if (filas.length === 0) throw new ErrorAdmin('No se pudo eliminar: la inscripción ya no existe o tu cuenta no tiene permiso para borrar.', 'permisos');
     },
 
     async listarPostulaciones() {

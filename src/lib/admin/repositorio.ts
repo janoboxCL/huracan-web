@@ -1,7 +1,7 @@
 /* Capa de acceso a datos del CRM. Las páginas solo conocen esta interfaz: hay una
    implementación real (Supabase, `supabase.ts`) y una de demostración en memoria (`demo.ts`). */
 
-import type { Administrador, Ajustes, CambiosPostulacion, JornadaAdmin, Pago, Postulacion, Usuario } from './tipos.ts';
+import type { Administrador, Ajustes, CambiosPostulacion, DatosNuevoUsuario, JornadaAdmin, Pago, Postulacion, Usuario } from './tipos.ts';
 
 export type ResultadoLogin = { ok: true } | { ok: false; motivo: 'credenciales' | 'red' | 'otro' };
 
@@ -14,6 +14,7 @@ export interface Repositorio {
   pedirRecuperacion(correo: string, volverA: string): Promise<'ok' | 'red' | 'otro'>;
   /** Toma la sesión temporal que trae el enlace del correo. `false` si el enlace no es válido o venció. */
   abrirSesionDeRecuperacion(): Promise<boolean>;
+  /** Define la contraseña propia y retira la marca de contraseña temporal. */
   cambiarClave(clave: string): Promise<'ok' | 'debil' | 'red' | 'otro'>;
   /** Fila del usuario en `administradores`; `null` si no es administrador. */
   obtenerAdministrador(usuarioId: string): Promise<Administrador | null>;
@@ -22,6 +23,14 @@ export interface Repositorio {
   obtenerPostulacion(codigo: string): Promise<Postulacion | null>;
   /** `version` es el `actualizado_en` que vio quien edita: si cambió, lanza `ErrorAdmin` de tipo `conflicto` sin pisar. */
   actualizarPostulacion(id: string, cambios: CambiosPostulacion, version?: string): Promise<Postulacion>;
+
+  /** Borra la postulación y sus pagos. Solo la jefatura (lo exige RLS). */
+  eliminarPostulacion(id: string): Promise<void>;
+
+  /** Cuentas del CRM (solo la jefatura las ve completas). */
+  listarAdministradores(): Promise<Administrador[]>;
+  /** Crea una cuenta con contraseña temporal; en su primer ingreso deberá cambiarla. Lanza `ErrorAdmin` con el motivo. */
+  crearUsuario(datos: DatosNuevoUsuario): Promise<Administrador>;
 
   listarPagos(postulacionId: string): Promise<Pago[]>;
   /** Todos los pagos registrados (para el reporte). */

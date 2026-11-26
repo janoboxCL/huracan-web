@@ -95,6 +95,11 @@ export async function arrancar(): Promise<Contexto> {
     return null;
   });
   if (!usuario) irALogin('sin-sesion');
+  /* Cuenta con contraseña temporal: antes de usar el CRM debe definir la suya. */
+  if (usuario.debeCambiarClave) {
+    location.replace('/admin/nueva-clave?primera=1');
+    throw new ErrorAdmin('Redirigiendo al cambio de contraseña.');
+  }
   const admin = await repo.obtenerAdministrador(usuario.id).catch((e: unknown) => {
     if (e instanceof ErrorAdmin && e.tipo === 'red') throw e;
     return null;
@@ -131,6 +136,8 @@ function prepararCabecera(c: Contexto): void {
       location.replace('/admin/login?motivo=salio');
     });
   }
+  /* «Usuarios» solo se ofrece a la jefatura (la página y la función de servidor lo vuelven a exigir). */
+  if (c.admin.rol !== 'coach') document.querySelectorAll<HTMLElement>('[data-solo-jefatura]').forEach((el) => (el.hidden = false));
   /* Texto y llave de la demostración solo dentro de esta condición: el build normal los elimina. */
   if ((import.meta.env.DEV || import.meta.env.PUBLIC_ADMIN_DEMO === '1') && c.demo) {
     const aviso = document.querySelector<HTMLElement>('[data-aviso-demo]');

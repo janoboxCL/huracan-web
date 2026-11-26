@@ -84,6 +84,7 @@ export interface Administrador {
   user_id: string;
   nombre: string;
   rol: 'head_coach' | 'administracion' | 'coach';
+  correo?: string | null;
 }
 
 export interface Banner {
@@ -104,4 +105,15 @@ export interface Ajustes {
 export interface Usuario {
   id: string;
   correo: string;
+  /** Cuenta creada con contraseña temporal: debe definir la suya antes de usar el CRM. */
+  debeCambiarClave?: boolean;
+}
+
+export type RolAdmin = Administrador['rol'];
+
+export interface DatosNuevoUsuario {
+  nombre: string;
+  correo: string;
+  rol: RolAdmin;
+  claveTemporal: string;
 }

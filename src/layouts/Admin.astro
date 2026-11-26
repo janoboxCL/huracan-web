@@ -11,7 +11,7 @@ import '../styles/admin.css';
 interface Props {
   titulo: string;
   /** Sección activa de la navegación. */
-  activo?: 'resumen' | 'postulaciones' | 'jornadas' | 'reportes' | 'ajustes' | 'login';
+  activo?: 'resumen' | 'postulaciones' | 'jornadas' | 'reportes' | 'ajustes' | 'usuarios' | 'login';
   /** El login no muestra la navegación ni exige sesión. */
   sinNavegacion?: boolean;
 }
@@ -41,6 +41,7 @@ const enlaces = [
   { id: 'jornadas', texto: 'Jornadas', href: '/admin/jornadas' },
   { id: 'reportes', texto: 'Reportes', href: '/admin/reportes' },
   { id: 'ajustes', texto: 'Ajustes', href: '/admin/ajustes' },
+  { id: 'usuarios', texto: 'Usuarios', href: '/admin/usuarios' },
 ] as const;
 ---
 
@@ -61,7 +62,7 @@ const enlaces = [
         <nav class="adm-nav" aria-label="Administración">
           <ul role="list">
             {enlaces.map((e) => (
-              <li>
+              <li hidden={e.id === 'usuarios'} data-solo-jefatura={e.id === 'usuarios' ? '' : undefined}>
                 <a href={e.href} aria-current={activo === e.id ? 'page' : undefined}>
                   {e.texto}
                 </a>

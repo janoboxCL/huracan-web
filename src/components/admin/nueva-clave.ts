@@ -11,8 +11,17 @@ const LARGO_MINIMO = 10;
 async function iniciar(): Promise<void> {
   try {
     const { repo } = await arrancarLogin();
-    const valido = await repo.abrirSesionDeRecuperacion();
-    if (!valido) {
+    /* Primer ingreso: la persona ya inició sesión con su contraseña temporal. Recuperación: llega por el enlace del correo. */
+    const primera = new URLSearchParams(location.search).get('primera') === '1';
+    if (primera) {
+      const usuario = await repo.obtenerUsuario().catch(() => null);
+      if (!usuario) {
+        location.replace('/admin/login?motivo=sin-sesion');
+        return;
+      }
+      consulta<HTMLElement>('[data-titulo]').textContent = 'Define tu contraseña';
+      consulta<HTMLElement>('[data-bajada]').textContent = 'Es tu primer ingreso. Reemplaza la contraseña temporal por una propia de al menos 10 caracteres.';
+    } else if (!(await repo.abrirSesionDeRecuperacion())) {
       avisar(mensaje, 'error', 'El enlace no es válido o venció. Pide uno nuevo.');
       return;
     }
@@ -35,6 +44,10 @@ async function iniciar(): Promise<void> {
       const liberar = ocupar(boton, 'Guardando…');
       try {
         const r = await repo.cambiarClave(clave);
+        if (r === 'ok' && primera) {
+          location.replace('/admin');
+          return;
+        }
         if (r === 'ok') {
           await repo.cerrarSesion().catch(() => undefined);
           location.replace('/admin/login?motivo=clave-nueva');

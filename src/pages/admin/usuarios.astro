@@ -1,0 +1,62 @@
+---
+import Admin from '../../layouts/Admin.astro';
+---
+
+<Admin titulo="Usuarios" activo="usuarios">
+  <div class="adm-aviso adm-aviso--info" data-carga role="status">Verificando sesión…</div>
+
+  <div data-contenido hidden>
+    <h1 class="adm-titulo">Usuarios</h1>
+    <p class="adm-bajada">Crea cuentas para quienes administran el CRM. Cada cuenta nace con una contraseña temporal y la persona debe cambiarla en su primer ingreso.</p>
+
+    <div data-sin-permiso class="adm-aviso adm-aviso--error" role="alert" hidden>Tu cuenta no tiene permiso para administrar usuarios.</div>
+
+    <div data-panel hidden>
+      <section class="adm-tarjeta" aria-labelledby="u-nuevo">
+        <h2 id="u-nuevo" class="adm-h2">Crear una cuenta</h2>
+        <form data-formulario novalidate>
+          <div class="adm-campo">
+            <label for="u-nombre">Nombre</label>
+            <input id="u-nombre" name="nombre" type="text" autocomplete="off" maxlength="80" required />
+          </div>
+          <div class="adm-campo">
+            <label for="u-correo">Correo</label>
+            <input id="u-correo" name="correo" type="email" autocomplete="off" inputmode="email" maxlength="120" required />
+          </div>
+          <div class="adm-campo">
+            <label for="u-rol">Rol</label>
+            <select id="u-rol" name="rol">
+              <option value="coach">Coach: ve y gestiona postulaciones</option>
+              <option value="administracion">Administración: además elimina inscripciones y crea usuarios</option>
+              <option value="head_coach">Head coach: además elimina inscripciones y crea usuarios</option>
+            </select>
+          </div>
+          <div class="adm-campo">
+            <label for="u-clave">Contraseña temporal</label>
+            <input id="u-clave" name="clave" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" minlength="10" maxlength="72" required aria-describedby="u-clave-ayuda" />
+            <p class="adm-ayuda" id="u-clave-ayuda">Al menos 10 caracteres. Se la entregas a la persona; al ingresar tendrá que definir una propia.</p>
+            <button type="button" class="adm-btn adm-btn--chico" data-generar>Generar contraseña</button>
+          </div>
+          <div class="adm-aviso" data-aviso role="status" aria-live="polite" hidden></div>
+          <button type="submit" class="adm-btn adm-btn--primario" data-crear>Crear cuenta</button>
+        </form>
+      </section>
+
+      <section class="adm-tarjeta" aria-labelledby="u-lista">
+        <h2 id="u-lista" class="adm-h2">Cuentas con acceso</h2>
+        <div class="adm-tabla-contenedor">
+          <table class="adm-tabla">
+            <thead>
+              <tr><th scope="col">Nombre</th><th scope="col">Correo</th><th scope="col">Rol</th></tr>
+            </thead>
+            <tbody data-lista></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    import '../../components/admin/usuarios.ts';
+  </script>
+</Admin>

@@ -10,7 +10,7 @@ import { leerBanner, leerInscripciones } from './ajustes.ts';
 import { ErrorAdmin, MENSAJE_CONFLICTO } from './errores.ts';
 import { ocupacionPorJornada } from './jornadas.ts';
 import type { Repositorio } from './repositorio.ts';
-import type { Ajustes, CambiosPostulacion, Estado, JornadaAdmin, Pago, Postulacion } from './tipos.ts';
+import type { Administrador, Ajustes, CambiosPostulacion, Estado, JornadaAdmin, Pago, Postulacion } from './tipos.ts';
 import {
   JORNADAS_INICIALES,
   evaluarPostulacion,
@@ -70,6 +70,7 @@ interface Estado_ {
   pagos: Pago[];
   jornadas: JornadaAdmin[];
   ajustes: Ajustes;
+  administradores: Administrador[];
 }
 
 export interface DatosBase {
@@ -167,6 +168,7 @@ export function crearEstadoDemo({ equipos, precios }: DatosBase): Estado_ {
     postulaciones,
     pagos,
     jornadas,
+    administradores: [],
     ajustes: {
       banner: leerBanner({ visible: true, texto: 'Evaluaciones el 4 y 5 de diciembre. Texto de ejemplo.', enlace: '/postula' }),
       inscripciones: leerInscripciones({ estado: 'abiertas' }),
@@ -180,7 +182,10 @@ export function crearRepositorioDemo(datos: DatosBase, almacen: Storage | null):
   let estado: Estado_ = crearEstadoDemo(datos);
   try {
     const guardado = almacen?.getItem(CLAVE_ALMACEN);
-    if (guardado) estado = JSON.parse(guardado) as Estado_;
+    if (guardado) {
+      const leido = JSON.parse(guardado) as Estado_;
+      estado = { ...leido, administradores: leido.administradores ?? [] };
+    }
   } catch {
     /* estado dañado: se parte de los datos de ejemplo */
   }
@@ -218,6 +223,27 @@ export function crearRepositorioDemo(datos: DatosBase, almacen: Storage | null):
     },
     async obtenerAdministrador(usuarioId) {
       return { user_id: usuarioId, nombre: 'Persona de demostración', rol: 'head_coach' };
+    },
+
+    async listarAdministradores() {
+      await esperar();
+      return [{ user_id: 'demo-admin', nombre: 'Persona de demostración', rol: 'head_coach', correo: 'demo@huracanallstars.cl' }, ...estado.administradores];
+    },
+    async crearUsuario(datos) {
+      await esperar();
+      if (estado.administradores.some((a) => a.correo === datos.correo)) throw new ErrorAdmin('Ya existe una cuenta con ese correo.', 'duplicado');
+      const nuevo = { user_id: `demo-${Date.now()}`, nombre: datos.nombre, rol: datos.rol, correo: datos.correo };
+      estado.administradores.push(nuevo);
+      guardar();
+      return structuredClone(nuevo);
+    },
+    async eliminarPostulacion(id) {
+      await esperar();
+      const antes = estado.postulaciones.length;
+      estado.postulaciones = estado.postulaciones.filter((x) => x.id !== id);
+      estado.pagos = estado.pagos.filter((x) => x.postulacion_id !== id);
+      if (estado.postulaciones.length === antes) throw new ErrorAdmin('No se encontró la postulación.', 'no-encontrado');
+      guardar();
     },
 
     async listarPostulaciones() {
