@@ -11,6 +11,22 @@ export class ErrorSupabase extends Error {
   }
 }
 
+/** Correos que reciben copia oculta de cada inscripción (`ajustes_privados.correo_copia_oculta`).
+ *  Nunca interrumpe la inscripción: ante cualquier falla devuelve una lista vacía. */
+export async function leerCopiasOcultas(env: Entorno): Promise<string[]> {
+  try {
+    const respuesta = await fetch(`${env.SUPABASE_URL}/rest/v1/ajustes_privados?clave=eq.correo_copia_oculta&select=valor`, {
+      headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, Authorization: `Bearer ${env.SUPABASE_SERVICE_ROLE_KEY}` },
+    });
+    if (!respuesta.ok) return [];
+    const filas = (await respuesta.json()) as { valor: unknown }[];
+    const valor = filas[0]?.valor;
+    return Array.isArray(valor) ? valor.filter((c): c is string => typeof c === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(c)) : [];
+  } catch {
+    return [];
+  }
+}
+
 export async function rpc<T>(env: Entorno, funcion: string, argumentos: Record<string, unknown> = {}): Promise<T> {
   const respuesta = await fetch(`${env.SUPABASE_URL}/rest/v1/rpc/${funcion}`, {
     method: 'POST',

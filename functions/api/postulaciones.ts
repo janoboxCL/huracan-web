@@ -9,7 +9,7 @@ import { franjasPorEquipo, textoHorarioEquipo, type DiaHorario } from '../../src
 import { JORNADAS_INICIALES, edadEnTemporada, evaluarPostulacion, preciosDesdeContenido, type EquipoBase, type ContenidoPrecios } from '../../src/lib/postulacion/reglas.ts';
 import type { ContextoFuncion } from '../../src/lib/servidor/entorno.ts';
 import { enviarCorreo } from '../../src/lib/servidor/correo.ts';
-import { ErrorSupabase, rpc } from '../../src/lib/servidor/supabase.ts';
+import { ErrorSupabase, leerCopiasOcultas, rpc } from '../../src/lib/servidor/supabase.ts';
 import { validarPostulacion } from '../../src/lib/servidor/validar.ts';
 
 const equipos = (contenido as unknown as { equipos: EquipoBase[] }).equipos;
@@ -147,6 +147,7 @@ export const onRequestPost = async ({ request, env }: ContextoFuncion): Promise<
         direccion: contacto.direccion,
         comoLlegar: contacto.comoLlegar,
         correoPagos: contacto.correoPagos,
+        copiasOcultas: await leerCopiasOcultas(env),
       });
     } catch (error) {
       console.error('Falló el envío de correo', error instanceof Error ? error.message : 'error');

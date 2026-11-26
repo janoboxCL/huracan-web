@@ -19,6 +19,8 @@ export interface DatosCorreo {
   comoLlegar?: string[];
   /** Correo alternativo para enviar el comprobante de pago. */
   correoPagos?: string;
+  /** Copias ocultas adicionales a las de `CORREO_COACH` (p. ej. desde `ajustes_privados`). */
+  copiasOcultas?: string[];
 }
 
 const escapar = (s: string) =>
@@ -167,13 +169,14 @@ export async function enviarCorreo(env: Entorno, d: DatosCorreo): Promise<boolea
     return false;
   }
   const { asunto, texto, html } = construirCorreo(d, env.DATOS_TRANSFERENCIA);
+  const copias = [...new Set([env.CORREO_COACH, ...(d.copiasOcultas ?? [])].filter((c): c is string => !!c && c.toLowerCase() !== d.para.toLowerCase()))];
   const respuesta = await fetch('https://api.resend.com/emails', {
     method: 'POST',
     headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
     body: JSON.stringify({
       from: env.CORREO_ORIGEN,
       to: [d.para],
-      ...(env.CORREO_COACH ? { bcc: [env.CORREO_COACH] } : {}),
+      ...(copias.length > 0 ? { bcc: copias } : {}),
       subject: asunto,
       text: texto,
       html,
