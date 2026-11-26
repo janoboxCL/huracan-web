@@ -26,7 +26,7 @@ const tituloBase = `${nombreSitio} · Cheerleading en Santiago · Temporada ${co
 const tituloCompleto = titulo ? `${titulo} · ${nombreSitio}` : tituloBase;
 const descripcionFinal =
   descripcion ??
-  `Club de cheerleading de ${club.ciudad.split(',')[0]} desde ${club.fundacion}. ${club.edades}. ${club.mensajeClave}: inscripciones abiertas para la temporada ${contenido._temporada}.`;
+  `Cheerleading All Stars en ${club.ciudad.split(',')[0]} desde el ${club.fundacion}. ${club.edades}. Desde los primeros pasos a los escenarios internacionales. ${club.mensajeClave}: inscripciones abiertas para la temporada ${contenido._temporada}.`;
 
 const sitio = Astro.site ?? new URL(Astro.url.origin);
 const canonica = new URL(Astro.url.pathname, sitio).href;

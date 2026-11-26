@@ -73,7 +73,7 @@ Hay dos subagentes en `.claude/agents/`:
 
 ## Etapas
 
-1. **Sitio estático v2**: base Astro, tokens, layout, las 12 secciones del inicio con contenido desde el JSON, buscador de equipos (isla), publicación en Cloudflare Pages (`*.pages.dev`).
+1. **Sitio estático v2**: base Astro, tokens, layout, las 12 secciones del inicio con contenido desde el JSON, buscador de equipos (isla), publicación en Cloudflare Pages, con dominio definitivo `https://huracanallstars.cl`.
 2. **Supabase**: tablas de catálogo (programas, equipos, horarios, valores, promociones, calendario, staff, logros, viajes, documentos, ajustes) y lectura en el build.
 3. **Agenda tu evaluación**: formulario de 3 pasos, cupos en vivo, correo de confirmación, enlace para reagendar o cancelar.
 4. **CRM `/admin`**: login, evaluaciones y reservas, fichas de familias, asignación a equipos (titular/reserva).

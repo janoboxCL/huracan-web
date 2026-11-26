@@ -17,7 +17,7 @@ Consolidado al cierre de la etapa 1 (detalle por bloque más abajo):
 - **Montos de ropa de abrigo y del pack de competencias internacionales** (`[por confirmar]`).
 - **Asignación de Pink Ladies del viernes** (diagramación ambigua del PDF; no publicada).
 - **Pago antes de la evaluación:** definir si el flujo online lo mantiene (no se publica el proceso actual).
-- **Dominio definitivo:** hoy `SITE_URL` por defecto es `https://huracan-web.pages.dev`.
+- **Dominio definitivo:** la URL pública está fija en `https://huracanallstars.cl` (`astro.config.mjs`); se ignora cualquier `SITE_URL` que apunte a `*.pages.dev`.
 - **Textos que vienen de la maqueta v2 y no del JSON**, a validar con el club: ver «Decisiones de contenido» de cada bloque.
 
 ---

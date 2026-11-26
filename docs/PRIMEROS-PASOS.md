@@ -41,7 +41,7 @@ Orden sugerido de bloques:
 
 1. Cloudflare → Workers & Pages → Crear → Pages → Conectar con Git → elige `huracan-web`.
 2. Framework: Astro · comando de build `npm run build` · carpeta de salida `dist`.
-3. Cada rama genera una URL de vista previa; `main` publica en `huracan-web.pages.dev` (o el nombre que quede disponible).
+3. Cada rama genera una URL de vista previa; `main` publica en el dominio definitivo `https://huracanallstars.cl`.
 4. Cuando el club tenga dominio, se agrega en "Dominios personalizados".
 
 ## Consejos
