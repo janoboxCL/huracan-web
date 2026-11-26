@@ -129,7 +129,7 @@ export function construirCorreo(d: DatosCorreo, transferencia: string | undefine
     ? `Si tienes dudas, escribe al head coach por WhatsApp (${d.whatsappTexto}) indicando tu código ${d.codigo}.`
     : `Después de pagar, envía el comprobante al head coach por WhatsApp (${d.whatsappTexto}) indicando tu código ${d.codigo}.${
         d.correoPagos
-          ? ` También puedes enviarlo al correo ${d.correoPagos}, indicando en el asunto el nombre del deportista, quién paga y qué pagas.`
+          ? ` También puedes enviarlo al correo ${d.correoPagos}, indicando en el asunto el nombre del atleta, quién paga y qué pagas.`
           : ''
       }`;
   if (!sinPago) notasMontos.push('El monto es una estimación sin promociones. El head coach confirma equipo, promoción y monto final.');

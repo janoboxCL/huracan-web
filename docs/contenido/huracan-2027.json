@@ -113,7 +113,7 @@
     { "nombre": "Huracán Velocity Lightning", "programa": "international", "categoria": "Open coed elite 3", "genero": "mixto", "edadMin": 15, "edadMax": null, "rango": "Damas y varones desde los 15 años y sin límite de edad" },
     { "nombre": "Huracán Five Elite", "programa": "international", "categoria": "Open coed elite 4", "genero": "mixto", "edadMin": 15, "edadMax": null, "rango": "Damas y varones desde los 15 años y sin límite de edad" }
   ],
-  "_notaEquipos": "Categorías y niveles tentativos 2027. La edad es la que cumple la deportista durante 2027.",
+  "_notaEquipos": "Categorías y niveles tentativos 2027. La edad es la que cumple el atleta durante 2027.",
   "horarios": [
     { "dia": "Lunes", "bloques": [
       { "inicio": "16:45", "fin": "18:00", "texto": "Clase extra flyer · gimnasia", "tipo": "extra" },

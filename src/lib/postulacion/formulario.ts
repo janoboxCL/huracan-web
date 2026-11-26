@@ -161,9 +161,9 @@ export function validarCampo(campo: keyof DatosPostulacion, d: DatosPostulacion,
   const vacio = (t: string) => t.trim().length === 0;
   switch (campo) {
     case 'nombre':
-      return vacio(d.nombre) ? 'Escribe el nombre de la deportista.' : null;
+      return vacio(d.nombre) ? 'Escribe el nombre del atleta.' : null;
     case 'apellido':
-      return vacio(d.apellido) ? 'Escribe el apellido de la deportista.' : null;
+      return vacio(d.apellido) ? 'Escribe el apellido del atleta.' : null;
     case 'fechaNacimiento': {
       if (vacio(d.fechaNacimiento)) return 'Indica la fecha de nacimiento.';
       if (!leerFecha(d.fechaNacimiento)) return 'La fecha no es válida. Usa el formato día/mes/año.';
@@ -260,7 +260,7 @@ export interface DatosMensaje {
   /** Texto de la jornada elegida o, en los grupos de inicio diferido, de cuándo comienzan. */
   jornada: string;
   equipos: string[];
-  /** Quien escribe: apoderado o la propia deportista. */
+  /** Quien escribe: apoderado o el propio atleta. */
   contacto: string;
   /** Grupos que comienzan más adelante (Spirit, Team Parent): no hay comprobante ni jornada. */
   inicioDiferido?: boolean;

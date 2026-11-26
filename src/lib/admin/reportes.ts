@@ -154,7 +154,7 @@ export function hojasReporte(d: DatosReporte, generado: string): Hoja[] {
 
   const postulaciones: Celda[][] = [
     cab(
-      'Código', 'Estado', 'Deportista', 'Fecha de nacimiento', 'Edad en 2027', 'Sexo', 'Comuna', 'Estuvo en Huracán',
+      'Código', 'Estado', 'Atleta', 'Fecha de nacimiento', 'Edad en 2027', 'Sexo', 'Comuna', 'Estuvo en Huracán',
       'Experiencia', 'Club anterior', 'Años de experiencia', 'Programa sugerido', 'Equipos sugeridos', 'Equipo asignado',
       'Evaluación', 'Contacto', 'Parentesco', 'Teléfono', 'Correo', 'Monto estimado', 'Pagos confirmados', 'Promociones declaradas',
       'Promoción validada', 'Notas del coach', 'Creada',
@@ -176,7 +176,7 @@ export function hojasReporte(d: DatosReporte, generado: string): Hoja[] {
   ];
 
   const pagos: Celda[][] = [
-    cab('Código', 'Deportista', 'Concepto', 'Monto', 'Estado del pago', 'Confirmado', 'Registrado'),
+    cab('Código', 'Atleta', 'Concepto', 'Monto', 'Estado del pago', 'Confirmado', 'Registrado'),
     ...[...d.pagos]
       .sort((a, b) => Date.parse(b.creado_en) - Date.parse(a.creado_en))
       .map((x): Celda[] => {
