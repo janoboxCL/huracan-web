@@ -51,6 +51,21 @@ const { sistema, club } = contenido;
       }
     </ol>
 
+    <div class="compromiso soplo">
+      <h3 class="disp compromiso__titulo">{sistema.compromiso.titulo}</h3>
+      <p class="compromiso__intro">{sistema.compromiso.intro}</p>
+      <ul role="list" class="compromiso__items">
+        {
+          sistema.compromiso.items.map((i) => (
+            <li class="compromiso__item">
+              <h4 class="disp compromiso__subtitulo">{i.titulo}</h4>
+              <p class="compromiso__texto">{i.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
     <div class="franja soplo">
       <p class="disp franja__titulo">¿Partes desde cero?</p>
       <p class="franja__texto">{sistema.clasesExtrasNota}</p>
@@ -169,6 +184,59 @@ const { sistema, club } = contenido;
     color: var(--texto-2);
   }
 
+  /* Titular y reserva */
+  .compromiso {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-4);
+    padding: 1.625rem 1.5rem;
+    background: var(--negro);
+    color: var(--blanco);
+    border-left: 8px solid var(--amarillo);
+  }
+
+  .compromiso__titulo {
+    font-size: clamp(2rem, 4vw, 2.75rem);
+    color: var(--amarillo);
+  }
+
+  .compromiso__intro {
+    max-width: 62rem;
+    font-size: var(--t-base);
+    line-height: 1.55;
+    color: var(--texto-2);
+  }
+
+  .compromiso__items {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--esp-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .compromiso__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--esp-2);
+    min-width: 0;
+    padding: 1.125rem 1.25rem;
+    background: var(--superficie-2);
+    border-top: 4px solid var(--amarillo);
+  }
+
+  .compromiso__subtitulo {
+    font-size: 1.625rem;
+    color: var(--blanco);
+  }
+
+  .compromiso__texto {
+    font-size: var(--t-sm);
+    line-height: 1.55;
+    color: var(--texto-2);
+  }
+
   /* Franja */
   .franja {
     display: flex;
@@ -205,6 +273,14 @@ const { sistema, club } = contenido;
   @media (min-width: 72rem) {
     .funciona__pasos {
       grid-template-columns: repeat(4, 1fr);
+    }
+
+    .compromiso {
+      padding: 1.875rem 2.125rem;
+    }
+
+    .compromiso__items {
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 </style>

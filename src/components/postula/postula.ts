@@ -203,7 +203,7 @@ interface DocumentoPdf {
   destroy(): Promise<void>;
 }
 
-const NIVELES_ZOOM = [1, 1.5, 2, 3];
+const NIVELES_ZOOM = [1, 1.5, 2, 3, 4];
 let visorIniciado = false;
 
 function habilitarLectura(): void {
@@ -416,7 +416,7 @@ async function iniciarVisor(): Promise<void> {
     $('#zoom-menos').addEventListener('click', () => nivel > 0 && aplicarZoom(nivel - 1));
     $('#zoom-mas').addEventListener('click', () => nivel < NIVELES_ZOOM.length - 1 && aplicarZoom(nivel + 1));
     /* En pantallas angostas el informativo (apaisado) arranca ampliado, con paneo dentro del visor. */
-    aplicarZoom(window.matchMedia('(max-width: 40rem)').matches ? 2 : 0);
+    aplicarZoom(window.matchMedia('(max-width: 40rem)').matches ? 3 : 0);
 
     /* Pantalla completa: el visor ocupa la ventana, con foco atrapado y Escape para salir. */
     const visor = $('#visor');

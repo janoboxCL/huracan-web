@@ -150,14 +150,14 @@ export interface PromoHabilidades {
   nombre: string;
   /** Mensualidad con la promoción, todo el año. */
   mensualidad: number;
-  /** Solo para atletas externos al club (flyers de Super Mafia y Titanium Black). */
+  /** Reservado: el informativo maestro no restringe ninguna promoción a atletas externos. */
   soloExternos: boolean;
   califica: (n: NivelAlcanzado) => boolean;
 }
 
 export const PROMOS_HABILIDADES: readonly PromoHabilidades[] = [
-  { equipo: 'Huracán Super Mafia', nombre: 'Junior coed prep 2.2', mensualidad: 25000, soloExternos: true, califica: (n) => n.gimnasia >= 2 },
-  { equipo: 'Huracán Titanium Black', nombre: 'Senior coed prep 2.2', mensualidad: 25000, soloExternos: true, califica: (n) => n.gimnasia >= 2 },
+  { equipo: 'Huracán Super Mafia', nombre: 'Junior coed prep 2.2', mensualidad: 25000, soloExternos: false, califica: (n) => n.gimnasia >= 2 },
+  { equipo: 'Huracán Titanium Black', nombre: 'Senior coed prep 2.2', mensualidad: 25000, soloExternos: false, califica: (n) => n.gimnasia >= 2 },
   { equipo: 'Huracán Lady Jags', nombre: 'Open prep 3.2', mensualidad: 25000, soloExternos: false, califica: (n) => n.gimnasia >= 2 || n.grupo >= 3 },
   { equipo: 'Huracán Velocity Lightning', nombre: 'International Open Coed 3', mensualidad: 25000, soloExternos: false, califica: (n) => n.gimnasia >= 3 || n.grupo >= 3 },
   { equipo: 'Huracán Five Elite', nombre: 'International Open Coed 4', mensualidad: 0, soloExternos: false, califica: (n) => n.gimnasia >= 4 || n.grupo >= 4 || n.dupla },
@@ -174,7 +174,7 @@ export interface Postulante {
   modalidad?: ProgramaId;
   /** Ids de `HABILIDADES` declaradas. */
   habilidades?: readonly string[];
-  /** Atleta antiguo de Huracán (afecta las promociones «solo externos»). */
+  /** Atleta antiguo de Huracán (hoy ninguna promoción por habilidades lo excluye). */
   esAntiguo?: boolean;
 }
 

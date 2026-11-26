@@ -26,3 +26,7 @@ test('texto del horario habitual', () => {
     'el horario habitual de Rockstar: Viernes 18:00 a 20:00; Sábado 12:00 a 14:00',
   );
 });
+
+test('Informativo maestro: Pink Ladies practica el viernes 18:00 y el sábado 14:00', () => {
+  assert.deepEqual(franjas['Huracán Pink Ladies']?.map((f) => `${f.dia} ${f.inicio}-${f.fin}`), ['Viernes 18:00-19:00', 'Sábado 14:00-15:00']);
+});

@@ -127,12 +127,12 @@ test('Five Elite: mensualidad gratis con nivel 4 o dupla', () => {
   assert.equal(calcularIngreso(precios, five, { ...base, habilidades: ['n3-flic-salto-flic'] }).promo, null);
 });
 
-test('Super Mafia: la promoción de $25.000 es solo para externos', () => {
+test('Super Mafia: la promoción de $25.000 aplica a externos y antiguos (informativo maestro)', () => {
   const mafia = equipos.find((e) => e.nombre === 'Huracán Super Mafia');
   assert.ok(mafia);
   const base = { edad: 11, genero: 'dama', experiencia: 'con', habilidades: ['n2-handvault'] } as const;
   assert.equal(calcularIngreso(precios, mafia, base).promo?.mensualidad, 25000);
-  assert.equal(calcularIngreso(precios, mafia, { ...base, esAntiguo: true }).promo, null);
+  assert.equal(calcularIngreso(precios, mafia, { ...base, esAntiguo: true }).promo?.mensualidad, 25000);
 });
 
 test('Five Elite se sugiere con nivel 4 o dupla, y siempre si la modalidad elegida es International', () => {
@@ -146,13 +146,26 @@ test('Five Elite se sugiere con nivel 4 o dupla, y siempre si la modalidad elegi
   assert.deepEqual(explicita.sort(), ['Five Elite', 'Velocity Lightning']);
 });
 
-test('Titanium Black (Senior prep 2.2, 12 a 19): se sugiere con experiencia y su promoción es solo para externos', () => {
-  const r = evaluarPostulacion(equipos, precios, { edad: 14, genero: 'varon', experiencia: 'con', habilidades: ['n2-handvault'] });
+test('Titanium Black (Senior prep 2.2, 15 a 19): se sugiere con experiencia y la promoción aplica también a atletas antiguos (informativo maestro)', () => {
+  const r = evaluarPostulacion(equipos, precios, { edad: 16, genero: 'varon', experiencia: 'con', habilidades: ['n2-handvault'] });
   assert.ok(nombres(r.equipos).includes('Titanium Black'));
   const promo = (esAntiguo: boolean) =>
-    evaluarPostulacion(equipos, precios, { edad: 14, genero: 'varon', experiencia: 'con', habilidades: ['n2-handvault'], esAntiguo }).ingresos.find((i) => i.equipo === 'Huracán Titanium Black')?.promo;
+    evaluarPostulacion(equipos, precios, { edad: 16, genero: 'varon', experiencia: 'con', habilidades: ['n2-handvault'], esAntiguo }).ingresos.find((i) => i.equipo === 'Huracán Titanium Black')?.promo;
   assert.equal(promo(false)?.mensualidad, 25000);
-  assert.equal(promo(true), null);
+  assert.equal(promo(true)?.mensualidad, 25000);
+});
+
+test('Informativo maestro: los Senior son de 15 a 19 años y Xtreme Force de 9 a 12', () => {
+  const con = (edad: number) => nombres(sugerirEquipos(equipos, { edad, genero: 'varon', experiencia: 'con', habilidades: [] }));
+  assert.ok(!con(14).includes('Titanium Black'));
+  assert.ok(!con(14).includes('Super Models'));
+  assert.ok(con(14).includes('Power Electric'));
+  assert.ok(con(15).includes('Super Models'));
+  assert.ok(!con(8).includes('Xtreme Force'));
+  assert.ok(con(9).includes('Xtreme Force'));
+  const runway = (edad: number) => nombres(sugerirEquipos(equipos, { edad, genero: 'dama', experiencia: 'ninguna', habilidades: [] }));
+  assert.ok(!runway(14).includes('Runway Diva'));
+  assert.ok(runway(15).includes('Runway Diva'));
 });
 
 test('Spirit y Team Parent no pasan por la evaluación: comienzan en abril y enero', () => {

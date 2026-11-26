@@ -56,6 +56,7 @@ const familias = [
       <ul role="list" class="pie__lista">
         <li><a href={enlaceInstagram()} rel="noopener">Instagram · @{contacto.instagram}</a></li>
         <li><span>Facebook · {contacto.facebook}</span></li>
+        {contacto.youtube && <li><span>YouTube · {contacto.youtube}</span></li>}
         <li><span>TikTok · {contacto.tiktok}</span></li>
       </ul>
     </div>

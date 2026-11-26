@@ -109,6 +109,7 @@ const tarjetas = equipos.map((e) => ({
               </p>
               <h3 class="disp equipo__nombre">{t.nombre}</h3>
               <p class="equipo__rango">{t.rango}</p>
+              {t.experiencia && <p class="equipo__experiencia">{t.experiencia}</p>}
               {t.aviso && <p class="equipo__inicio">{t.aviso.etiqueta}</p>}
               {t.aviso?.detalle && <p class="equipo__nota">{t.aviso.detalle}</p>}
               <p class="equipo__genero">{t.genero}</p>
@@ -293,6 +294,9 @@ const tarjetas = equipos.map((e) => ({
   .equipo__tarjeta--recreativo .equipo__rango,
   .equipo__tarjeta--novice .equipo__rango,
   .equipo__tarjeta--prep .equipo__rango,
+  .equipo__tarjeta--recreativo .equipo__experiencia,
+  .equipo__tarjeta--novice .equipo__experiencia,
+  .equipo__tarjeta--prep .equipo__experiencia,
   .equipo__tarjeta--recreativo .equipo__nota,
   .equipo__tarjeta--novice .equipo__nota,
   .equipo__tarjeta--prep .equipo__nota {
@@ -354,6 +358,12 @@ const tarjetas = equipos.map((e) => ({
 
   .equipo__rango {
     font-size: 0.9375rem;
+    color: var(--texto-2);
+  }
+
+  .equipo__experiencia {
+    font-size: 0.875rem;
+    font-weight: 700;
     color: var(--texto-2);
   }
 

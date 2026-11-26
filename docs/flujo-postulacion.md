@@ -92,7 +92,7 @@ Sin habilidades que califiquen, se muestra la mensualidad estándar del programa
 
 ## Respuestas del club (25 nov 2026)
 
-- **Solo externos:** la promoción de Super Mafia y Titanium Black es solo para atletas externos; un atleta antiguo de Huracán paga la mensualidad estándar. Es la regla vigente en el motor.
+- **Solo externos (retirado el 26 nov):** el informativo maestro no restringe las promociones de Super Mafia y Titanium Black a atletas externos; el motor ya no lo exige.
 - **Titanium Black:** confirmado como equipo tentativo (observaciones #12, #18 y #23 del club): Senior coed prep 2.2, damas y varones de 12 a 19 años cumplidos en 2027, miércoles 18:00 a 20:00 y sábado 10:00 a 12:00. Promoción «Senior Prep 2.2»: $25.000 todo el 2027 para externos con habilidades de gimnasia élite nivel 2. Programa Prep (supuesto por su categoría 2.2).
 - **Spirit:** comienza en abril de 2027, se crea cuando los equipos del año ya están conformados (para que recibir gente no atrase a los equipos) y es un grupo formativo. No pasa por la evaluación de diciembre.
 - **Team Parent:** se crea en enero de 2027; por ahora no tiene horario (interpretación del mensaje: «Será en enero»). No pasa por la evaluación.
@@ -117,6 +117,10 @@ Sin habilidades que califiquen, se muestra la mensualidad estándar del programa
 - Showcase: viernes 10 de septiembre de 2027, 20:00 a 22:00.
 - Dirección del gimnasio: Carlos Walker Martínez 5520, San Miguel (Metro Departamental).
 - Próximas evaluaciones (enero): miércoles 6, 18:00 a 20:00 y 20:00 a 22:00; viernes de la misma semana (fecha por confirmar), mismos horarios.
+
+## Informativo maestro (26 nov 2026, 11:37)
+
+El club entregó un informativo nuevo que **reemplaza al anterior** y manda sobre piezas y mensajes previos. Aplicado: Xtreme Force 9 a 12; Runway Diva, Super Models y Titanium Black de 15 a 19 (Super Models pasa a «coed»); experiencia por equipo en las tarjetas; horarios (jueves gimnasia nivel 2 y nivel 3-4, Pink Ladies del sábado 14:00 a 15:00); clases extras (Flyers, Gimnasia nivel 1-2-3, Prepa física saltos-gym y Full body; sale Pilates mat); logro NCA Daytona Beach 2009; redes (huracanallstars.cl, Instagram Huracan_Allstars, Facebook y YouTube «Huracán All Stars»); Semana Santa 26 al 28 de marzo; bloque «Titular y reserva» en Cómo funciona; PDF de 11,4 MB (41 páginas). Calendario según el PDF (Orlando en febrero con evaluación final; Semana Santa). Promociones con el texto del PDF. PDF recomprimido a 14 MB (imágenes hasta 2400 px, calidad 88) y visor móvil abre al 300 %. Se resolvieron: showcase viernes 10 de septiembre y edad de Xtreme Force.
 
 ## Datos pendientes
 

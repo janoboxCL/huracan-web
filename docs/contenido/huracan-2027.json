@@ -15,8 +15,10 @@
     "whatsappHeadCoach": "+56954959681",
     "whatsappTexto": "+56 9 5495 9681",
     "correoPagos": "pagoshuracan@gmail.com",
-    "instagram": "Huracan_Allstars.team",
-    "facebook": "Huracán All Stars 2027",
+    "web": "huracanallstars.cl",
+    "instagram": "Huracan_Allstars",
+    "facebook": "Huracán All Stars",
+    "youtube": "Huracán All Stars",
     "tiktok": "Huracan ALL Stars",
     "direccion": "Carlos Walker Martínez 5520, San Miguel · Metro Departamental",
     "comoLlegar": [
@@ -29,7 +31,7 @@
   "hitos": [
     { "anio": 2002, "texto": "Nace en el Colegio Filipense." },
     { "anio": 2003, "texto": "Se transforma en agrupación y se abre a deportistas de todo Santiago." },
-    { "anio": 2009, "texto": "5° lugar del mundo en Cheerleading Worlds: único equipo latinoamericano en el top 10." },
+    { "anio": 2009, "texto": "5° lugar del mundo en Cheerleading Worlds, único equipo latinoamericano en el top 10, y 2° lugar internacional en la competencia NCA, Daytona Beach." },
     { "anio": 2010, "texto": "Se funda el club deportivo." },
     { "anio": 2017, "texto": "Premio a la mejor coreografía y 2° lugar internacional en Americheer." },
     { "anio": 2024, "texto": "1° lugar internacional en Americheer Orlando, Florida, y premio campeón de campeones." },
@@ -40,7 +42,8 @@
     "1° Internacional · Americheer Orlando 2024",
     "Campeón de campeones 2024",
     "Mejor coreografía · Americheer 2017",
-    "5° del mundo · Cheerleading Worlds 2009"
+    "5° del mundo · Cheerleading Worlds 2009",
+    "2° Internacional · NCA Daytona Beach 2009"
   ],
   "staff": {
     "direccion": [
@@ -57,21 +60,30 @@
     "asistentes": ["Marcela Urbina", "Ignacia Parra", "Tania Soto", "Josefa Molina", "Daniela Jorquera", "Débora Zúñiga", "Lorien Espinoza", "Valentina Gangas", "Javiera Gómez", "Constanza Cáceres", "María Ignacia Zárate", "Samantha Urdaneta"]
   },
   "sistema": {
-    "resumen": "Tres meses de nivelación técnica para todos los atletas que postulen al club, nuevos o antiguos, con o sin experiencia. Por lo general se postula a la mayoría en 2 equipos y/o niveles, entrenando más gratis. Cada dos semanas se evalúa el avance y cada mes se publican nóminas tentativas por equipo. Al terminar la nivelación se publican nóminas oficiales con titulares y reservas por equipo y nivel.",
+    "resumen": "Tres meses de nivelación técnica para todos los atletas que postulen al club, nuevos o antiguos, con o sin experiencia. Primero hay una evaluación inicial y luego se designa a cada atleta a sus equipos para postular. Por lo general se postula a la gran mayoría en 2 equipos y/o niveles, entrenando más veces a la semana gratis, sin costo adicional, para aprovechar mejor el tiempo y acelerar el aprendizaje y la nivelación. Cada dos semanas se evalúa el avance y cada mes se publican nóminas tentativas por equipo. Al terminar la nivelación se publican nóminas oficiales con deportistas titulares y reservas por equipo y nivel.",
     "pasos": [
       { "n": "01", "titulo": "Pre-inscripción", "texto": "Inscripción online: de acuerdo a edad y experiencia se designa el día de evaluación." },
-      { "n": "02", "titulo": "Evaluación", "texto": "En diciembre: designación de equipo y horario tentativo." },
-      { "n": "03", "titulo": "Nivelación", "texto": "Tres meses de nivelación técnica, evaluación cada dos semanas y nómina tentativa mensual." },
-      { "n": "04", "titulo": "Nómina oficial", "texto": "Equipos oficiales con titulares y reservas por equipo y nivel." }
+      { "n": "02", "titulo": "Evaluación", "texto": "Primera evaluación del mes: designación de equipo y horario tentativo, y formulario final de inscripción 2027." },
+      { "n": "03", "titulo": "Nivelación", "texto": "Tres meses de nivelación técnica, evaluación cada dos semanas y nómina tentativa mensual por equipo." },
+      { "n": "04", "titulo": "Nómina oficial", "texto": "Terminada la nivelación, nóminas oficiales con deportistas titulares y reservas por equipo y nivel." }
     ],
-    "clasesExtrasNota": "Si no tienes conocimiento de cheer o necesitas mejorar habilidades, el club ofrece clases extras intensivas grupales. Clases de flyers, clases de gimnasia nivel 1-2-3-4, clases de preparación física general y saltos.",
+    "compromiso": {
+      "titulo": "Titular y reserva",
+      "intro": "Al entrar al club y comprometerse con la temporada, cada deportista es evaluado individualmente y, de acuerdo a sus habilidades, designado para postular como titular o reserva de un equipo. Durante 2027 su situación puede variar dependiendo exclusivamente de su compromiso con el equipo y el club: presentación personal, comportamiento, convivencia, trabajo en equipo, puntualidad, asistencia a las prácticas y actividades, pagos, etc.",
+      "items": [
+        { "titulo": "Titular", "texto": "Asume el compromiso al 100 % con su equipo y club: asiste obligatoriamente a todas las prácticas designadas por su head coach y cumple los reglamentos del club de inicio a fin de la temporada 2027. Si no cumple con la asistencia completa, es impuntual, se atrasa en pagos o no sigue el reglamento interno, pasa a reserva en cualquier momento de la temporada 2027." },
+        { "titulo": "Reserva", "texto": "Puede tener este cargo por habilidades que mejorar o lograr, faltas a entrenamientos obligatorios por razones personales, no seguir el reglamento interno, atraso en pagos, impuntualidad, etc. Su rol: asistir a todos los entrenamientos de forma normal, participar como cualquier deportista titular y seguir aprendiendo y mejorando sus habilidades." },
+        { "titulo": "Asistencia obligatoria", "texto": "Solo puede faltar 2 veces con justificación médica durante la temporada, dejando un reemplazo para que el equipo y su grupo de trabajo no se atrasen. Faltar por actividades personales (viajes, vacaciones en temporada de coreografía, competencias, etc.) podría dejarlo en reserva. En el segundo semestre están prohibidas las faltas a prácticas o competencias sin excepción: todas las inasistencias deben ser cubiertas por un suplente que maneje las habilidades del atleta, y esto no puede ocurrir más de 2 veces." }
+      ]
+    },
+    "clasesExtrasNota": "Si no tienes ningún conocimiento de cheer, tienes falencias técnicas o no dominas las habilidades necesarias para tu equipo, el club ofrece clases extras intensivas grupales en las distintas habilidades del deporte, para que mejores y logres más rápido las habilidades que requiere tu rutina de competencia.",
     "procesoActualDelPdf": [
-      "Leer el informativo 2027 completo.",
-      "Resolver dudas con el head coach por WhatsApp.",
+      "Entrar a huracanallstars.cl y hacer clic en «Realiza tu inscripción» (o al enlace de la biografía de Instagram), descargar y leer el informativo y llenar la ficha de preinscripción.",
+      "Resolver dudas con el head coach (Franco Pinto) por WhatsApp.",
       "Pagar inscripción, mensualidad del mes, cuota de ropa de entrenamiento y accesorio oficial 2027, y enviar el comprobante al head coach.",
       "Ingresar al grupo de WhatsApp Huracán General.",
       "Coordinar día y hora de evaluación indicando edad a cumplir en 2027, experiencia, equipo anterior y habilidades de elevación y gimnasia.",
-      "Asistir a la evaluación en diciembre y completar el formulario de inscripción 2027 ese día."
+      "Asistir a la primera evaluación del mes para la designación de equipo y horario tentativo y completar el formulario final de inscripción 2027."
     ],
     "_notaPago": "En el proceso actual el pago es ANTES de la evaluación. Definir con el club si el flujo online lo mantiene."
   },
@@ -86,18 +98,18 @@
     { "nombre": "Huracán Baby Storm", "programa": "recreativo", "categoria": "Tiny recreativo", "genero": "mixto", "edadMin": 4, "edadMax": 6, "rango": "Niños y niñas desde los 4 a los 6 años" },
     { "nombre": "Huracán Team Parent", "programa": "recreativo", "categoria": "Recreativo", "genero": "mixto", "edadMin": 18, "edadMax": null, "rango": "Apoderados y parientes de familia", "inicio": "enero de 2027", "nota": "Se crea en enero de 2027. Por ahora no tiene horario." },
     { "nombre": "Huracán Spirit", "programa": "recreativo", "categoria": "Recreativo formativo", "genero": "mixto", "edadMin": 7, "edadMax": null, "rango": "Desde los 7 años y sin límite de edad", "inicio": "abril de 2027", "nota": "Comienza en abril de 2027. Se crea cuando los equipos del año ya están conformados, para que recibir nuevas deportistas no atrase a los equipos. Es un grupo formativo: su foco es aprender el deporte." },
-    { "nombre": "Huracán Pink Ladies", "programa": "novice", "categoria": "Tiny nivel 1", "genero": "damas", "edadMin": 4, "edadMax": 6, "rango": "Niñas desde los 4 a los 6 años cumplidos el 2027" },
-    { "nombre": "Huracán Rockstar", "programa": "novice", "categoria": "Mini coed nivel 1", "genero": "mixto", "edadMin": 7, "edadMax": 9, "rango": "Niños y niñas desde los 7 a los 9 años cumplidos el 2027" },
-    { "nombre": "Huracán Xplotion", "programa": "novice", "categoria": "Youth coed nivel 1", "genero": "mixto", "edadMin": 9, "edadMax": 12, "rango": "Niños y niñas desde los 9 a los 12 años cumplidos el 2027" },
-    { "nombre": "Huracán Blackout", "programa": "novice", "categoria": "Junior coed nivel 1", "genero": "mixto", "edadMin": 9, "edadMax": 15, "rango": "Niños y niñas desde los 9 a los 15 años cumplidos el 2027" },
-    { "nombre": "Huracán Runway Diva", "programa": "novice", "categoria": "Senior nivel 1", "genero": "damas", "edadMin": 12, "edadMax": 19, "rango": "Damas de 12 a 19 años cumplidos el 2027" },
-    { "nombre": "Huracán Ice Bullets", "programa": "novice", "categoria": "Open coed nivel 2", "genero": "mixto", "edadMin": 15, "edadMax": null, "rango": "Damas y varones desde los 15 años y sin límite de edad" },
-    { "nombre": "Huracán Xtreme Force", "programa": "prep", "categoria": "Youth prep 1.1", "genero": "mixto", "edadMin": 8, "edadMax": 12, "rango": "Niños y niñas desde los 8 a los 12 años cumplidos el 2027" },
-    { "nombre": "Huracán Power Electric", "programa": "prep", "categoria": "Junior prep 1.1", "genero": "mixto", "edadMin": 9, "edadMax": 15, "rango": "Niños y niñas desde los 9 a los 15 años cumplidos el 2027" },
-    { "nombre": "Huracán Super Mafia", "programa": "prep", "categoria": "Junior prep 2.2", "genero": "mixto", "edadMin": 9, "edadMax": 15, "rango": "Niños y niñas desde los 9 a los 15 años cumplidos el 2027" },
-    { "nombre": "Huracán Super Models", "programa": "prep", "categoria": "Senior prep 1.1", "genero": "mixto", "edadMin": 12, "edadMax": 19, "rango": "Damas y varones de 12 a 19 años cumplidos el 2027" },
-    { "nombre": "Huracán Titanium Black", "programa": "prep", "categoria": "Senior coed prep 2.2", "genero": "mixto", "edadMin": 12, "edadMax": 19, "rango": "Damas y varones de 12 a 19 años cumplidos el 2027" },
-    { "nombre": "Huracán Lady Jags", "programa": "prep", "categoria": "Open prep 3.2", "genero": "damas", "edadMin": 15, "edadMax": null, "rango": "Damas desde los 15 años y sin límite de edad" },
+    { "nombre": "Huracán Pink Ladies", "programa": "novice", "categoria": "Tiny nivel 1", "experiencia": "Sin experiencia", "genero": "damas", "edadMin": 4, "edadMax": 6, "rango": "Niñas desde los 4 a los 6 años cumplidos el 2027" },
+    { "nombre": "Huracán Rockstar", "programa": "novice", "categoria": "Mini coed nivel 1", "experiencia": "Poca o sin experiencia", "genero": "mixto", "edadMin": 7, "edadMax": 9, "rango": "Niños y niñas desde los 7 a los 9 años cumplidos el 2027" },
+    { "nombre": "Huracán Xplotion", "programa": "novice", "categoria": "Youth coed nivel 1", "experiencia": "Poca o sin experiencia", "genero": "mixto", "edadMin": 9, "edadMax": 12, "rango": "Niños y niñas desde los 9 a los 12 años cumplidos el 2027" },
+    { "nombre": "Huracán Blackout", "programa": "novice", "categoria": "Junior coed nivel 1", "experiencia": "Poca o sin experiencia", "genero": "mixto", "edadMin": 9, "edadMax": 15, "rango": "Niños y niñas desde los 9 a los 15 años cumplidos el 2027" },
+    { "nombre": "Huracán Runway Diva", "programa": "novice", "categoria": "Senior nivel 1", "experiencia": "Poca o sin experiencia", "genero": "damas", "edadMin": 15, "edadMax": 19, "rango": "Damas desde los 15 a los 19 años cumplidos el 2027" },
+    { "nombre": "Huracán Ice Bullets", "programa": "novice", "categoria": "Open coed nivel 2", "experiencia": "Sin experiencia", "genero": "mixto", "edadMin": 15, "edadMax": null, "rango": "Damas y varones desde los 15 años y sin límite de edad" },
+    { "nombre": "Huracán Xtreme Force", "programa": "prep", "categoria": "Youth prep 1.1", "experiencia": "Con experiencia", "genero": "mixto", "edadMin": 9, "edadMax": 12, "rango": "Niños y niñas desde los 9 a los 12 años cumplidos el 2027" },
+    { "nombre": "Huracán Power Electric", "programa": "prep", "categoria": "Junior prep 1.1", "experiencia": "Con experiencia", "genero": "mixto", "edadMin": 9, "edadMax": 15, "rango": "Niños y niñas desde los 9 a los 15 años cumplidos el 2027" },
+    { "nombre": "Huracán Super Mafia", "programa": "prep", "categoria": "Junior prep 2.2", "experiencia": "Con experiencia", "genero": "mixto", "edadMin": 9, "edadMax": 15, "rango": "Niños y niñas desde los 9 a los 15 años cumplidos el 2027" },
+    { "nombre": "Huracán Super Models", "programa": "prep", "categoria": "Senior coed prep 1.1", "experiencia": "Con experiencia", "genero": "mixto", "edadMin": 15, "edadMax": 19, "rango": "Damas y varones de 15 a 19 años cumplidos el 2027" },
+    { "nombre": "Huracán Titanium Black", "programa": "prep", "categoria": "Senior coed prep 2.2", "experiencia": "Con experiencia", "genero": "mixto", "edadMin": 15, "edadMax": 19, "rango": "Damas y varones de 15 a 19 años cumplidos el 2027" },
+    { "nombre": "Huracán Lady Jags", "programa": "prep", "categoria": "Open prep 3.2", "experiencia": "Con experiencia", "genero": "damas", "edadMin": 15, "edadMax": null, "rango": "Damas desde los 15 años y sin límite de edad" },
     { "nombre": "Huracán Velocity Lightning", "programa": "international", "categoria": "Open coed elite 3", "genero": "mixto", "edadMin": 15, "edadMax": null, "rango": "Damas y varones desde los 15 años y sin límite de edad" },
     { "nombre": "Huracán Five Elite", "programa": "international", "categoria": "Open coed elite 4", "genero": "mixto", "edadMin": 15, "edadMax": null, "rango": "Damas y varones desde los 15 años y sin límite de edad" }
   ],
@@ -109,14 +121,14 @@
       { "inicio": "20:00", "fin": "22:00", "texto": "Super Models · Lady Jags", "tipo": "equipo" } ] },
     { "dia": "Martes", "bloques": [
       { "inicio": "15:00", "fin": "16:30", "texto": "Clase de gimnasia nivel 1 · iniciación", "tipo": "gimnasia" },
-      { "inicio": "16:30", "fin": "18:00", "texto": "Clase de gimnasia nivel 1 · intermedio y avanzado (diciembre a marzo)", "tipo": "gimnasia" } ] },
+      { "inicio": "16:30", "fin": "18:00", "texto": "Clase de gimnasia nivel 1 · básico, intermedio y avanzado (diciembre a marzo)", "tipo": "gimnasia" } ] },
     { "dia": "Miércoles", "bloques": [
       { "inicio": "16:45", "fin": "18:00", "texto": "Clase extra flyer · gimnasia", "tipo": "extra" },
       { "inicio": "18:00", "fin": "20:00", "texto": "Xtreme Force · Xplotion · Titanium Black", "tipo": "equipo" },
       { "inicio": "20:00", "fin": "22:00", "texto": "Velocity Lightning · Ice Bullets", "tipo": "equipo" } ] },
     { "dia": "Jueves", "bloques": [
-      { "inicio": "15:00", "fin": "16:30", "texto": "Clase de gimnasia nivel 1 · iniciación", "tipo": "gimnasia" },
-      { "inicio": "16:30", "fin": "18:00", "texto": "Clase de gimnasia nivel 1 · intermedio y avanzado (diciembre a marzo)", "tipo": "gimnasia" } ] },
+      { "inicio": "15:00", "fin": "16:30", "texto": "Clase de gimnasia nivel 2 · básico, intermedio y avanzado (diciembre a marzo)", "tipo": "gimnasia" },
+      { "inicio": "16:30", "fin": "18:00", "texto": "Clase de gimnasia nivel 3-4 · básico, intermedio y avanzado (diciembre a marzo)", "tipo": "gimnasia" } ] },
     { "dia": "Viernes", "bloques": [
       { "inicio": "16:45", "fin": "18:00", "texto": "Clase extra flyer · gimnasia", "tipo": "extra" },
       { "inicio": "18:00", "fin": "19:00", "texto": "Pink Ladies · Baby Storm", "tipo": "equipo" },
@@ -126,7 +138,7 @@
       { "inicio": "08:00", "fin": "10:00", "texto": "Super Mafia · Power Electric · Blackout", "tipo": "equipo" },
       { "inicio": "10:00", "fin": "12:00", "texto": "Xtreme Force · Xplotion · Titanium Black", "tipo": "equipo" },
       { "inicio": "12:00", "fin": "14:00", "texto": "Super Models · Rockstar", "tipo": "equipo" },
-      { "inicio": "12:00", "fin": "13:00", "texto": "Pink Ladies", "tipo": "equipo" },
+      { "inicio": "14:00", "fin": "15:00", "texto": "Pink Ladies", "tipo": "equipo" },
       { "inicio": "14:00", "fin": "16:00", "texto": "Lady Jags", "tipo": "equipo" },
       { "inicio": "16:00", "fin": "18:00", "texto": "Five Elite", "tipo": "equipo" } ] }
   ],
@@ -161,8 +173,8 @@
     "vestimenta": [
       { "item": "Vestimenta de entrenamiento", "monto": 50000, "detalle": "Dama: peto y calza o falda. Varón: polera y short. 2 cuotas: al inscribirse y al mes siguiente. Entrega máx. 60 días. Todos deben uniformarse apenas se inscriban." },
       { "item": "Cinta de entrenamiento (damas)", "monto": 10000, "detalle": "Pago al inscribirse." },
-      { "item": "Polera institucional", "monto": 28000, "detalle": "Para atletas, apoderados y acompañantes (barra). 2 cuotas: 1 de abril y 1 de mayo." },
-      { "item": "Accesorio de cabello de competencia", "monto": 16500, "detalle": "Pago 1 de junio." },
+      { "item": "Polera institucional", "monto": 28000, "detalle": "Para atletas, apoderados y acompañantes (barra). 2 cuotas: 1 de abril y 1 de mayo. Es la misma polera de 2026." },
+      { "item": "Accesorio de cabello de competencia", "monto": 16500, "detalle": "Todas las damas del club tendrán el mismo accesorio en 2027. Pago 1 de junio." },
       { "item": "Uniforme de competencia", "monto": 190000, "detalle": "2 cuotas: 31 de marzo y 30 de abril. Entrega máx. 60 días pagando en fecha." },
       { "item": "Ropa de abrigo", "monto": null, "detalle": "Prendas y valor por confirmar. 2 cuotas." }
     ],
@@ -171,7 +183,7 @@
       { "item": "Pack competencias circuito nacional", "monto": 300000, "detalle": "5 eventos nacionales, 6 cuotas de enero a junio 2027." },
       { "item": "Pack competencias internacionales", "monto": null, "detalle": "Solo algunos equipos, pronto más información." }
     ],
-    "clasesExtras": { "tipos": ["Flyers", "Gimnasia", "Preparación física", "Pilates mat"], "pack": { "monto": 30000, "clases": 4, "minutos": 75 }, "suelta": 8000 },
+    "clasesExtras": { "tipos": ["Flyers", "Gimnasia nivel 1-2-3", "Preparación física, saltos y gimnasio", "Full body"], "pack": { "monto": 30000, "clases": 4, "minutos": 75 }, "suelta": 8000 },
     "requisitos": ["Damas: pony (extensión de cabello grande, escarmenada y lisa) para junio.", "Todos: zapatillas negras de cheerleader y calcetas 3/4 negras."]
   },
   "promociones": [
@@ -179,19 +191,19 @@
     { "nombre": "Otra región", "descuento": "50%", "texto": "Descuento en la mensualidad." },
     { "nombre": "Varones externos", "descuento": "50%", "texto": "Descuento en la mensualidad, válido para Junior y Senior." },
     { "nombre": "Familiar", "descuento": "Mensualidad especial", "texto": "Open y Open coed (Novice): mensualidad $30.000. Mini, Youth, Junior y Senior (Novice y Prep): mensualidad $40.000." },
-    { "nombre": "Junior coed prep 2.2", "descuento": "$25.000", "texto": "Mensualidad todo el año para niños y niñas externos de 9 a 15 años con habilidades de gimnasia avanzada o élite nivel 2." },
-    { "nombre": "Senior coed prep 2.2", "descuento": "$25.000", "texto": "Mensualidad todo el 2027 para damas y varones externos de 12 a 19 años cumplidos el 2027 que manejen habilidades de gimnasia élite nivel 2." },
-    { "nombre": "Open prep 3.2", "descuento": "$25.000", "texto": "Mensualidad todo el año para damas desde 15 años con habilidades élite nivel 2, o que postulen con su grupo de elevación con 3 habilidades élite." },
-    { "nombre": "International Open Coed 3", "descuento": "$25.000", "texto": "Mensualidad todo el año desde 15 años con habilidades élite nivel 3, o grupo de elevación con 3 habilidades élite." },
-    { "nombre": "International Open Coed 4", "descuento": "Gratis", "texto": "Mensualidad gratis todo el año desde 15 años con habilidades élite nivel 4, o grupo de elevación con 4 habilidades élite." }
+    { "nombre": "Junior coed prep 2.2", "descuento": "$25.000", "texto": "Mensualidad $25.000 todo el año para niños y niñas de 9 a 15 años que manejen habilidades de gimnasia avanzada o élite nivel 2." },
+    { "nombre": "Senior coed prep 2.2", "descuento": "$25.000", "texto": "Mensualidad $25.000 todo el año para damas y varones de 12 a 19 años que manejen habilidades de gimnasia avanzada o élite nivel 2." },
+    { "nombre": "Open prep 3.2", "descuento": "$25.000", "texto": "Mensualidad $25.000 todo el año para damas desde los 15 años y sin límite de edad que manejen habilidades de gimnasia avanzada o élite nivel 2, o que postulen con su grupo de elevación y manejen 3 habilidades élite." },
+    { "nombre": "International Open Coed 3", "descuento": "$25.000", "texto": "Mensualidad $25.000 todo el año para damas y varones desde los 15 años y sin límite de edad que manejen habilidades de gimnasia avanzada o élite nivel 3, o que postulen con su grupo de elevación y manejen 3 habilidades élite." },
+    { "nombre": "International Open Coed 4", "descuento": "Gratis", "texto": "Mensualidad gratis todo el año para damas y varones desde los 15 años y sin límite de edad que manejen habilidades de gimnasia avanzada o élite nivel 4, o que postulen con su grupo de elevación y manejen 4 habilidades élite." }
   ],
   "_notaPromociones": "La lista de habilidades exigidas para cada beca está en informativo-2027.txt (páginas 30–31).",
   "calendario": [
     { "mes": "Noviembre 2026", "corto": "Nov", "evento": true, "hitos": ["Nacionales para equipos 2026", "Prácticas grupo Novice preparatorio", "Inscripciones temporada 2027"] },
     { "mes": "Diciembre 2026", "corto": "Dic", "evento": false, "hitos": ["Evaluación y postulación a equipos 2027", "Comienzo de prácticas de nivelación", "Inicio de prácticas del proceso de viaje Disney 2027", "Vacaciones de fin de año: 21 de diciembre al 3 de enero"] },
-    { "mes": "Enero 2027", "corto": "Ene", "evento": false, "hitos": ["Prácticas de nivelación", "Evaluación segunda etapa de postulaciones y nómina tentativa", "Evaluaciones: miércoles 6 de enero y viernes [fecha por confirmar], 18:00–20:00 y 20:00–22:00", "Prácticas de la delegación en viaje"] },
-    { "mes": "Febrero 2027", "corto": "Feb", "evento": false, "porConfirmar": "Mes de la evaluación final con equipos oficiales.", "hitos": ["Evaluación final de postulaciones y equipos oficiales [confirmar mes]", "Prácticas de la delegación en viaje", "Vacaciones de verano: 14 al 28 de febrero"] },
-    { "mes": "Marzo 2027", "corto": "Mar", "evento": true, "hitos": ["Prácticas de nivelación, evaluación y tercera etapa de postulaciones, nómina tentativa", "Competencia en Orlando, Disney 2027"] },
+    { "mes": "Enero 2027", "corto": "Ene", "evento": false, "hitos": ["Vacaciones de fin de año: 21 de diciembre al 3 de enero", "Prácticas de nivelación, evaluación segunda etapa de postulaciones 2027 y nómina tentativa", "Evaluaciones: miércoles 6 de enero y viernes [fecha por confirmar], 18:00–20:00 y 20:00–22:00", "Prácticas de la delegación en viaje, marzo Disney 2027"] },
+    { "mes": "Febrero 2027", "corto": "Feb", "evento": true, "hitos": ["Evaluación final de postulaciones 2027 y equipos oficiales de la temporada", "Prácticas de la delegación en viaje, competencia en Orlando, Disney 2027", "Vacaciones de verano: 14 al 28 de febrero"] },
+    { "mes": "Marzo 2027", "corto": "Mar", "evento": false, "hitos": ["Prácticas de nivelación, evaluación y tercera etapa de postulaciones 2027 y nómina tentativa", "Prácticas de la delegación en viaje, marzo Disney 2027", "Vacaciones de Semana Santa: 26 al 28"] },
     { "mes": "Abril 2027", "corto": "Abr", "evento": false, "hitos": ["Prácticas de equipos oficiales", "Montaje de elevaciones y pirámides"] },
     { "mes": "Mayo 2027", "corto": "May", "evento": false, "hitos": ["Montaje de coreografía de piso por equipo", "Sábado 1: Día del Trabajador, sin clases", "Viernes 21 y sábado 22: clases normales"] },
     { "mes": "Junio 2027", "corto": "Jun", "evento": false, "hitos": ["Montaje de la coreografía de competencia", "Vacaciones de invierno (fecha por confirmar)", "Lunes 21 y 28: clases normales"] },

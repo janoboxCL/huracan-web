@@ -18,8 +18,11 @@ export interface Contacto {
   whatsappTexto: string;
   /** Correo del club para recibir comprobantes de pago (flyer «Check in Pagos»). */
   correoPagos?: string;
+  /** Dirección del sitio del club, sin protocolo (p. ej. `huracanallstars.cl`). */
+  web?: string;
   instagram: string;
   facebook: string;
+  youtube?: string;
   tiktok: string;
   /** Puede ser un marcador `[así]` mientras el club no la confirme. */
   direccion: string;
@@ -56,9 +59,17 @@ export interface PasoSistema {
   texto: string;
 }
 
+export interface CompromisoSistema {
+  titulo: string;
+  intro: string;
+  items: { titulo: string; texto: string }[];
+}
+
 export interface Sistema {
   resumen: string;
   pasos: PasoSistema[];
+  /** Titular, reserva y asistencia obligatoria (informativo, lámina «Nuestro sistema» 2/2). */
+  compromiso: CompromisoSistema;
   clasesExtrasNota: string;
   procesoActualDelPdf: string[];
   _notaPago: string;
@@ -88,6 +99,8 @@ export interface Equipo {
   /** `null`: sin límite de edad. */
   edadMax: number | null;
   rango: string;
+  /** Experiencia que pide el equipo («Sin experiencia», «Poca o sin experiencia», «Con experiencia»). */
+  experiencia?: string;
   /** Grupos que no parten en la evaluación de diciembre (p. ej. «abril de 2027»). */
   inicio?: string;
   /** Aviso para mostrar junto al equipo (inicio, definición del grupo). */
