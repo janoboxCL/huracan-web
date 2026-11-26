@@ -5,6 +5,7 @@
    interfaz (src/lib/postulacion/reglas.ts). El cupo se revisa dentro de la función SQL
    `crear_postulacion`, de forma atómica. */
 import contenido from '../../docs/contenido/huracan-2027.json';
+import { franjasPorEquipo, textoHorarioEquipo, type DiaHorario } from '../../src/lib/postulacion/horarios.ts';
 import { JORNADAS_INICIALES, edadEnTemporada, evaluarPostulacion, preciosDesdeContenido, type EquipoBase, type ContenidoPrecios } from '../../src/lib/postulacion/reglas.ts';
 import type { ContextoFuncion } from '../../src/lib/servidor/entorno.ts';
 import { enviarCorreo } from '../../src/lib/servidor/correo.ts';
@@ -14,6 +15,8 @@ import { validarPostulacion } from '../../src/lib/servidor/validar.ts';
 const equipos = (contenido as unknown as { equipos: EquipoBase[] }).equipos;
 const precios = preciosDesdeContenido(contenido as unknown as ContenidoPrecios);
 const contacto = (contenido as unknown as { contacto: { whatsappHeadCoach: string; whatsappTexto: string } }).contacto;
+
+const horariosClub = (contenido as unknown as { horarios: DiaHorario[] }).horarios;
 
 const LIMITE_CUERPO = 20_000;
 
@@ -62,19 +65,34 @@ export const onRequestPost = async ({ request, env }: ContextoFuncion): Promise<
 
   let jornadaId: string | null = null;
   let jornadaTexto: string | null = null;
+  let tipoJornada: string = evaluacion.jornada.tipo;
+  let equipoEvaluacion: string | null = null;
+  let horarioEquipo: string | undefined;
   if (evaluacion.jornada.tipo === 'jornadas') {
-    if (!d.jornadaId) return respuestaError(400, 'datos_invalidos', { campos: ['jornadaId'] });
+    const grupos = evaluacion.jornada.grupos;
+    let abiertas: FilaJornada[];
     try {
-      const abiertas = await rpc<FilaJornada[]>(env, 'jornadas_disponibles');
+      abiertas = await rpc<FilaJornada[]>(env, 'jornadas_disponibles');
+    } catch (error) {
+      console.error('No se pudieron leer las jornadas', error instanceof Error ? error.message : 'error');
+      return respuestaError(503, 'no_disponible');
+    }
+    if (d.jornadaId) {
       const elegida = abiertas.find((j) => j.id === d.jornadaId);
-      if (!elegida || !evaluacion.jornada.grupos.includes(elegida.grupo as never)) return respuestaError(409, 'jornada_no_disponible');
+      if (!elegida || !grupos.includes(elegida.grupo as never)) return respuestaError(409, 'jornada_no_disponible');
       if (elegida.disponibles !== null && elegida.disponibles <= 0) return respuestaError(409, 'jornada_sin_cupo');
       jornadaId = elegida.id;
       const semilla = JORNADAS_INICIALES.find((j) => j.id === elegida.id);
       jornadaTexto = `${semilla?.dia ?? elegida.fecha}, ${elegida.inicio.slice(0, 5)} a ${elegida.fin.slice(0, 5)}`;
-    } catch (error) {
-      console.error('No se pudieron leer las jornadas', error instanceof Error ? error.message : 'error');
-      return respuestaError(503, 'no_disponible');
+    } else if (!abiertas.some((j) => grupos.includes(j.grupo as never))) {
+      /* Sin jornadas de audición: la evaluación es en el horario habitual del equipo que la persona elija. */
+      const elegido = evaluacion.equipos.length === 1 ? evaluacion.equipos[0] : evaluacion.equipos.find((e) => e.nombre === d.equipoEvaluacion);
+      if (!elegido) return respuestaError(400, 'datos_invalidos', { campos: ['equipoEvaluacion'] });
+      tipoJornada = 'horario-equipo';
+      equipoEvaluacion = elegido.nombre;
+      horarioEquipo = textoHorarioEquipo(elegido.nombre, franjasPorEquipo(horariosClub, [elegido.nombre])[elegido.nombre] ?? []);
+    } else {
+      return respuestaError(400, 'datos_invalidos', { campos: ['jornadaId'] });
     }
   } else if (d.jornadaId) {
     return respuestaError(400, 'datos_invalidos', { campos: ['jornadaId'] });
@@ -107,7 +125,8 @@ export const onRequestPost = async ({ request, env }: ContextoFuncion): Promise<
         programa_sugerido: principal?.programa ?? null,
         equipos_sugeridos: evaluacion.equipos.map((e) => e.nombre),
         jornada_id: jornadaId,
-        jornada_tipo: evaluacion.jornada.tipo,
+        jornada_tipo: tipoJornada,
+        equipo_evaluacion: equipoEvaluacion,
         monto_estimado: principal?.total ?? 0,
         desglose: evaluacion.ingresos,
       },
@@ -122,6 +141,7 @@ export const onRequestPost = async ({ request, env }: ContextoFuncion): Promise<
         para: d.contactoCorreo,
         evaluacion,
         jornadaTexto,
+        ...(horarioEquipo ? { horarioEquipo } : {}),
         whatsappHeadCoach: contacto.whatsappHeadCoach,
         whatsappTexto: contacto.whatsappTexto,
         direccion: contacto.direccion,

@@ -101,6 +101,7 @@ class Detalle {
     const j = this.jornada;
     if (j) return textoJornada(j);
     if (this.p.jornada_id) return this.p.jornada_id;
+    if (this.p.jornada_tipo === 'horario-equipo' && this.p.equipo_evaluacion) return `Horario habitual de ${this.p.equipo_evaluacion.replace('Huracán ', '')}`;
     return ETIQUETA_TIPO_JORNADA[this.p.jornada_tipo];
   }
 

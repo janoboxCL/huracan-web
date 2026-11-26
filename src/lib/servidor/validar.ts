@@ -33,6 +33,8 @@ export interface DatosPostulacion {
   contactoTelefono: string;
   contactoCorreo: string;
   jornadaId: string | null;
+  /** Equipo elegido cuando la evaluación es en el horario habitual de los equipos. */
+  equipoEvaluacion: string | null;
 }
 
 export type ResultadoValidacion = { ok: true; datos: DatosPostulacion } | { ok: false; campos: string[] };
@@ -124,6 +126,7 @@ export function validarPostulacion(cuerpo: unknown): ResultadoValidacion {
     contactoTelefono: exigir('contactoTelefono', normalizarTelefono(c['contactoTelefono'])),
     contactoCorreo: exigir('contactoCorreo', correoOk),
     jornadaId: opcional(c['jornadaId'], 40),
+    equipoEvaluacion: opcional(c['equipoEvaluacion'], 60),
   };
 
   if (errores.length > 0) return { ok: false, campos: errores };

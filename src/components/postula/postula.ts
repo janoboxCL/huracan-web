@@ -41,9 +41,13 @@ interface DatosPagina {
   equipos: (EquipoBase & { rango: string; nota?: string })[];
   precios: Precios;
   jornadas: { id: string; dia: string }[];
+  /** Horario habitual de cada equipo (evaluación posterior a las audiciones). */
+  franjas: Record<string, Franja[]>;
   telefono: string;
   programas: Record<ProgramaId, string>;
 }
+
+import { nombreCortoEquipo, textoFranjas, textoHorarioEquipo, type Franja } from '../../lib/postulacion/horarios.ts';
 
 const datosPagina = JSON.parse(document.getElementById('postula-datos')?.textContent ?? 'null') as DatosPagina | null;
 
@@ -66,6 +70,8 @@ interface Estado {
   datos: DatosPostulacion;
   /** Jornada elegida (solo cuando la evaluación es en una jornada). */
   jornadaId: string;
+  /** Equipo elegido cuando la evaluación es en el horario habitual (sin jornadas de audición). */
+  equipoEvaluacion: string;
   /** Preinscripción ya registrada (una sola vez). Guarda lo que se registró. */
   confirmada: Confirmacion | null;
 }
@@ -83,7 +89,7 @@ interface Confirmacion {
 const CLAVE = 'huracan-postula-2027';
 
 function estadoInicial(): Estado {
-  return { paso: 1, ultimaVista: false, leido: false, datos: datosVacios(), jornadaId: '', confirmada: null };
+  return { paso: 1, ultimaVista: false, leido: false, datos: datosVacios(), jornadaId: '', equipoEvaluacion: '', confirmada: null };
 }
 
 function cargarEstado(): Estado {
@@ -98,6 +104,7 @@ function cargarEstado(): Estado {
       leido: g.leido === true,
       datos: { ...base.datos, ...(g.datos ?? {}) },
       jornadaId: typeof g.jornadaId === 'string' ? g.jornadaId : '',
+      equipoEvaluacion: typeof g.equipoEvaluacion === 'string' ? g.equipoEvaluacion : '',
       confirmada:
         g.confirmada && typeof g.confirmada.codigo === 'string' && g.confirmada.datos
           ? { ...g.confirmada, datos: { ...base.datos, ...g.confirmada.datos } }
@@ -832,6 +839,41 @@ function detalleNota(nota: string): string {
   return corte === -1 ? '' : nota.slice(corte + 2);
 }
 
+/** `true` cuando no hay jornadas de audición abiertas: la evaluación es en el horario habitual del equipo. */
+let modoHorario = false;
+
+function franjasDe(equipo: string): Franja[] {
+  return datosPagina?.franjas[equipo] ?? [];
+}
+
+/** Texto del horario del equipo elegido (o del único sugerido). */
+function textoHorarioElegido(): string {
+  const nombre = estado.equipoEvaluacion;
+  return nombre ? textoHorarioEquipo(nombre, franjasDe(nombre)) : 'por coordinar con el head coach';
+}
+
+function pintarHorarioEquipos(ev: Evaluacion, caja: HTMLElement): void {
+  jornadasMostradas = [];
+  estado.jornadaId = '';
+  if (ev.equipos.length === 1) {
+    const unico = ev.equipos[0]?.nombre ?? '';
+    estado.equipoEvaluacion = unico;
+    caja.innerHTML = `<p>Tu evaluación es en <strong>${esc(textoHorarioEquipo(unico, franjasDe(unico)))}</strong>.</p>`;
+    return;
+  }
+  if (!ev.equipos.some((e) => e.nombre === estado.equipoEvaluacion)) estado.equipoEvaluacion = '';
+  const opciones = ev.equipos
+    .map((e) => {
+      const franjas = franjasDe(e.nombre);
+      const horario = franjas.length > 0 ? textoFranjas(franjas) : 'El head coach te confirmará el horario';
+      return `<label class="jornada"><input type="radio" name="equipoEval" value="${esc(e.nombre)}" ${e.nombre === estado.equipoEvaluacion ? 'checked' : ''} />
+        <span><span class="jornada__dia">${esc(nombreCortoEquipo(e.nombre))}</span><span class="jornada__hora">${esc(horario)}</span></span></label>`;
+    })
+    .join('');
+  caja.innerHTML = `<fieldset class="jornadas" id="grupo-equipo-eval"><legend>Elige el equipo en el que quieres evaluarte (obligatorio)</legend>${opciones}</fieldset>
+    <p>Tu evaluación es en el horario habitual del equipo que elijas.</p>`;
+}
+
 const esDiferido = (ev: Evaluacion | null): boolean => ev?.jornada.tipo === 'inicio-diferido';
 
 /** Sin equipo sugerido: se guarda la preinscripción y el head coach orienta por WhatsApp. */
@@ -841,6 +883,7 @@ function textoJornadaElegida(ev: Evaluacion, jornadaId: string, conf: Confirmaci
   if (ev.jornada.tipo === 'sin-evaluacion') return ev.jornada.motivo === 'sin-equipo' ? 'por coordinar con el head coach' : 'sin evaluación (Tiny); el coach me indicará día y hora de la primera práctica';
   if (ev.jornada.tipo === 'inicio-diferido') return textoInicios(ev);
   if (conf) return conf.jornadaTexto;
+  if (modoHorario) return textoHorarioElegido();
   const j = jornadasMostradas.find((x) => x.id === jornadaId);
   return j ? `${j.dia}, ${j.inicio} a ${j.fin}` : 'por coordinar con el coach';
 }
@@ -868,9 +911,9 @@ function actualizarBotonConfirmar(): void {
   const ayuda = $('#confirmar-ayuda');
   if (!ev) return;
   const necesitaJornada = ev.jornada.tipo === 'jornadas';
-  const falta = necesitaJornada && !estado.jornadaId;
+  const falta = necesitaJornada && (modoHorario ? !estado.equipoEvaluacion : !estado.jornadaId);
   boton.disabled = falta;
-  ayuda.textContent = falta ? 'Elige una jornada de evaluación para poder confirmar.' : '';
+  ayuda.textContent = falta ? (modoHorario ? 'Elige un equipo para poder confirmar.' : 'Elige una jornada de evaluación para poder confirmar.') : '';
 }
 
 function actualizarEnlaceWhatsapp(): void {
@@ -924,7 +967,9 @@ async function pintarJornada(ev: Evaluacion, conf: Confirmacion | null): Promise
     return;
   }
   if (conf) {
-    caja.innerHTML = `<p>Tu jornada de evaluación: <strong>${esc(textoJornadaElegida(ev, conf.jornadaId, conf))}</strong>.</p>`;
+    caja.innerHTML = conf.jornadaId === ''
+      ? `<p>Tu evaluación es en <strong>${esc(conf.jornadaTexto)}</strong>.</p>`
+      : `<p>Tu jornada de evaluación: <strong>${esc(textoJornadaElegida(ev, conf.jornadaId, conf))}</strong>.</p>`;
     return;
   }
   const mia = ++secuencia;
@@ -946,11 +991,12 @@ async function pintarJornada(ev: Evaluacion, conf: Confirmacion | null): Promise
   jornadasMostradas = lista.map((x) => ({ id: x.id, dia: diaDe(x), inicio: x.inicio, fin: x.fin }));
   const libres = lista.filter((x) => !textoCupo(x).agotada);
   if (!libres.some((x) => x.id === estado.jornadaId)) estado.jornadaId = '';
-  if (lista.length === 0 || libres.length === 0) {
-    caja.innerHTML =
-      lista.length === 0
-        ? '<p>Por ahora no hay jornadas publicadas para tu caso.</p>'
-        : htmlJornadasLista(lista) + '<p>Las jornadas de este grupo ya no tienen cupos.</p>';
+  modoHorario = lista.length === 0;
+  if (modoHorario) {
+    /* Sin jornadas de audición: la evaluación es en el horario habitual del equipo. */
+    pintarHorarioEquipos(ev, caja);
+  } else if (libres.length === 0) {
+    caja.innerHTML = htmlJornadasLista(lista) + '<p>Las jornadas de este grupo ya no tienen cupos.</p>';
     mostrarErrorConfirmar('No hay jornadas con cupo disponible para tu caso. Escribe al head coach por WhatsApp para coordinar tu evaluación.', true);
   } else {
     caja.innerHTML = htmlJornadasLista(lista);
@@ -1026,7 +1072,7 @@ async function confirmarPreinscripcion(): Promise<void> {
   if (!ev || estado.confirmada) return;
   const boton = $<HTMLButtonElement>('.js-confirmar');
   const necesitaJornada = ev.jornada.tipo === 'jornadas';
-  if (necesitaJornada && !estado.jornadaId) {
+  if (necesitaJornada && (modoHorario ? !estado.equipoEvaluacion : !estado.jornadaId)) {
     actualizarBotonConfirmar();
     return;
   }
@@ -1034,8 +1080,9 @@ async function confirmarPreinscripcion(): Promise<void> {
   mostrarErrorConfirmar(null);
   $('#confirmar-ayuda').textContent = 'Guardando tu preinscripción…';
   const datos = estado.datos;
-  const jornadaId = necesitaJornada ? estado.jornadaId : null;
-  const r: ResultadoEnvio = await enviarPostulacion(datos, jornadaId);
+  const jornadaId = necesitaJornada && !modoHorario ? estado.jornadaId : null;
+  const equipoEval = necesitaJornada && modoHorario ? estado.equipoEvaluacion : null;
+  const r: ResultadoEnvio = await enviarPostulacion(datos, jornadaId, {}, equipoEval);
   $('#confirmar-ayuda').textContent = '';
 
   if (r.ok) {
@@ -1095,6 +1142,13 @@ function configurarPaso3(): void {
   /* Delegación: los radios de jornada se crean al pintar el resultado. */
   $('#res-jornada').addEventListener('change', (e) => {
     const el = e.target as HTMLInputElement;
+    if (el.name === 'equipoEval') {
+      estado.equipoEvaluacion = el.value;
+      guardarEstado();
+      mostrarErrorConfirmar(null);
+      actualizarBotonConfirmar();
+      return;
+    }
     if (el.name !== 'jornada') return;
     estado.jornadaId = el.value;
     guardarEstado();

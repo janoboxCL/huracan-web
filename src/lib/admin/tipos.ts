@@ -6,7 +6,7 @@ export type Estado = (typeof ESTADOS)[number];
 
 export type ProgramaClave = 'recreativo' | 'novice' | 'prep' | 'international';
 export type GrupoJornadaClave = 'youth-junior-senior-prep' | 'open' | 'sin-experiencia-7-19';
-export type TipoJornada = 'jornadas' | 'sin-evaluacion' | 'inicio-diferido';
+export type TipoJornada = 'jornadas' | 'sin-evaluacion' | 'inicio-diferido' | 'horario-equipo';
 
 export interface Postulacion {
   id: string;
@@ -36,6 +36,8 @@ export interface Postulacion {
   equipos_sugeridos: string[];
   jornada_id: string | null;
   jornada_tipo: TipoJornada;
+  /** Equipo en cuyo horario habitual se evalúa (tipo `horario-equipo`). */
+  equipo_evaluacion: string | null;
   monto_estimado: number;
   /** Lo guarda la API: un `Ingreso` por equipo sugerido (ver reglas.ts). */
   desglose: unknown;

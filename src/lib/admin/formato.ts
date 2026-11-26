@@ -30,6 +30,7 @@ export const ETIQUETA_TIPO_JORNADA: Record<TipoJornada, string> = {
   jornadas: 'Jornada de evaluación',
   'sin-evaluacion': 'Sin evaluación (primera práctica)',
   'inicio-diferido': 'Inicio diferido',
+  'horario-equipo': 'Evaluación en horario del equipo',
 };
 
 export const ETIQUETA_TIPO_POSTULACION: Record<Postulacion['tipo_postulacion'], string> = {

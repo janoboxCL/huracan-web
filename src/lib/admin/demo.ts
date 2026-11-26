@@ -144,6 +144,7 @@ export function crearEstadoDemo({ equipos, precios }: DatosBase): Estado_ {
       equipos_sugeridos: ev.equipos.map((e) => e.nombre),
       jornada_id: jornadaId,
       jornada_tipo: tipoJornada,
+      equipo_evaluacion: null,
       monto_estimado: principal?.total ?? 0,
       desglose: ev.ingresos,
       equipo_asignado: equipoAsignado,

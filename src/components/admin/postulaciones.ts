@@ -50,6 +50,7 @@ async function iniciar(): Promise<void> {
         const j = jornadas.find((x) => x.id === p.jornada_id);
         return j ? `${fechaDiaMes(`${j.fecha}T12:00:00Z`)} · ${j.inicio}` : p.jornada_id;
       }
+      if (p.jornada_tipo === 'horario-equipo') return p.equipo_evaluacion ? `Horario de ${p.equipo_evaluacion.replace('Huracán ', '')}` : 'Horario del equipo';
       return p.jornada_tipo === 'sin-evaluacion' ? 'Sin evaluación' : 'Inicio diferido';
     };
 

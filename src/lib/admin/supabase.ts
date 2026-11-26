@@ -17,7 +17,7 @@ const COLUMNAS_POSTULACION = [
   'id', 'codigo', 'estado', 'atleta_nombre', 'atleta_apellido', 'fecha_nacimiento', 'edad_2027', 'sexo', 'comuna',
   'es_antiguo', 'experiencia', 'club_anterior', 'anios_experiencia', 'posicion', 'habilidades', 'modalidad_deseada',
   'equipo_interes', 'tipo_postulacion', 'promociones_declaradas', 'contacto_nombre', 'contacto_parentesco',
-  'contacto_telefono', 'contacto_correo', 'programa_sugerido', 'equipos_sugeridos', 'jornada_id', 'jornada_tipo',
+  'contacto_telefono', 'contacto_correo', 'programa_sugerido', 'equipos_sugeridos', 'jornada_id', 'jornada_tipo', 'equipo_evaluacion',
   'monto_estimado', 'desglose', 'equipo_asignado', 'promocion_validada', 'notas_coach', 'creado_en', 'actualizado_en',
 ].join(',');
 

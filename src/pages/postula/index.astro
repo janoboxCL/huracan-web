@@ -7,6 +7,7 @@ import { statSync } from 'node:fs';
 import { join } from 'node:path';
 import { contenido } from '../../data/contenido';
 import { JORNADAS_INICIALES, preciosDesdeContenido } from '../../lib/postulacion/reglas';
+import { franjasPorEquipo } from '../../lib/postulacion/horarios';
 import { PROMOCIONES_DECLARABLES } from '../../lib/postulacion/formulario';
 import Base from '../../layouts/Base.astro';
 import Header from '../../components/secciones/Header.astro';
@@ -48,6 +49,7 @@ const datosIsla = {
   equipos,
   precios: preciosDesdeContenido(contenido),
   jornadas: JORNADAS_INICIALES,
+  franjas: franjasPorEquipo(contenido.horarios, contenido.equipos.map((e) => e.nombre)),
   telefono: contenido.contacto.whatsappHeadCoach.replace(/\D/g, ''),
   programas: Object.fromEntries(contenido.programas.map((p) => [p.id, p.nombre])),
 };

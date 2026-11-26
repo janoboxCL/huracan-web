@@ -10,6 +10,8 @@ export interface DatosCorreo {
   evaluacion: Evaluacion;
   /** Texto de la jornada elegida, p. ej. «Viernes 4 de diciembre, 18:00 a 20:00». */
   jornadaTexto: string | null;
+  /** Evaluación en el horario habitual del equipo elegido, p. ej. «el horario habitual de Xplotion: Miércoles 18:00 a 20:00». */
+  horarioEquipo?: string;
   whatsappHeadCoach: string;
   whatsappTexto: string;
   /** Dirección del gimnasio e indicaciones desde el metro (salen del contenido del club). */
@@ -30,6 +32,7 @@ function lineaJornada(d: DatosCorreo): string {
     const inicios = j.inicios.map((i) => `${i.equipo.replace('Huracán ', '')} comienza en ${i.inicio}`).join('; ');
     return `${inicios}. No pasa por la evaluación de diciembre: el head coach te avisará por WhatsApp.`;
   }
+  if (d.horarioEquipo) return `Tu evaluación es en ${d.horarioEquipo}. Llega 10 minutos antes.`;
   return d.jornadaTexto ? `Tu evaluación: ${d.jornadaTexto}. Llega 10 minutos antes.` : 'Tu evaluación está por confirmar.';
 }
 

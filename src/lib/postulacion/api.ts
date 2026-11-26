@@ -47,6 +47,8 @@ export interface CuerpoPostulacion {
   contactoCorreo: string;
   /** Solo si la evaluación es en una jornada; `null` en los demás casos. */
   jornadaId: string | null;
+  /** Solo cuando la evaluación es en el horario habitual: el equipo elegido; `null` en los demás casos. */
+  equipoEvaluacion: string | null;
   sitioWeb: string;
 }
 
@@ -56,7 +58,7 @@ const TIPO_POR_FORMA: Record<DatosPostulacion['forma'], CuerpoPostulacion['tipoP
   'grupo-elevacion': 'grupo',
 };
 
-export function armarCuerpo(d: DatosPostulacion, jornadaId: string | null): CuerpoPostulacion {
+export function armarCuerpo(d: DatosPostulacion, jornadaId: string | null, equipoEvaluacion: string | null = null): CuerpoPostulacion {
   const con = d.experiencia === 'con';
   const menor = esMenorDeEdad(d.fechaNacimiento);
   const nombreCompleto = `${d.nombre.trim()} ${d.apellido.trim()}`.trim();
@@ -81,6 +83,7 @@ export function armarCuerpo(d: DatosPostulacion, jornadaId: string | null): Cuer
     contactoTelefono: d.telefono.trim(),
     contactoCorreo: d.correo.trim(),
     jornadaId,
+    equipoEvaluacion,
     sitioWeb: d.sitioWeb,
   };
 }
@@ -147,7 +150,7 @@ export function interpretarRespuesta(estado: number, cuerpo: unknown): Resultado
 }
 
 /** Crea la postulación (una sola vez, con la jornada ya elegida). Nunca lanza. */
-export async function enviarPostulacion(datos: DatosPostulacion, jornadaId: string | null, deps: Dependencias = {}): Promise<ResultadoEnvio> {
+export async function enviarPostulacion(datos: DatosPostulacion, jornadaId: string | null, deps: Dependencias = {}, equipoEvaluacion: string | null = null): Promise<ResultadoEnvio> {
   if (!(deps.activa ?? modoApiActivo())) {
     return { ok: true, codigo: generarCodigo(), correoEnviado: null, ingresoEstimado: null, simulada: true };
   }
@@ -157,7 +160,7 @@ export async function enviarPostulacion(datos: DatosPostulacion, jornadaId: stri
     respuesta = await llamar('/api/postulaciones', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(armarCuerpo(datos, jornadaId)),
+      body: JSON.stringify(armarCuerpo(datos, jornadaId, equipoEvaluacion)),
     });
   } catch {
     return { ok: false, error: 'red' };

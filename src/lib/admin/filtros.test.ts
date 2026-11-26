@@ -10,7 +10,7 @@ function post(parcial: Partial<Postulacion>): Postulacion {
     edad_2027: 12, sexo: 'dama', comuna: 'La Cisterna', es_antiguo: false, experiencia: 'ninguna', club_anterior: null, anios_experiencia: null,
     posicion: null, habilidades: [], modalidad_deseada: null, equipo_interes: null, tipo_postulacion: 'individual', promociones_declaradas: [],
     contacto_nombre: 'Rosa Pérez', contacto_parentesco: 'madre', contacto_telefono: '+56912345678', contacto_correo: 'r@x.cl',
-    programa_sugerido: 'novice', equipos_sugeridos: [], jornada_id: '2026-12-05-1200', jornada_tipo: 'jornadas', monto_estimado: 0, desglose: [],
+    programa_sugerido: 'novice', equipos_sugeridos: [], jornada_id: '2026-12-05-1200', jornada_tipo: 'jornadas', equipo_evaluacion: null, monto_estimado: 0, desglose: [],
     equipo_asignado: null, promocion_validada: null, notas_coach: null, creado_en: '2026-11-25T12:00:00Z', actualizado_en: '2026-11-25T12:00:00Z',
     ...parcial,
   };
