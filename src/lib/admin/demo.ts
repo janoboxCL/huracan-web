@@ -243,6 +243,10 @@ export function crearRepositorioDemo(datos: DatosBase, almacen: Storage | null):
       await esperar(60);
       return structuredClone(estado.pagos.filter((x) => x.postulacion_id === postulacionId));
     },
+    async listarTodosLosPagos() {
+      await esperar(60);
+      return structuredClone(estado.pagos);
+    },
     async crearPago(postulacionId, concepto, monto) {
       await esperar();
       const pago: Pago = { id: `demo-pago-${Date.now()}`, postulacion_id: postulacionId, concepto, monto, comprobante_url: null, confirmado_por: null, confirmado_en: null, creado_en: new Date().toISOString() };

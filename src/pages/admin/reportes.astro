@@ -1,0 +1,51 @@
+---
+import Admin from '../../layouts/Admin.astro';
+---
+
+<Admin titulo="Reportes" activo="reportes">
+  <div class="adm-aviso adm-aviso--info" data-carga role="status">Verificando sesión…</div>
+
+  <div data-contenido hidden>
+    <div class="adm-titulo-fila">
+      <h1 class="adm-titulo">Reportes</h1>
+      <div class="adm-acciones">
+        <button type="button" class="adm-btn" data-actualizar>Actualizar</button>
+        <button type="button" class="adm-btn adm-btn--primario" data-excel>Descargar Excel</button>
+      </div>
+    </div>
+    <div class="adm-aviso adm-aviso--error" data-error-excel role="alert" hidden></div>
+
+    <section aria-labelledby="rp-cifras" class="adm-bloque">
+      <h2 id="rp-cifras" class="adm-h2">Cifras principales</h2>
+      <ul class="adm-cifras" role="list" data-cifras></ul>
+      <p class="adm-nota">«Activas» son las postulaciones que no están canceladas. Los montos suman lo estimado de las activas y los pagos que ya confirmaste.</p>
+    </section>
+
+    <section aria-labelledby="rp-estados" class="adm-bloque">
+      <h2 id="rp-estados" class="adm-h2">Por estado</h2>
+      <div data-estados></div>
+    </section>
+
+    <section aria-labelledby="rp-equipos" class="adm-bloque">
+      <h2 id="rp-equipos" class="adm-h2">Por equipo</h2>
+      <div class="adm-dos-columnas">
+        <div><h3 class="adm-h3">Equipo asignado</h3><div data-asignado></div></div>
+        <div><h3 class="adm-h3">Equipo sugerido (todavía sin asignar)</h3><div data-sugerido></div></div>
+      </div>
+    </section>
+
+    <section aria-labelledby="rp-programas" class="adm-bloque">
+      <h2 id="rp-programas" class="adm-h2">Por programa</h2>
+      <div data-programas></div>
+    </section>
+
+    <section aria-labelledby="rp-jornadas" class="adm-bloque">
+      <h2 id="rp-jornadas" class="adm-h2">Jornadas de evaluación</h2>
+      <div data-jornadas></div>
+    </section>
+  </div>
+
+  <script>
+    import '../../components/admin/reportes.ts';
+  </script>
+</Admin>

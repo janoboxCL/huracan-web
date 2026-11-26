@@ -11,7 +11,7 @@ import '../styles/admin.css';
 interface Props {
   titulo: string;
   /** Sección activa de la navegación. */
-  activo?: 'resumen' | 'postulaciones' | 'jornadas' | 'ajustes' | 'login';
+  activo?: 'resumen' | 'postulaciones' | 'jornadas' | 'reportes' | 'ajustes' | 'login';
   /** El login no muestra la navegación ni exige sesión. */
   sinNavegacion?: boolean;
 }
@@ -39,6 +39,7 @@ const enlaces = [
   { id: 'resumen', texto: 'Resumen', href: '/admin' },
   { id: 'postulaciones', texto: 'Postulaciones', href: '/admin/postulaciones' },
   { id: 'jornadas', texto: 'Jornadas', href: '/admin/jornadas' },
+  { id: 'reportes', texto: 'Reportes', href: '/admin/reportes' },
   { id: 'ajustes', texto: 'Ajustes', href: '/admin/ajustes' },
 ] as const;
 ---

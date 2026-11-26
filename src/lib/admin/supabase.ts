@@ -149,6 +149,11 @@ export async function crearRepositorioSupabase(url: string, clave: string): Prom
       return (comprobar(r as never) ?? []) as Pago[];
     },
 
+    async listarTodosLosPagos() {
+      const r = await db.from('pagos').select('*').order('creado_en', { ascending: true }).limit(5000);
+      return (comprobar(r as never) ?? []) as Pago[];
+    },
+
     async crearPago(postulacionId, concepto, monto) {
       const r = await db.from('pagos').insert({ postulacion_id: postulacionId, concepto, monto }).select('*').single();
       return comprobar<Pago>(r as never) as Pago;

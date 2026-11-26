@@ -16,13 +16,14 @@
     "check": "astro check",
     "astro": "astro",
     "capturas": "node scripts/capturas.mjs",
-    "test": "node --test src/lib/postulacion/reglas.test.ts src/lib/postulacion/formulario.test.ts src/lib/postulacion/api.test.ts src/lib/postulacion/horarios.test.ts src/lib/servidor/validar.test.ts src/lib/admin/estados.test.ts src/lib/admin/filtros.test.ts src/lib/admin/formato.test.ts src/lib/admin/jornadas.test.ts src/lib/admin/demo.test.ts"
+    "test": "node --test src/lib/postulacion/reglas.test.ts src/lib/postulacion/formulario.test.ts src/lib/postulacion/api.test.ts src/lib/postulacion/horarios.test.ts src/lib/servidor/validar.test.ts src/lib/admin/estados.test.ts src/lib/admin/filtros.test.ts src/lib/admin/formato.test.ts src/lib/admin/jornadas.test.ts src/lib/admin/demo.test.ts src/lib/admin/reportes.test.ts"
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.6",
     "@supabase/supabase-js": "^2.119.2",
     "astro": "^5.18.2",
-    "pdfjs-dist": "^6.5.438"
+    "pdfjs-dist": "^6.5.438",
+    "write-excel-file": "^4.1.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.12",

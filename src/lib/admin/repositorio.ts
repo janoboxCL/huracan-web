@@ -24,6 +24,8 @@ export interface Repositorio {
   actualizarPostulacion(id: string, cambios: CambiosPostulacion, version?: string): Promise<Postulacion>;
 
   listarPagos(postulacionId: string): Promise<Pago[]>;
+  /** Todos los pagos registrados (para el reporte). */
+  listarTodosLosPagos(): Promise<Pago[]>;
   crearPago(postulacionId: string, concepto: string, monto: number): Promise<Pago>;
   confirmarPago(pagoId: string, usuarioId: string): Promise<Pago>;
 
