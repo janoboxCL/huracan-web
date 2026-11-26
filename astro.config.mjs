@@ -2,9 +2,12 @@
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
 
-// URL pública del sitio. Se ajusta cuando el club defina su dominio
-// (o con la variable SITE_URL en Cloudflare Pages).
-const site = process.env.SITE_URL ?? 'https://huracan-web.pages.dev';
+// URL pública del sitio: siempre el dominio del club. SITE_URL (Cloudflare Pages) solo puede
+// reemplazarlo por otro dominio propio; se ignora si está vacía o apunta a *.pages.dev, para que
+// los enlaces canónicos, las vistas previas (WhatsApp, Instagram) y el sitemap nunca lleven al sitio de desarrollo.
+const DOMINIO = 'https://huracanallstars.cl';
+const definida = (process.env.SITE_URL ?? '').trim();
+const site = definida && !definida.includes('pages.dev') ? definida : DOMINIO;
 
 export default defineConfig({
   site,

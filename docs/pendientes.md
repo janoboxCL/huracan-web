@@ -6,13 +6,17 @@
 - Los bloques «Clase extra flyer · gimnasia» (lunes, miércoles y viernes) están como tipo `extra` en el JSON y se ven blancos; si el club los quiere grises, cambiar su tipo a `gimnasia`.
 - El gris de Recreativo (`--gris-programa`) puede necesitar ajuste para distinguirse mejor del blanco de Novice.
 
-## Contradicciones dentro del informativo maestro (26 nov 2026)
+## Respuestas de Franco (26 nov 2026, 12:31)
 
-- Senior: equipos de 15 a 19 años, pero la promoción Junior-Senior 2.2 dice Senior de 12 a 19.
-- Orlando: febrero («competencia en Orlando») frente a «marzo Disney 2027» en enero y marzo.
-- Gimnasia: clases extras niveles 1-2-3, pero el jueves aparece nivel 3-4.
-- Five Elite: International declara 2 clases semanales de cheerleading, pero Five Elite solo tiene el sábado 16:00 a 18:00.
-- Nivelación: «3 meses», pero el calendario la extiende de diciembre a marzo (con tercera etapa en marzo).
-- Tiny: el sistema dice que todos parten con evaluación inicial; el club había indicado que los Tiny pasan directo a su primera práctica (el sitio mantiene esto).
-- Habilidades de dupla (Five Elite) y «inversión atrás» de Lady Jags: el PDF no las incluye como el flyer; el motor sigue el flyer.
-- Datos bancarios en la página «Paso 2» del PDF público.
+- Senior: 12 a 19 años en todos los equipos (el 15 a 19 de las láminas es un error del PDF). Aplicado.
+- Orlando: febrero. Aplicado.
+- Jueves: primer bloque gimnasia nivel 2, segundo bloque nivel 3-4. Aplicado.
+- Five Elite: tiene una sola clase (sábado); el «2 clases semanales» de International aplica a Velocity.
+- Nivelación: «3 meses» porque diciembre y febrero traen dos semanas de vacaciones.
+- Tiny: todos menos Tiny tienen evaluación inicial. Coincide con el sitio.
+
+## Pendientes sin respuesta
+
+- Habilidades de dupla de Five Elite y «inversión atrás» sola de Lady Jags (el formulario sigue los flyers; el PDF no las trae).
+- Datos bancarios en la página «Paso 2» del PDF público (decisión de Jano).
+- Corregir el PDF: láminas de equipos con 15 a 19 años (Franco debería actualizarlas en Canva).
