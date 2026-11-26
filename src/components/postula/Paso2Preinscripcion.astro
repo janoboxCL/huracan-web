@@ -14,7 +14,7 @@ interface Props {
   equipos: { nombre: string }[];
   promociones: { id: string; nombre: string; texto: string }[];
 }
-const { equipos, promociones } = Astro.props;
+const { promociones } = Astro.props;
 
 const delTipo = (tipo: string, nivel?: number) => HABILIDADES.filter((h) => h.tipo === tipo && (nivel === undefined || h.nivel === nivel));
 const gruposHabilidades = [
@@ -131,26 +131,9 @@ const gruposHabilidades = [
 
     <details class="habilidades desplegable" id="det-equipo">
       <summary>
-        <span>Equipo y modalidad</span> <span class="campo__opc">(opcional)</span>
+        <span>Forma de postulación</span> <span class="campo__opc">(opcional)</span>
       </summary>
       <div class="habilidades__cuerpo">
-      <div class="campo" data-campo="modalidad">
-        <label for="f-modalidad">Modalidad deseada</label>
-        <select id="f-modalidad" name="modalidad" autocomplete="off">
-          <option value="auto" selected>Que el sistema lo sugiera</option>
-          <option value="recreativo">Recreativa</option>
-          <option value="novice">Novice</option>
-          <option value="prep">Prep</option>
-          <option value="international">International</option>
-        </select>
-      </div>
-      <div class="campo" data-campo="equipoInteres">
-        <label for="f-equipoInteres">Equipo de interés <span class="campo__opc">(opcional)</span></label>
-        <select id="f-equipoInteres" name="equipoInteres" autocomplete="off">
-          <option value="">Sin preferencia</option>
-          {equipos.map((e) => <option value={e.nombre}>{e.nombre}</option>)}
-        </select>
-      </div>
       <GrupoOpciones
         nombre="forma"
         leyenda="¿Postula individualmente, con dupla coed o con grupo de elevación?"

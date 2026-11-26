@@ -541,8 +541,9 @@ function leerFormulario(): DatosPostulacion {
     aniosExperiencia: v('aniosExperiencia'),
     posicion: v('posicion') as DatosPostulacion['posicion'],
     habilidades: marcados('habilidades'),
-    modalidad: (v('modalidad') || 'auto') as DatosPostulacion['modalidad'],
-    equipoInteres: v('equipoInteres'),
+    /* La persona no elige modalidad ni equipo: el sistema los sugiere según edad y experiencia. */
+    modalidad: 'auto',
+    equipoInteres: '',
     forma: (v('forma') || 'individual') as DatosPostulacion['forma'],
     promociones: marcados('promociones') as DatosPostulacion['promociones'],
     contactoNombre: v('contactoNombre'),
@@ -561,7 +562,7 @@ function escribirFormulario(original: DatosPostulacion): void {
     d.comunaOtra = d.comuna;
     d.comuna = COMUNA_OTRA;
   }
-  const texto = ['nombre', 'apellido', 'fechaNacimiento', 'comuna', 'comunaOtra', 'clubAnterior', 'aniosExperiencia', 'posicion', 'modalidad', 'equipoInteres', 'contactoNombre', 'parentesco', 'telefono', 'correo'] as const;
+  const texto = ['nombre', 'apellido', 'fechaNacimiento', 'comuna', 'comunaOtra', 'clubAnterior', 'aniosExperiencia', 'posicion', 'contactoNombre', 'parentesco', 'telefono', 'correo'] as const;
   for (const k of texto) {
     const el = f.elements.namedItem(k) as HTMLInputElement | HTMLSelectElement | null;
     if (el) el.value = d[k];
@@ -619,7 +620,7 @@ function actualizarDependencias(d: DatosPostulacion): void {
   if (etiquetaCorreo) etiquetaCorreo.textContent = menor ? 'Correo del apoderado' : 'Correo';
 
   /* Los bloques opcionales se abren solos si ya tienen respuestas (p. ej. al restaurar la sesión). */
-  if (d.modalidad !== 'auto' || d.equipoInteres !== '' || d.forma !== 'individual') $<HTMLDetailsElement>('#det-equipo').open = true;
+  if (d.forma !== 'individual') $<HTMLDetailsElement>('#det-equipo').open = true;
   if (d.promociones.length > 0) $<HTMLDetailsElement>('#det-promos').open = true;
 
   const n = d.habilidades.length;
@@ -846,32 +847,31 @@ function franjasDe(equipo: string): Franja[] {
   return datosPagina?.franjas[equipo] ?? [];
 }
 
-/** Texto del horario del equipo elegido (o del único sugerido). */
+/** Texto del horario de evaluación: el del equipo sugerido, o el de cada equipo sugerido si son varios. */
 function textoHorarioElegido(): string {
-  const nombre = estado.equipoEvaluacion;
-  return nombre ? textoHorarioEquipo(nombre, franjasDe(nombre)) : 'por coordinar con el head coach';
+  const equipos = evaluacionActual?.equipos ?? [];
+  if (equipos.length === 0) return 'por coordinar con el head coach';
+  return equipos.map((e) => textoHorarioEquipo(e.nombre, franjasDe(e.nombre))).join('; o ');
 }
 
+/** La persona no elige equipo: se muestran los horarios de los equipos sugeridos y el head coach confirma cuál corresponde. */
 function pintarHorarioEquipos(ev: Evaluacion, caja: HTMLElement): void {
   jornadasMostradas = [];
   estado.jornadaId = '';
+  estado.equipoEvaluacion = '';
   if (ev.equipos.length === 1) {
     const unico = ev.equipos[0]?.nombre ?? '';
-    estado.equipoEvaluacion = unico;
     caja.innerHTML = `<p>Tu evaluación es en <strong>${esc(textoHorarioEquipo(unico, franjasDe(unico)))}</strong>.</p>`;
     return;
   }
-  if (!ev.equipos.some((e) => e.nombre === estado.equipoEvaluacion)) estado.equipoEvaluacion = '';
-  const opciones = ev.equipos
+  const items = ev.equipos
     .map((e) => {
       const franjas = franjasDe(e.nombre);
-      const horario = franjas.length > 0 ? textoFranjas(franjas) : 'El head coach te confirmará el horario';
-      return `<label class="jornada"><input type="radio" name="equipoEval" value="${esc(e.nombre)}" ${e.nombre === estado.equipoEvaluacion ? 'checked' : ''} />
-        <span><span class="jornada__dia">${esc(nombreCortoEquipo(e.nombre))}</span><span class="jornada__hora">${esc(horario)}</span></span></label>`;
+      const horario = franjas.length > 0 ? textoFranjas(franjas) : 'el head coach te confirmará el horario';
+      return `<li><strong>${esc(nombreCortoEquipo(e.nombre))}</strong>: ${esc(horario)}</li>`;
     })
     .join('');
-  caja.innerHTML = `<fieldset class="jornadas" id="grupo-equipo-eval"><legend>Elige el equipo en el que quieres evaluarte (obligatorio)</legend>${opciones}</fieldset>
-    <p>Tu evaluación es en el horario habitual del equipo que elijas.</p>`;
+  caja.innerHTML = `<p>Tu evaluación es en el horario habitual de uno de los equipos sugeridos. El head coach te confirmará cuál corresponde según lo que observe.</p><ul>${items}</ul>`;
 }
 
 const esDiferido = (ev: Evaluacion | null): boolean => ev?.jornada.tipo === 'inicio-diferido';
@@ -911,9 +911,9 @@ function actualizarBotonConfirmar(): void {
   const ayuda = $('#confirmar-ayuda');
   if (!ev) return;
   const necesitaJornada = ev.jornada.tipo === 'jornadas';
-  const falta = necesitaJornada && (modoHorario ? !estado.equipoEvaluacion : !estado.jornadaId);
+  const falta = necesitaJornada && !modoHorario && !estado.jornadaId;
   boton.disabled = falta;
-  ayuda.textContent = falta ? (modoHorario ? 'Elige un equipo para poder confirmar.' : 'Elige una jornada de evaluación para poder confirmar.') : '';
+  ayuda.textContent = falta ? 'Elige una jornada de evaluación para poder confirmar.' : '';
 }
 
 function actualizarEnlaceWhatsapp(): void {
@@ -1072,7 +1072,7 @@ async function confirmarPreinscripcion(): Promise<void> {
   if (!ev || estado.confirmada) return;
   const boton = $<HTMLButtonElement>('.js-confirmar');
   const necesitaJornada = ev.jornada.tipo === 'jornadas';
-  if (necesitaJornada && (modoHorario ? !estado.equipoEvaluacion : !estado.jornadaId)) {
+  if (necesitaJornada && !modoHorario && !estado.jornadaId) {
     actualizarBotonConfirmar();
     return;
   }
@@ -1081,8 +1081,7 @@ async function confirmarPreinscripcion(): Promise<void> {
   $('#confirmar-ayuda').textContent = 'Guardando tu preinscripción…';
   const datos = estado.datos;
   const jornadaId = necesitaJornada && !modoHorario ? estado.jornadaId : null;
-  const equipoEval = necesitaJornada && modoHorario ? estado.equipoEvaluacion : null;
-  const r: ResultadoEnvio = await enviarPostulacion(datos, jornadaId, {}, equipoEval);
+  const r: ResultadoEnvio = await enviarPostulacion(datos, jornadaId, {}, null);
   $('#confirmar-ayuda').textContent = '';
 
   if (r.ok) {
@@ -1142,13 +1141,6 @@ function configurarPaso3(): void {
   /* Delegación: los radios de jornada se crean al pintar el resultado. */
   $('#res-jornada').addEventListener('change', (e) => {
     const el = e.target as HTMLInputElement;
-    if (el.name === 'equipoEval') {
-      estado.equipoEvaluacion = el.value;
-      guardarEstado();
-      mostrarErrorConfirmar(null);
-      actualizarBotonConfirmar();
-      return;
-    }
     if (el.name !== 'jornada') return;
     estado.jornadaId = el.value;
     guardarEstado();

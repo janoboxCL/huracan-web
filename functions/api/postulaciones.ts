@@ -85,12 +85,13 @@ export const onRequestPost = async ({ request, env }: ContextoFuncion): Promise<
       const semilla = JORNADAS_INICIALES.find((j) => j.id === elegida.id);
       jornadaTexto = `${semilla?.dia ?? elegida.fecha}, ${elegida.inicio.slice(0, 5)} a ${elegida.fin.slice(0, 5)}`;
     } else if (!abiertas.some((j) => grupos.includes(j.grupo as never))) {
-      /* Sin jornadas de audición: la evaluación es en el horario habitual del equipo que la persona elija. */
-      const elegido = evaluacion.equipos.length === 1 ? evaluacion.equipos[0] : evaluacion.equipos.find((e) => e.nombre === d.equipoEvaluacion);
-      if (!elegido) return respuestaError(400, 'datos_invalidos', { campos: ['equipoEvaluacion'] });
+      /* Sin jornadas de audición: la evaluación es en el horario habitual del equipo sugerido. La persona no elige equipo: con varios sugeridos, el head coach confirma cuál. */
+      const sugeridos = evaluacion.equipos;
+      if (sugeridos.length === 0) return respuestaError(400, 'datos_invalidos', { campos: ['jornadaId'] });
       tipoJornada = 'horario-equipo';
-      equipoEvaluacion = elegido.nombre;
-      horarioEquipo = textoHorarioEquipo(elegido.nombre, franjasPorEquipo(horariosClub, [elegido.nombre])[elegido.nombre] ?? []);
+      const franjas = franjasPorEquipo(horariosClub, sugeridos.map((e) => e.nombre));
+      equipoEvaluacion = sugeridos.length === 1 ? (sugeridos[0]?.nombre ?? null) : null;
+      horarioEquipo = sugeridos.map((e) => textoHorarioEquipo(e.nombre, franjas[e.nombre] ?? [])).join('; o ');
     } else {
       return respuestaError(400, 'datos_invalidos', { campos: ['jornadaId'] });
     }
