@@ -21,6 +21,10 @@ interface Props {
 const { club, contacto } = contenido;
 const { titulo, descripcion, imagen = imagenSocial, noindex = false } = Astro.props;
 
+/* Google Analytics 4 (flujo «SITIO WEB HURACAN»). Solo en el build publicado y nunca en /admin. */
+const ID_MEDICION = 'G-DH23VSD69E';
+const medir = import.meta.env.PROD && !Astro.url.pathname.startsWith('/admin');
+
 const nombreSitio = club.nombre;
 const tituloBase = `${nombreSitio} · Cheerleading en Santiago · Temporada ${contenido._temporada}`;
 const tituloCompleto = titulo ? `${titulo} · ${nombreSitio}` : tituloBase;
@@ -91,6 +95,15 @@ const datosEstructurados = {
     />
 
     <script type="application/ld+json" set:html={JSON.stringify(datosEstructurados)} />
+
+    {
+      medir && (
+        <>
+          <script is:inline async src={`https://www.googletagmanager.com/gtag/js?id=${ID_MEDICION}`} />
+          <script is:inline set:html={`window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', '${ID_MEDICION}');`} />
+        </>
+      )
+    }
   </head>
   <body>
     <a class="saltar" href="#contenido">Saltar al contenido</a>
