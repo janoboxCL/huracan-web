@@ -58,7 +58,7 @@ export const onRequestPost = async ({ request, env }: ContextoFuncion): Promise<
     habilidades: d.habilidades,
     esAntiguo: d.esAntiguo,
   });
-  if (!evaluacion.ingresoEstimado) return respuestaError(422, 'sin_equipo_sugerido');
+  /* Sin equipo sugerido también se guarda: el head coach orienta a la familia por WhatsApp. */
 
   let jornadaId: string | null = null;
   let jornadaTexto: string | null = null;
@@ -80,7 +80,7 @@ export const onRequestPost = async ({ request, env }: ContextoFuncion): Promise<
     return respuestaError(400, 'datos_invalidos', { campos: ['jornadaId'] });
   }
 
-  const principal = evaluacion.ingresoEstimado;
+  const principal = evaluacion.ingresoEstimado; // nulo si no hay equipo sugerido
   try {
     const [creada] = await rpc<{ id: string; codigo: string; token_gestion: string }[]>(env, 'crear_postulacion', {
       p: {
@@ -104,11 +104,11 @@ export const onRequestPost = async ({ request, env }: ContextoFuncion): Promise<
         contacto_parentesco: d.contactoParentesco,
         contacto_telefono: d.contactoTelefono,
         contacto_correo: d.contactoCorreo,
-        programa_sugerido: principal.programa,
+        programa_sugerido: principal?.programa ?? null,
         equipos_sugeridos: evaluacion.equipos.map((e) => e.nombre),
         jornada_id: jornadaId,
         jornada_tipo: evaluacion.jornada.tipo,
-        monto_estimado: principal.total,
+        monto_estimado: principal?.total ?? 0,
         desglose: evaluacion.ingresos,
       },
     });

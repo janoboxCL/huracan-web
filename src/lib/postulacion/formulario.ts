@@ -264,10 +264,15 @@ export interface DatosMensaje {
   contacto: string;
   /** Grupos que comienzan más adelante (Spirit, Team Parent): no hay comprobante ni jornada. */
   inicioDiferido?: boolean;
+  /** No hay equipo sugerido: se pide orientación al head coach. */
+  sinEquipo?: boolean;
 }
 
 export function mensajeWhatsapp(m: DatosMensaje): string {
   const equipos = m.equipos.length > 0 ? m.equipos.join(', ') : 'por definir con el coach';
+  if (m.sinEquipo) {
+    return [`Hola, soy ${m.contacto}.`, `Preinscribí a ${m.atleta} (código ${m.codigo}).`, 'El sitio no me sugirió un equipo. ¿Me orientas?'].join('\n');
+  }
   if (m.inicioDiferido) {
     return [`Hola, soy ${m.contacto}.`, `Preinscribí a ${m.atleta} (código ${m.codigo}).`, `Equipos sugeridos: ${equipos}.`, `Inicio: ${m.jornada}.`].join('\n');
   }

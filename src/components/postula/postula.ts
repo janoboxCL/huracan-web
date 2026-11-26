@@ -834,8 +834,11 @@ function detalleNota(nota: string): string {
 
 const esDiferido = (ev: Evaluacion | null): boolean => ev?.jornada.tipo === 'inicio-diferido';
 
+/** Sin equipo sugerido: se guarda la preinscripción y el head coach orienta por WhatsApp. */
+const esSinEquipo = (ev: Evaluacion | null): boolean => ev !== null && ev.equipos.length === 0;
+
 function textoJornadaElegida(ev: Evaluacion, jornadaId: string, conf: Confirmacion | null = null): string {
-  if (ev.jornada.tipo === 'sin-evaluacion') return 'sin evaluación (Tiny); el coach me indicará día y hora de la primera práctica';
+  if (ev.jornada.tipo === 'sin-evaluacion') return ev.jornada.motivo === 'sin-equipo' ? 'por coordinar con el head coach' : 'sin evaluación (Tiny); el coach me indicará día y hora de la primera práctica';
   if (ev.jornada.tipo === 'inicio-diferido') return textoInicios(ev);
   if (conf) return conf.jornadaTexto;
   const j = jornadasMostradas.find((x) => x.id === jornadaId);
@@ -866,8 +869,8 @@ function actualizarBotonConfirmar(): void {
   if (!ev) return;
   const necesitaJornada = ev.jornada.tipo === 'jornadas';
   const falta = necesitaJornada && !estado.jornadaId;
-  boton.disabled = ev.equipos.length === 0 || falta;
-  ayuda.textContent = ev.equipos.length === 0 ? '' : falta ? 'Elige una jornada de evaluación para poder confirmar.' : '';
+  boton.disabled = falta;
+  ayuda.textContent = falta ? 'Elige una jornada de evaluación para poder confirmar.' : '';
 }
 
 function actualizarEnlaceWhatsapp(): void {
@@ -881,6 +884,7 @@ function actualizarEnlaceWhatsapp(): void {
     equipos: evaluacionActual.equipos.map((e) => e.nombre),
     contacto: quienEscribe(d),
     inicioDiferido: esDiferido(evaluacionActual),
+    sinEquipo: esSinEquipo(evaluacionActual),
   });
   $<HTMLAnchorElement>('.js-whatsapp').href = enlaceWhatsappCon(datosPagina.telefono, mensaje);
 }
@@ -903,7 +907,9 @@ async function pintarJornada(ev: Evaluacion, conf: Confirmacion | null): Promise
   const caja = $('#res-jornada');
   const j = ev.jornada;
   if (j.tipo === 'sin-evaluacion') {
-    caja.innerHTML = '<p>Los equipos Tiny no tienen evaluación: pasan directo a su primera práctica. El coach te indicará día y hora.</p>';
+    caja.innerHTML = j.motivo === 'sin-equipo'
+      ? '<p>Por ahora no hay una jornada que elegir. El head coach te contactará por WhatsApp para orientarte y coordinar tu evaluación.</p>'
+      : '<p>Los equipos Tiny no tienen evaluación: pasan directo a su primera práctica. El coach te indicará día y hora.</p>';
     return;
   }
   if (j.tipo === 'inicio-diferido') {
@@ -980,25 +986,26 @@ async function pintarResultado(): Promise<void> {
   const dif = esDiferido(ev);
   $('#res-jornada-titulo').textContent = dif ? 'Inicio' : 'Evaluación';
   $('#res-monto-titulo').textContent = dif ? 'Mensualidad' : 'Monto estimado de ingreso';
-  $('#res-pago-titulo').textContent = dif ? 'Próximos pasos' : 'Cómo pagar';
-  $('#res-pago-texto').textContent = dif ? 'El head coach te avisará por WhatsApp cuando el grupo esté por comenzar.' : 'Paga y envía el comprobante al head coach.';
-  $('#res-codigo-ayuda').textContent = dif ? 'Guárdalo: lo necesitas cuando escribas al head coach.' : 'Guárdalo: lo necesitas al enviar el comprobante.';
-  $('#res-equipos-nota').textContent = dif ? 'El head coach confirma tu grupo antes del inicio.' : 'El coach confirma tu equipo final en la evaluación.';
-  $('#res-confirmar-texto').textContent = dif ? 'Al confirmar guardamos tu preinscripción. El head coach te avisará cuando el grupo esté por comenzar.' : 'Al confirmar guardamos tu preinscripción y reservamos tu jornada. Después te mostramos cómo pagar.';
-  $('#whatsapp-texto').textContent = dif ? 'Escribir al head coach por WhatsApp' : 'Enviar comprobante por WhatsApp';
+  const sin = esSinEquipo(ev);
+  const sp = dif || sin;
+  $('#res-pago-titulo').textContent = sp ? 'Próximos pasos' : 'Cómo pagar';
+  $('#res-pago-texto').textContent = sin ? 'El head coach te contactará por WhatsApp para orientarte.' : dif ? 'El head coach te avisará por WhatsApp cuando el grupo esté por comenzar.' : 'Paga y envía el comprobante al head coach.';
+  $('#res-codigo-ayuda').textContent = sp ? 'Guárdalo: lo necesitas cuando escribas al head coach.' : 'Guárdalo: lo necesitas al enviar el comprobante.';
+  $('#res-equipos-nota').textContent = sin ? 'El head coach te orientará para definir el equipo.' : dif ? 'El head coach confirma tu grupo antes del inicio.' : 'El coach confirma tu equipo final en la evaluación.';
+  $('#res-confirmar-texto').textContent = sin ? 'Al confirmar guardamos tu preinscripción. El head coach te contactará por WhatsApp para orientarte.' : dif ? 'Al confirmar guardamos tu preinscripción. El head coach te avisará cuando el grupo esté por comenzar.' : 'Al confirmar guardamos tu preinscripción y reservamos tu jornada. Después te mostramos cómo pagar.';
+  $('#whatsapp-texto').textContent = sp ? 'Escribir al head coach por WhatsApp' : 'Enviar comprobante por WhatsApp';
 
   /* Antes de confirmar: vista previa. Después: código, cómo pagar y WhatsApp. */
   $('#res-confirmada').hidden = !conf;
   $('#res-previa').hidden = !!conf;
   if (conf) {
     $('#res-codigo').textContent = conf.codigo;
-    $('#res-correo').textContent = textoCorreo(conf, esDiferido(ev));
+    $('#res-correo').textContent = textoCorreo(conf, esDiferido(ev) || esSinEquipo(ev));
     $('#whatsapp-estado').textContent = '';
     await pintarJornada(ev, conf);
     actualizarEnlaceWhatsapp();
   } else {
     mostrarErrorConfirmar(null);
-    if (ev.equipos.length === 0) mostrarErrorConfirmar('Para tu caso el head coach te orientará. Escríbele por WhatsApp.', true);
     await pintarJornada(ev, null);
     actualizarBotonConfirmar();
   }

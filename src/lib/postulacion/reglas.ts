@@ -222,6 +222,15 @@ function cumpleNivelInternational(nombre: string, n: NivelAlcanzado): boolean {
 export function sugerirEquipos(equipos: readonly EquipoBase[], p: Postulante): EquipoBase[] {
   const nivel = nivelAlcanzado(p.habilidades ?? []);
   const programas = programasCandidatos(p, nivel);
+  const resultado = filtrarEquipos(equipos, p, nivel, programas);
+  /* Con experiencia pero sin equipo Prep para su edad (por ejemplo, 7 años): se sugiere Novice. */
+  if (resultado.length === 0 && !p.modalidad && !programas.includes('novice')) {
+    return filtrarEquipos(equipos, p, nivel, ['novice']);
+  }
+  return resultado;
+}
+
+function filtrarEquipos(equipos: readonly EquipoBase[], p: Postulante, nivel: NivelAlcanzado, programas: readonly ProgramaId[]): EquipoBase[] {
   return equipos
     .filter((e) => programas.includes(e.programa))
     .filter((e) => cabeEnEdad(e, p.edad))
@@ -264,7 +273,7 @@ export const JORNADAS_INICIALES: readonly Jornada[] = [
 
 export type ResultadoJornada =
   /** Los Tiny pasan directo a su primera práctica. */
-  | { tipo: 'sin-evaluacion'; motivo: 'tiny' }
+  | { tipo: 'sin-evaluacion'; motivo: 'tiny' | 'sin-equipo' }
   /** Grupos que comienzan más adelante (Spirit en abril, Team Parent en enero): sin jornada. */
   | { tipo: 'inicio-diferido'; inicios: { equipo: string; inicio: string }[] }
   | { tipo: 'jornadas'; grupos: GrupoJornada[] };
@@ -272,11 +281,13 @@ export type ResultadoJornada =
 /** Edad hasta la que aplica la jornada «sin experiencia» del sábado. */
 
 export function resolverJornada(p: Postulante, sugeridos: readonly EquipoBase[]): ResultadoJornada {
+  /* Sin equipo sugerido no hay jornada que elegir: la preinscripción se guarda y el head coach orienta. */
+  if (sugeridos.length === 0) return { tipo: 'sin-evaluacion', motivo: 'sin-equipo' };
   if (p.edad <= EDAD_MAX_TINY) return { tipo: 'sin-evaluacion', motivo: 'tiny' };
   if (sugeridos.length > 0 && sugeridos.every((e) => e.inicio !== undefined)) {
     return { tipo: 'inicio-diferido', inicios: sugeridos.map((e) => ({ equipo: e.nombre, inicio: e.inicio ?? '' })) };
   }
-  if (esNovice(p)) {
+  if (esNovice(p) || (sugeridos.length > 0 && sugeridos.every((e) => e.programa === 'novice'))) {
     /* El club confirmó (25 nov 2026) que los mayores de 19 sin experiencia también van a la
        evaluación Novice del sábado, es decir, la jornada de atletas sin experiencia. */
     return { tipo: 'jornadas', grupos: ['sin-experiencia-7-19'] };

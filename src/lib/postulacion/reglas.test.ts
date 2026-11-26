@@ -182,3 +182,17 @@ test('sexo «otro»: solo equipos mixtos', () => {
   assert.ok(r.equipos.length > 0);
   assert.ok(r.equipos.every((e) => e.genero === 'mixto'));
 });
+
+test('7 años con experiencia: sin Prep para su edad, se sugiere Novice y su evaluación del sábado', () => {
+  const r = evaluarPostulacion(equipos, precios, { edad: 7, genero: 'dama', experiencia: 'con' });
+  assert.ok(r.equipos.length > 0);
+  assert.ok(r.equipos.every((e) => e.programa === 'novice'));
+  assert.deepEqual(r.jornada, { tipo: 'jornadas', grupos: ['sin-experiencia-7-19'] });
+});
+
+test('sin equipo sugerido (3 años): no hay jornada que elegir y el ingreso queda sin estimar', () => {
+  const r = evaluarPostulacion(equipos, precios, { edad: 3, genero: 'dama', experiencia: 'ninguna' });
+  assert.equal(r.equipos.length, 0);
+  assert.equal(r.ingresoEstimado, null);
+  assert.deepEqual(r.jornada, { tipo: 'sin-evaluacion', motivo: 'sin-equipo' });
+});
