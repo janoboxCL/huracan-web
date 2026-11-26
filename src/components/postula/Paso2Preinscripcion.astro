@@ -29,9 +29,9 @@ const gruposHabilidades = [
 
 <section class="paso" id="paso-2" data-paso="2" aria-labelledby="paso-2-titulo" hidden>
   <Etiqueta variante="seccion" class="paso__etiqueta">02 · Preinscripción</Etiqueta>
-  <h2 id="paso-2-titulo" class="disp paso__titulo" tabindex="-1">Cuéntanos de la deportista</h2>
+  <h2 id="paso-2-titulo" class="disp paso__titulo" tabindex="-1">Cuéntanos sobre quién postula</h2>
   <p class="paso__intro">
-    Con estos datos sugerimos equipos y una jornada de evaluación. Todos los campos son obligatorios, salvo los marcados como opcionales.
+    Con estos datos te sugerimos, de acuerdo con la edad y la experiencia, el equipo al que postular, junto con tu jornada de evaluación inicial. Todos los campos son obligatorios, salvo los marcados como opcionales.
   </p>
 
   <form id="form-preinscripcion" class="formulario" novalidate autocomplete="on">
@@ -53,10 +53,11 @@ const gruposHabilidades = [
       <GrupoOpciones
         nombre="sexo"
         leyenda="Sexo"
-        ayuda="Se usa para sugerir equipos: algunos son solo de damas."
+        ayuda="Se usa para sugerir equipos: algunos son solo de damas. Con «Otro» te sugerimos los equipos mixtos."
         opciones={[
           { valor: 'dama', texto: 'Dama' },
           { valor: 'varon', texto: 'Varón' },
+          { valor: 'otro', texto: 'Otro' },
         ]}
       />
       <div class="campo" data-campo="comuna">
@@ -73,7 +74,7 @@ const gruposHabilidades = [
       </div>
       <GrupoOpciones
         nombre="esAntiguo"
-        leyenda="¿Es atleta antigua o antiguo de Huracán?"
+        leyenda="¿Estuvo antes en Huracán?"
         opciones={[
           { valor: 'si', texto: 'Sí' },
           { valor: 'no', texto: 'No' },
@@ -88,6 +89,7 @@ const gruposHabilidades = [
         leyenda="¿Ha practicado cheerleading?"
         opciones={[
           { valor: 'ninguna', texto: 'No, parte desde cero' },
+          { valor: 'basica', texto: 'Sí, pero muy poco y nivel básico' },
           { valor: 'con', texto: 'Sí' },
         ]}
       />

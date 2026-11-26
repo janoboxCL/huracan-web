@@ -98,13 +98,13 @@ export interface DatosPostulacion {
   nombre: string;
   apellido: string;
   fechaNacimiento: string;
-  sexo: '' | 'dama' | 'varon';
+  sexo: '' | 'dama' | 'varon' | 'otro';
   /** Una comuna de la lista o `COMUNA_OTRA`. */
   comuna: string;
   /** Texto de «¿Cuál?», solo cuando `comuna` es `COMUNA_OTRA`. */
   comunaOtra: string;
   esAntiguo: '' | 'si' | 'no';
-  experiencia: '' | 'ninguna' | 'con';
+  experiencia: '' | 'ninguna' | 'basica' | 'con';
   clubAnterior: string;
   aniosExperiencia: string;
   posicion: Posicion;
@@ -178,7 +178,7 @@ export function validarCampo(campo: keyof DatosPostulacion, d: DatosPostulacion,
     case 'comunaOtra':
       return d.comuna === COMUNA_OTRA && vacio(d.comunaOtra) ? 'Escribe cuál es tu comuna o región.' : null;
     case 'esAntiguo':
-      return d.esAntiguo === '' ? 'Indica si es atleta antigua o antiguo de Huracán.' : null;
+      return d.esAntiguo === '' ? 'Indica si estuvo antes en Huracán.' : null;
     case 'experiencia':
       return d.experiencia === '' ? 'Indica si ha practicado cheerleading.' : null;
     case 'clubAnterior':

@@ -28,10 +28,10 @@ export interface CuerpoPostulacion {
   atletaNombre: string;
   atletaApellido: string;
   fechaNacimiento: string;
-  sexo: 'dama' | 'varon' | '';
+  sexo: 'dama' | 'varon' | 'otro' | '';
   comuna: string;
   esAntiguo: boolean;
-  experiencia: 'ninguna' | 'con' | '';
+  experiencia: 'ninguna' | 'basica' | 'con' | '';
   clubAnterior: string;
   aniosExperiencia: number | null;
   posicion: string;

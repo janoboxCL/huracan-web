@@ -76,7 +76,7 @@
     "_notaPago": "En el proceso actual el pago es ANTES de la evaluación. Definir con el club si el flujo online lo mantiene."
   },
   "programas": [
-    { "id": "recreativo", "nombre": "Recreativo", "edadDesde": 3, "descripcion": "Espacio donde los niños interactúan con actividades lúdicas trabajando motricidad, equilibrio y fuerza mezcladas con el cheerleading.", "mensualidad": 25000, "detalle": "4 clases mensuales. Pago en la primera clase, en efectivo, al head coach." },
+    { "id": "recreativo", "nombre": "Recreativo", "edadDesde": 4, "descripcion": "Espacio donde los niños interactúan con actividades lúdicas trabajando motricidad, equilibrio y fuerza mezcladas con el cheerleading.", "mensualidad": 25000, "detalle": "4 clases mensuales. Pago en la primera clase, en efectivo, al head coach." },
     { "id": "novice", "nombre": "Novice", "edadDesde": 4, "descripcion": "Espacio de iniciación deportiva, formación y recreación, pero también un lugar de competencia. La evaluación tiene un fuerte enfoque en la técnica, la seguridad y la progresión.", "mensualidad": 45000, "mensualidadOpen": 32000, "detalle": "Hasta Senior $45.000 · Open $32.000. 2 clases semanales de cheerleading y 1 clase semanal de gimnasia de diciembre a marzo." },
     { "id": "prep", "nombre": "Prep", "edadDesde": 9, "descripcion": "Espacio competitivo para deportistas dispuestos a aprender en base a resultados y que buscan dominar el nivel en que compiten. La evaluación tiene un fuerte enfoque en la dificultad y la técnica.", "mensualidad": 45000, "mensualidadOpen": 32000, "detalle": "Hasta Senior $45.000 · Open $32.000. 2 clases semanales de cheerleading y 1 clase semanal de gimnasia de diciembre a marzo." },
     { "id": "international", "nombre": "International", "edadDesde": 15, "descripcion": "Espacio exclusivo para deportistas consolidados y altamente preparados: la evolución del trabajo élite. Pueden prepararse para competencias internacionales como Cheerleading Worlds.", "mensualidad": 32000, "detalle": "2 clases semanales de cheerleading y 1 clase semanal de gimnasia de diciembre a marzo." }
@@ -179,9 +179,9 @@
     { "nombre": "Otra región", "descuento": "50%", "texto": "Descuento en la mensualidad." },
     { "nombre": "Varones externos", "descuento": "50%", "texto": "Descuento en la mensualidad, válido para Junior y Senior." },
     { "nombre": "Familiar", "descuento": "Mensualidad especial", "texto": "Open y Open coed (Novice): mensualidad $30.000. Mini, Youth, Junior y Senior (Novice y Prep): mensualidad $40.000." },
-    { "nombre": "Junior 2.2", "descuento": "$25.000", "texto": "Mensualidad todo el año para niños y niñas externos de 9 a 15 años con habilidades de gimnasia avanzada o élite nivel 2." },
-    { "nombre": "Senior Prep 2.2", "descuento": "$25.000", "texto": "Mensualidad todo el 2027 para damas y varones externos de 12 a 19 años cumplidos el 2027 que manejen habilidades de gimnasia élite nivel 2." },
-    { "nombre": "Open Prep", "descuento": "$25.000", "texto": "Mensualidad todo el año para damas desde 15 años con habilidades élite nivel 2, o que postulen con su grupo de elevación con 3 habilidades élite." },
+    { "nombre": "Junior coed prep 2.2", "descuento": "$25.000", "texto": "Mensualidad todo el año para niños y niñas externos de 9 a 15 años con habilidades de gimnasia avanzada o élite nivel 2." },
+    { "nombre": "Senior coed prep 2.2", "descuento": "$25.000", "texto": "Mensualidad todo el 2027 para damas y varones externos de 12 a 19 años cumplidos el 2027 que manejen habilidades de gimnasia élite nivel 2." },
+    { "nombre": "Open prep 3.2", "descuento": "$25.000", "texto": "Mensualidad todo el año para damas desde 15 años con habilidades élite nivel 2, o que postulen con su grupo de elevación con 3 habilidades élite." },
     { "nombre": "International Open Coed 3", "descuento": "$25.000", "texto": "Mensualidad todo el año desde 15 años con habilidades élite nivel 3, o grupo de elevación con 3 habilidades élite." },
     { "nombre": "International Open Coed 4", "descuento": "Gratis", "texto": "Mensualidad gratis todo el año desde 15 años con habilidades élite nivel 4, o grupo de elevación con 4 habilidades élite." }
   ],

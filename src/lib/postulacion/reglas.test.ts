@@ -168,3 +168,17 @@ test('inicio diferido: Spirit paga inscripción y vestimenta; Team Parent solo v
   assert.equal(conceptosInicioDiferido([{ nombre: 'Huracán Spirit' }]), 'inscripción y vestimenta de entrenamiento');
   assert.equal(conceptosInicioDiferido([{ nombre: 'Huracán Team Parent' }]), 'vestimenta de entrenamiento');
 });
+
+test('experiencia muy básica: misma vía Novice que sin experiencia', () => {
+  const basica = evaluarPostulacion(equipos, precios, { edad: 10, genero: 'dama', experiencia: 'basica' });
+  const ninguna = evaluarPostulacion(equipos, precios, { edad: 10, genero: 'dama', experiencia: 'ninguna' });
+  assert.deepEqual(basica.equipos.map((e) => e.nombre), ninguna.equipos.map((e) => e.nombre));
+  assert.ok(basica.equipos.every((e) => e.programa === 'novice'));
+  assert.deepEqual(basica.jornada, ninguna.jornada);
+});
+
+test('sexo «otro»: solo equipos mixtos', () => {
+  const r = evaluarPostulacion(equipos, precios, { edad: 10, genero: 'otro', experiencia: 'ninguna' });
+  assert.ok(r.equipos.length > 0);
+  assert.ok(r.equipos.every((e) => e.genero === 'mixto'));
+});

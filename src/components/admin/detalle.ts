@@ -138,10 +138,10 @@ class Detalle {
             <dl class="adm-datos">
               ${dato('Edad en 2027', `${p.edad_2027} años`)}
               ${dato('Fecha de nacimiento', esc(p.fecha_nacimiento.split('-').reverse().join('-')))}
-              ${dato('Sexo', p.sexo === 'dama' ? 'Dama' : 'Varón')}
+              ${dato('Sexo', p.sexo === 'dama' ? 'Dama' : p.sexo === 'varon' ? 'Varón' : 'Otro')}
               ${dato('Comuna', esc(p.comuna))}
               ${dato('Atleta antiguo de Huracán', si(p.es_antiguo))}
-              ${dato('Experiencia', p.experiencia === 'con' ? 'Con experiencia (Prep)' : 'Sin experiencia (Novice)')}
+              ${dato('Experiencia', p.experiencia === 'con' ? 'Con experiencia (Prep)' : p.experiencia === 'basica' ? 'Experiencia muy básica (Novice)' : 'Sin experiencia (Novice)')}
               ${p.experiencia === 'con' ? dato('Club anterior', esc(p.club_anterior || 'No indicó')) : ''}
               ${p.experiencia === 'con' && p.anios_experiencia !== null ? dato('Años de experiencia', String(p.anios_experiencia)) : ''}
               ${p.posicion ? dato('Posición', esc(ETIQUETA_POSICION[p.posicion] ?? p.posicion)) : ''}

@@ -14,6 +14,9 @@
   /* Gris de programa Recreativo y de clases de gimnasia: texto negro 13,6:1 (AA) */
   --gris-programa: #d4d4d4;
 
+  /* Fondo del programa Recreativo: gris más oscuro; texto negro 7,8:1 (AA) */
+  --gris-recreativo: #a3a3a3;
+
   /* Texto sobre negro (AA sobre --negro y --superficie-*) */
   --texto: var(--blanco);
   --texto-2: #d4d4d4;

@@ -697,8 +697,8 @@ const datosVigentes = (): DatosPostulacion => estado.confirmada?.datos ?? estado
 function postulanteDesdeDatos(d: DatosPostulacion): Postulante {
   const p: Postulante = {
     edad: edadTemporada(d.fechaNacimiento) ?? 0,
-    genero: d.sexo === 'varon' ? 'varon' : 'dama',
-    experiencia: d.experiencia === 'con' ? 'con' : 'ninguna',
+    genero: d.sexo === 'varon' ? 'varon' : d.sexo === 'otro' ? 'otro' : 'dama',
+    experiencia: d.experiencia === 'con' ? 'con' : d.experiencia === 'basica' ? 'basica' : 'ninguna',
     habilidades: d.experiencia === 'con' ? d.habilidades : [],
     esAntiguo: d.esAntiguo === 'si',
   };

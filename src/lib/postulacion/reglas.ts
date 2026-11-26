@@ -10,8 +10,9 @@
    decisión final: aquí solo se sugiere. */
 
 export type ProgramaId = 'recreativo' | 'novice' | 'prep' | 'international';
-export type Genero = 'dama' | 'varon';
-export type Experiencia = 'ninguna' | 'con';
+export type Genero = 'dama' | 'varon' | 'otro';
+/** `basica`: ha practicado muy poco y a nivel básico; se evalúa por la vía Novice, igual que «ninguna». */
+export type Experiencia = 'ninguna' | 'basica' | 'con';
 
 /** Forma mínima de un equipo del JSON de contenido (docs/contenido/huracan-2027.json). */
 export interface EquipoBase {
@@ -155,9 +156,9 @@ export interface PromoHabilidades {
 }
 
 export const PROMOS_HABILIDADES: readonly PromoHabilidades[] = [
-  { equipo: 'Huracán Super Mafia', nombre: 'Junior 2.2', mensualidad: 25000, soloExternos: true, califica: (n) => n.gimnasia >= 2 },
-  { equipo: 'Huracán Titanium Black', nombre: 'Senior Prep 2.2', mensualidad: 25000, soloExternos: true, califica: (n) => n.gimnasia >= 2 },
-  { equipo: 'Huracán Lady Jags', nombre: 'Open Prep', mensualidad: 25000, soloExternos: false, califica: (n) => n.gimnasia >= 2 || n.grupo >= 3 },
+  { equipo: 'Huracán Super Mafia', nombre: 'Junior coed prep 2.2', mensualidad: 25000, soloExternos: true, califica: (n) => n.gimnasia >= 2 },
+  { equipo: 'Huracán Titanium Black', nombre: 'Senior coed prep 2.2', mensualidad: 25000, soloExternos: true, califica: (n) => n.gimnasia >= 2 },
+  { equipo: 'Huracán Lady Jags', nombre: 'Open prep 3.2', mensualidad: 25000, soloExternos: false, califica: (n) => n.gimnasia >= 2 || n.grupo >= 3 },
   { equipo: 'Huracán Velocity Lightning', nombre: 'International Open Coed 3', mensualidad: 25000, soloExternos: false, califica: (n) => n.gimnasia >= 3 || n.grupo >= 3 },
   { equipo: 'Huracán Five Elite', nombre: 'International Open Coed 4', mensualidad: 0, soloExternos: false, califica: (n) => n.gimnasia >= 4 || n.grupo >= 4 || n.dupla },
 ];
@@ -188,6 +189,11 @@ export function edadEnTemporada(fechaNacimiento: string, anio: number = ANIO_TEM
 const ORDEN_PROGRAMA: Record<ProgramaId, number> = { recreativo: 0, novice: 1, prep: 2, international: 3 };
 const EDAD_MAX_TINY = 6;
 
+/** Sin experiencia, o con experiencia muy básica: sigue la vía Novice. */
+function esNovice(p: Postulante): boolean {
+  return p.experiencia === 'ninguna' || p.experiencia === 'basica';
+}
+
 function cabeEnEdad(e: EquipoBase, edad: number): boolean {
   return edad >= e.edadMin && (e.edadMax === null || edad <= e.edadMax);
 }
@@ -200,7 +206,7 @@ function esOpen(e: EquipoBase): boolean {
 function programasCandidatos(p: Postulante, nivel: NivelAlcanzado): ProgramaId[] {
   if (p.modalidad) return [p.modalidad];
   if (p.edad <= EDAD_MAX_TINY) return ['recreativo', 'novice'];
-  if (p.experiencia === 'ninguna') return ['novice'];
+  if (esNovice(p)) return ['novice'];
   const calificaInternational = p.edad >= 15 && (nivel.gimnasia >= 3 || nivel.grupo >= 3 || nivel.dupla);
   return calificaInternational ? ['prep', 'international'] : ['prep'];
 }
@@ -270,7 +276,7 @@ export function resolverJornada(p: Postulante, sugeridos: readonly EquipoBase[])
   if (sugeridos.length > 0 && sugeridos.every((e) => e.inicio !== undefined)) {
     return { tipo: 'inicio-diferido', inicios: sugeridos.map((e) => ({ equipo: e.nombre, inicio: e.inicio ?? '' })) };
   }
-  if (p.experiencia === 'ninguna') {
+  if (esNovice(p)) {
     /* El club confirmó (25 nov 2026) que los mayores de 19 sin experiencia también van a la
        evaluación Novice del sábado, es decir, la jornada de atletas sin experiencia. */
     return { tipo: 'jornadas', grupos: ['sin-experiencia-7-19'] };

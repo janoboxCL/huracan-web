@@ -16,10 +16,10 @@ export interface Postulacion {
   atleta_apellido: string;
   fecha_nacimiento: string;
   edad_2027: number;
-  sexo: 'dama' | 'varon';
+  sexo: 'dama' | 'varon' | 'otro';
   comuna: string;
   es_antiguo: boolean;
-  experiencia: 'ninguna' | 'con';
+  experiencia: 'ninguna' | 'basica' | 'con';
   club_anterior: string | null;
   anios_experiencia: number | null;
   posicion: string | null;
