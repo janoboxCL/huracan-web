@@ -2,7 +2,7 @@
    acota largos y descarta lo que no reconoce. Los montos, equipos y jornadas NO se leen
    del cuerpo: se recalculan con las reglas (src/lib/postulacion/reglas.ts). */
 import { COMUNA_OTRA } from '../postulacion/comunas.ts';
-import { HABILIDADES, type Experiencia, type Genero, type ProgramaId } from '../postulacion/reglas.ts';
+import { HABILIDADES, edadEnTemporada, EDAD_MIN_INGRESO, type Experiencia, type Genero, type ProgramaId } from '../postulacion/reglas.ts';
 
 export const PROMOCIONES_DECLARABLES = ['hermanos', 'otra-region', 'varones-externos', 'familiar'] as const;
 const POSICIONES = ['flyer', 'base-principal', 'base-secundaria', 'backspot'] as const;
@@ -66,7 +66,7 @@ function fechaValida(v: unknown): string | null {
   const fecha = new Date(`${v}T00:00:00Z`);
   if (Number.isNaN(fecha.getTime()) || fecha.toISOString().slice(0, 10) !== v) return null;
   const anio = Number(v.slice(0, 4));
-  return anio >= 1925 && anio <= 2026 ? v : null;
+  return anio >= 1925 && anio <= 2026 && edadEnTemporada(v) >= EDAD_MIN_INGRESO ? v : null;
 }
 
 /** Una comuna de la lista o el texto libre de «Otra comuna o región». El navegador envía ese

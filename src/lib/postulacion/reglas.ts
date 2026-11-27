@@ -179,6 +179,9 @@ export interface Postulante {
 }
 
 export const ANIO_TEMPORADA = 2027;
+/** Edad mínima de ingreso: Tiny Recreativo y Novice. */
+export const EDAD_MIN_INGRESO = 4;
+export const MENSAJE_EDAD_MINIMA = `La edad mínima para ingresar a Huracán es de ${EDAD_MIN_INGRESO} años cumplidos durante la temporada ${ANIO_TEMPORADA}.`;
 
 export function edadEnTemporada(fechaNacimiento: string, anio: number = ANIO_TEMPORADA): number {
   const nacimiento = Number.parseInt(fechaNacimiento.slice(0, 4), 10);

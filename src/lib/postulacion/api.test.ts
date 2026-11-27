@@ -156,3 +156,9 @@ test('con «Otra comuna o región» el cuerpo lleva el texto de «¿Cuál?» com
   assert.equal(c.comuna, 'Rancagua');
   assert.equal(armarCuerpo({ ...menor, comuna: 'Maipú', comunaOtra: 'x' }, null).comuna, 'Maipú');
 });
+
+test('respuesta exitosa sin equipo sugerido ni monto estimado', () => {
+  assert.deepEqual(interpretarRespuesta(201, { codigo: 'HUR-ABC234', correoEnviado: true, ingresoEstimado: null }), {
+    ok: true, codigo: 'HUR-ABC234', correoEnviado: true, ingresoEstimado: null, simulada: false,
+  });
+});

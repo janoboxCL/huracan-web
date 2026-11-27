@@ -153,3 +153,13 @@ test('correo: ofrece el correo de pagos como alternativa solo cuando se entrega 
   assert.ok(con.texto.includes('También puedes enviarlo al correo pagos@example.com'));
   assert.ok(con.html.includes('pagos@example.com'));
 });
+
+test('la API rechaza menores de 4 años durante 2027 antes de guardar y acepta el límite', () => {
+  for (const fechaNacimiento of ['2026-01-01', '2025-01-01', '2024-01-01', '2024-12-31']) {
+    const r = validarPostulacion({ ...base, fechaNacimiento });
+    assert.ok(!r.ok && r.campos.includes('fechaNacimiento'));
+  }
+  for (const fechaNacimiento of ['2023-12-31', '2023-01-01', '1985-01-01']) {
+    assert.ok(validarPostulacion({ ...base, fechaNacimiento }).ok);
+  }
+});

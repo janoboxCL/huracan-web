@@ -154,7 +154,7 @@ export const onRequestPost = async ({ request, env }: ContextoFuncion): Promise<
       console.error('Falló el envío de correo', error instanceof Error ? error.message : 'error');
     }
 
-    return Response.json({ codigo: creada.codigo, correoEnviado, ingresoEstimado: principal.total }, { status: 201 });
+    return Response.json({ codigo: creada.codigo, correoEnviado, ingresoEstimado: principal?.total ?? null }, { status: 201 });
   } catch (error) {
     if (error instanceof ErrorSupabase) {
       if (error.mensaje.includes('jornada_sin_cupo')) return respuestaError(409, 'jornada_sin_cupo');

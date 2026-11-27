@@ -1108,7 +1108,7 @@ async function confirmarPreinscripcion(): Promise<void> {
       const destino = CAMPO_API_A_FORMULARIO[campo];
       if (destino && document.getElementById(`error-${destino}`)) {
         tocados.add(destino);
-        mostrarError(destino, 'Revisa este dato: el servidor no lo aceptó.');
+        mostrarError(destino, validarCampo(destino, estado.datos, hoyISO()) ?? 'Revisa este dato: el servidor no lo aceptó.');
         primero ??= destino;
       } else sinCampo.push(campo);
     }
