@@ -8,7 +8,7 @@
    El tornado vive dentro de la escena del recorte (no cruza texto). Reveal: `.soplo` en
    contenedores; el recorte flota en el <img> (hijo) para no mezclar transforms. */
 import { Image } from 'astro:assets';
-import duo from '../../assets/img/cut-duo.png';
+import fotoCierre from '../../assets/img/cut-cierre.png';
 import { contenido } from '../../data/contenido';
 import { enlaces } from '../../data/enlaces';
 import Boton from '../ui/Boton.astro';
@@ -42,11 +42,12 @@ import Tornado from '../ui/Tornado.astro';
     <div class="cierre__escena soplo-der">
       <Tornado class="cierre__tornado" />
       <Image
-        class="cierre__duo flota"
-        src={duo}
-        alt="Dos deportistas de Huracán All Stars con uniforme de competencia"
-        widths={[360, 560, 1120]}
-        sizes="(min-width: 70rem) 560px, 80vw"
+        class="cierre__grupo flota"
+        src={fotoCierre}
+        alt="Deportistas de Huracán All Stars formando un círculo con sus uniformes de competencia"
+        widths={[360, 640, 1120]}
+        sizes="(min-width: 70rem) 560px, (min-width: 40rem) 416px, 80vw"
+        format="webp"
         loading="lazy"
         decoding="async"
       />
@@ -74,7 +75,7 @@ import Tornado from '../ui/Tornado.astro';
     display: flex;
     flex-direction: column;
     gap: var(--esp-7);
-    padding-block: calc(var(--corte-diagonal) + var(--seccion-y)) 0;
+    padding-block: calc(var(--corte-diagonal) + var(--seccion-y)) var(--seccion-y);
   }
 
   .cierre__texto {
@@ -163,8 +164,8 @@ import Tornado from '../ui/Tornado.astro';
   .cierre__escena {
     position: relative;
     align-self: center;
-    width: min(100%, 26rem);
-    margin-top: auto;
+    width: min(90%, 26rem);
+    margin-block: var(--esp-3);
   }
 
   .cierre :global(.cierre__tornado) {
@@ -178,34 +179,39 @@ import Tornado from '../ui/Tornado.astro';
     pointer-events: none;
   }
 
-  .cierre :global(.cierre__duo) {
+  .cierre :global(.cierre__grupo) {
     position: relative;
     display: block;
     width: 100%;
     height: auto;
-    filter: drop-shadow(10px 0 0 var(--negro));
+    filter: drop-shadow(8px 8px 0 var(--negro));
   }
 
   @media (min-width: 70rem) {
     .cierre__cuerpo {
       flex-direction: row;
-      align-items: flex-end;
-      gap: var(--esp-6);
+      align-items: center;
+      gap: var(--esp-7);
     }
 
     .cierre__texto {
       flex: 1 1 0;
-      padding-bottom: var(--esp-9);
+    }
+
+    .cierre__titulo {
+      font-size: clamp(3.75rem, 7.2vw, 8rem);
     }
 
     .cierre__escena {
       flex: 0 1 35rem;
       width: auto;
-      align-self: flex-end;
+      min-width: 0;
+      align-self: center;
+      margin-right: 14px;
     }
 
-    .cierre :global(.cierre__duo) {
-      filter: drop-shadow(14px 0 0 var(--negro));
+    .cierre :global(.cierre__grupo) {
+      filter: drop-shadow(12px 12px 0 var(--negro));
     }
   }
 </style>
