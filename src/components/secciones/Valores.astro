@@ -5,6 +5,8 @@
    `formatearPesos` ([por confirmar]); el detalle se conserva tal cual.
    Semántica: cada grupo es una lista de definición (dt = concepto, dd = monto y detalle),
    precedida por un h3. No se publican datos bancarios ni `noPublicar`. */
+import { Image } from 'astro:assets';
+import fotoValores from '../../assets/img/cut-valores.png';
 import { contenido, esPendiente, formatearPesos } from '../../data/contenido';
 import Etiqueta from '../ui/Etiqueta.astro';
 import Promociones from './Promociones.astro';
@@ -37,9 +39,23 @@ const grupos: { id: string; titulo: string; filas: Fila[] }[] = [
 <section class="valores" id="valores" aria-labelledby="valores-titulo">
   <div class="valores__cuerpo contenedor">
     <div class="valores__izq">
-      <div class="valores__cabecera soplo">
-        <Etiqueta variante="seccion" class="valores__etiqueta">08 · Valores {_temporada}</Etiqueta>
-        <h2 id="valores-titulo" class="disp valores__titulo">Sin letra<br /><span>chica</span></h2>
+      <div class="valores__cabecera">
+        <div class="valores__titulos soplo">
+          <Etiqueta variante="seccion" class="valores__etiqueta">08 · Valores {_temporada}</Etiqueta>
+          <h2 id="valores-titulo" class="disp valores__titulo">Sin letra<br /><span>chica</span></h2>
+        </div>
+        <div class="valores__recorte soplo-der" aria-hidden="true">
+          <Image
+            class="valores__atleta"
+            src={fotoValores}
+            alt=""
+            widths={[320, 640, 960]}
+            sizes="(min-width: 64rem) 192px, (min-width: 30rem) 160px, 112px"
+            format="webp"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
       </div>
 
       <div class="inscripcion-ancla soplo">
@@ -109,9 +125,62 @@ const grupos: { id: string; titulo: string; filas: Fila[] }[] = [
   }
 
   .valores__cabecera {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: end;
+    gap: var(--esp-4);
+  }
+
+  .valores__titulos {
     display: flex;
     flex-direction: column;
     gap: var(--esp-4);
+    min-width: 0;
+  }
+
+  /* El recorte vive dentro de la cabecera, sin tapar precios ni promociones. */
+  .valores__recorte {
+    width: min(9rem, 55%);
+    justify-self: center;
+    pointer-events: none;
+  }
+
+  .valores :global(.valores__atleta) {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(6px 6px 0 var(--amarillo));
+  }
+
+  @media (min-width: 30rem) {
+    .valores__cabecera {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 32%);
+    }
+
+    .valores__recorte {
+      width: min(10rem, 100%);
+      justify-self: end;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .valores__cabecera {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 34%);
+    }
+
+    .valores__cabecera .valores__titulo {
+      font-size: clamp(3rem, 4.7vw, 5.5rem);
+    }
+
+    .valores__recorte {
+      width: min(12rem, 100%);
+      margin-right: 8px;
+    }
+
+    .valores :global(.valores__atleta) {
+      filter: drop-shadow(8px 8px 0 var(--amarillo));
+    }
   }
 
   .valores :global(.valores__etiqueta) {
