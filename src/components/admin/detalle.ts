@@ -1,4 +1,6 @@
 import { arrancar, mostrarContenido, mostrarErrorGeneral, type Contexto } from '../../lib/admin/arranque.ts';
+import { edadTemporada } from '../../lib/postulacion/formulario.ts';
+import { EDAD_MIN_INGRESO } from '../../lib/postulacion/reglas.ts';
 import { ErrorAdmin } from '../../lib/admin/errores.ts';
 import { ESTADOS, estadoTrasConfirmarPago, ETIQUETA_ESTADO, planearGestion, transicionesDesde } from '../../lib/admin/estados.ts';
 import { filtrosAParametros, filtrosDesdeParametros } from '../../lib/admin/filtros.ts';
@@ -102,6 +104,7 @@ class Detalle {
     if (j) return textoJornada(j);
     if (this.p.jornada_id) return this.p.jornada_id;
     if (this.p.jornada_tipo === 'horario-equipo' && this.p.equipo_evaluacion) return `Horario habitual de ${this.p.equipo_evaluacion.replace('Huracán ', '')}`;
+    if (this.p.jornada_tipo === 'horario-equipo' && !this.p.equipo_evaluacion) return 'Horario por confirmar con el coach';
     return ETIQUETA_TIPO_JORNADA[this.p.jornada_tipo];
   }
 
@@ -168,6 +171,7 @@ class Detalle {
             }
           </section>
 
+          ${this.ctx.repo.editarDatosPostulacion && this.ctx.admin.rol !== 'coach' ? this.htmlEdicion() : ''}
           <section class="adm-tarjeta" aria-labelledby="d-sugerencia">
             <h2 id="d-sugerencia" class="adm-h2">Sugerencia del sistema</h2>
             <dl class="adm-datos">
@@ -252,6 +256,69 @@ class Detalle {
     this.pintarPagos();
     this.conectar();
     activarPistas(this.raiz);
+  }
+
+  private htmlEdicion(): string {
+    const p = this.p;
+    const campo = (nombre: string, titulo: string, valor: string, tipo = 'text') => '<div class="adm-campo"><label for="ed-' + nombre + '">' + esc(titulo) + '</label><input required id="ed-' + nombre + '" name="' + nombre + '" type="' + tipo + '" value="' + esc(valor) + '" /></div>';
+    const select = (nombre: string, titulo: string, actual: string, opciones: [string, string][]) => '<div class="adm-campo"><label for="ed-' + nombre + '">' + esc(titulo) + '</label><select required id="ed-' + nombre + '" name="' + nombre + '">' + opciones.map(([v,t]) => '<option value="' + esc(v) + '"' + (actual === v ? ' selected' : '') + '>' + esc(t) + '</option>').join('') + '</select></div>';
+    return '<section class="adm-tarjeta"><h2 class="adm-h2">Editar datos de preinscripción</h2><p class="adm-tenue">Conserva el código, el estado y los pagos. Si cambia la edad o el sexo se revisan equipos, montos y evaluación.</p>' +
+      '<details><summary>Editar atleta y apoderado</summary><form data-edicion>' +
+      campo('atletaNombre', 'Nombre del atleta', p.atleta_nombre) + campo('atletaApellido', 'Apellido del atleta', p.atleta_apellido) +
+      campo('fechaNacimiento', 'Fecha de nacimiento', p.fecha_nacimiento, 'date') + '<p class="adm-ayuda" data-edad-edicion></p>' +
+      select('sexo', 'Sexo', p.sexo, [['dama','Dama'],['varon','Varón'],['otro','Otro']]) + campo('comuna', 'Comuna', p.comuna) +
+      campo('contactoNombre', 'Nombre del contacto', p.contacto_nombre) +
+      select('contactoParentesco', 'Parentesco', p.contacto_parentesco ?? '', [['','Selecciona'],['madre','Madre'],['padre','Padre'],['tutor','Tutor/a'],['otro','Otro'],['propio','Contacto propio']]) +
+      campo('contactoTelefono', 'Teléfono', p.contacto_telefono, 'tel') + campo('contactoCorreo', 'Correo electrónico', p.contacto_correo, 'email') +
+      '<label><input type="checkbox" name="enviarCorreo" ' + (p.estado === 'cancelada' ? 'disabled' : 'checked') + ' /> Enviar correo actualizado al contacto</label><p class="adm-ayuda">La jornada incompatible queda pendiente de coordinación. El correo reemplaza al anterior.</p><button type="submit" class="adm-btn adm-btn--primario" data-editar-guardar>Guardar cambios</button></form></details>' +
+      '<button type="button" class="adm-btn" data-reenviar-correo ' + (p.estado === 'cancelada' ? 'disabled' : '') + '>Reenviar correo de confirmación</button><div class="adm-aviso" data-aviso-edicion role="status" aria-live="polite" hidden></div></section>';
+  }
+
+  private conectarEdicion(): void {
+    const form = document.querySelector<HTMLFormElement>('[data-edicion]');
+    if (!form || !this.ctx.repo.editarDatosPostulacion) return;
+    const aviso = consulta<HTMLElement>('[data-aviso-edicion]');
+    const fecha = consulta<HTMLInputElement>('#ed-fechaNacimiento');
+    const mostrarEdad = () => {
+      const edad = edadTemporada(fecha.value);
+      fecha.setCustomValidity(edad !== null && edad < EDAD_MIN_INGRESO ? 'La edad mínima es 4 años durante 2027.' : '');
+      consulta('[data-edad-edicion]').textContent = edad === null ? 'Indica una fecha válida.' : 'Edad en 2027: ' + edad + ' años' + (edad < EDAD_MIN_INGRESO ? ' (mínimo 4)' : '');
+    };
+    fecha.addEventListener('input', mostrarEdad);
+    mostrarEdad();
+    const clave = 'huracan-edicion-' + this.p.id;
+    try {
+      const msg = sessionStorage.getItem(clave);
+      if (msg) { sessionStorage.removeItem(clave); avisar(aviso, msg.startsWith('Atención') ? 'error' : 'ok', msg); }
+    } catch { /* sin almacenamiento */ }
+    const ejecutar = async (accion: 'editar' | 'reenviar', boton: HTMLButtonElement, datos?: Record<string,string>, enviarCorreo = false) => {
+      if (this.esSucio()) return avisar(aviso, 'error', 'Guarda primero los cambios de Gestión del coach.');
+      const destino = datos?.['contactoCorreo'] ?? this.p.contacto_correo;
+      if ((accion === 'reenviar' || enviarCorreo) && !window.confirm('¿Confirmas el envío del correo a ' + destino + '?')) return;
+      const guardar = consulta<HTMLButtonElement>('[data-editar-guardar]');
+      const reenviar = consulta<HTMLButtonElement>('[data-reenviar-correo]');
+      const liberar = ocupar(boton, 'Procesando…');
+      guardar.disabled = true; reenviar.disabled = true;
+      try {
+        const r = await this.ctx.repo.editarDatosPostulacion!({ id: this.p.id, version: this.p.actualizado_en, accion, ...(datos ? { datos } : {}), enviarCorreo });
+        const mensaje = (r.correoEnviado === false ? 'Atención: ' : '') + (r.guardado ? 'Datos guardados. ' : '') + (r.correoEnviado === true ? 'Correo aceptado por Resend.' : r.correoEnviado === false ? 'No se pudo enviar el correo. Puedes reenviarlo sin volver a guardar.' : '') + (r.jornadaPendiente ? ' Evaluación pendiente de coordinación.' : '');
+        if (r.guardado) {
+          try { sessionStorage.setItem(clave, mensaje); } catch { window.alert(mensaje); }
+          this.saliendo = true; location.reload();
+        } else avisar(aviso, r.correoEnviado === false ? 'error' : 'ok', mensaje);
+      } catch (e) {
+        if (e instanceof ErrorAdmin && e.tipo === 'conflicto') this.avisarConflicto(aviso, e.message);
+        else avisar(aviso, 'error', e instanceof ErrorAdmin ? e.message : 'No se pudo completar la operación. Recarga la ficha antes de reintentar.');
+      } finally { liberar(); guardar.disabled = false; reenviar.disabled = this.p.estado === 'cancelada'; }
+    };
+    form.addEventListener('submit', e => {
+      e.preventDefault();
+      const fd = new FormData(form);
+      const datos: Record<string,string> = {};
+      for (const nombre of ['atletaNombre','atletaApellido','fechaNacimiento','sexo','comuna','contactoNombre','contactoParentesco','contactoTelefono','contactoCorreo']) datos[nombre] = String(fd.get(nombre) ?? '');
+      void ejecutar('editar', consulta<HTMLButtonElement>('[data-editar-guardar]'), datos, fd.has('enviarCorreo'));
+    });
+    consulta<HTMLButtonElement>('[data-reenviar-correo]').addEventListener('click', e => void ejecutar('reenviar', e.currentTarget as HTMLButtonElement));
   }
 
   /* ── Eliminar (solo jefatura; RLS lo vuelve a exigir) ────────── */
@@ -566,6 +633,7 @@ class Detalle {
     }
 
     this.conectarEliminar();
+    this.conectarEdicion();
 
     consulta<HTMLFormElement>('[data-gestion]').addEventListener('submit', (e) => {
       e.preventDefault();

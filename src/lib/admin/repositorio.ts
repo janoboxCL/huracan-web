@@ -19,6 +19,8 @@ export interface Repositorio {
   /** Fila del usuario en `administradores`; `null` si no es administrador. */
   obtenerAdministrador(usuarioId: string): Promise<Administrador | null>;
 
+  /** Solo jefatura en el CRM real; nunca crea registros nuevos. */
+  editarDatosPostulacion?(solicitud: { id: string; version: string; accion: 'editar' | 'reenviar'; datos?: Record<string, string>; enviarCorreo?: boolean }): Promise<{ guardado: boolean; correoEnviado: boolean | null; jornadaPendiente: boolean }>;
   listarPostulaciones(): Promise<Postulacion[]>;
   obtenerPostulacion(codigo: string): Promise<Postulacion | null>;
   /** `version` es el `actualizado_en` que vio quien edita: si cambió, lanza `ErrorAdmin` de tipo `conflicto` sin pisar. */
