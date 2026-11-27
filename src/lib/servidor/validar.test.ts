@@ -163,3 +163,17 @@ test('la API rechaza menores de 4 años durante 2027 antes de guardar y acepta e
     assert.ok(validarPostulacion({ ...base, fechaNacimiento }).ok);
   }
 });
+
+
+test('correo administrativo actualizado conserva código, reemplaza el anterior y no vuelve a cobrar', () => {
+  const evaluacion = evaluarPostulacion(contenido.equipos, preciosDesdeContenido(contenido), { edad: 10, genero: 'dama', experiencia: 'ninguna' });
+  const c = construirCorreo({ codigo: 'HUR-ABC234', atleta: 'Atleta Prueba', para: 'familia@example.com', evaluacion, jornadaTexto: null, whatsappHeadCoach: '+56900000000', whatsappTexto: '+56 9 0000 0000', actualizada: true, sinInstruccionesPago: true, evaluacionPendiente: true }, 'Banco Prueba');
+  assert.match(c.asunto, /Preinscripción actualizada HUR-ABC234/);
+  for (const cuerpo of [c.texto, c.html]) {
+    assert.match(cuerpo, /reemplaza al anterior/);
+    assert.match(cuerpo, /HUR-ABC234/);
+    assert.match(cuerpo, /evaluación está por confirmar/);
+    assert.match(cuerpo, /No realices un nuevo pago/);
+    assert.doesNotMatch(cuerpo, /Banco Prueba|Total a transferir|Después de pagar/);
+  }
+});
