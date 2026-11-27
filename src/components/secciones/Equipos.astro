@@ -5,7 +5,7 @@
    muestra u oculta tarjetas. Sin JS se ve el listado completo; los botones de
    edad y el resumen (que dependen del script) permanecen ocultos. */
 import { Image } from 'astro:assets';
-import fotoEquipos from '../../assets/img/bg-equipos.jpg';
+import fotoEquipos from '../../assets/img/cut-equipos.png';
 import { contenido, equiposPorEdad, programaPorId } from '../../data/contenido';
 import { enlaces } from '../../data/enlaces';
 import Boton from '../ui/Boton.astro';
@@ -50,19 +50,6 @@ const tarjetas = equipos.map((e) => ({
 ---
 
 <section class="equipos sobre-amarillo" id="equipos" aria-labelledby="equipos-titulo" data-edad-tope={EDAD_TOPE}>
-  <div class="equipos__foto-caja" aria-hidden="true">
-    <Image
-      class="equipos__foto"
-      src={fotoEquipos}
-      alt=""
-      widths={[480, 800, 957]}
-      sizes="(min-width: 72rem) 44vw, 100vw"
-      loading="lazy"
-      decoding="async"
-    />
-    <div class="equipos__velo"></div>
-  </div>
-
   <div class="equipos__cuerpo contenedor">
     <div class="equipos__cabecera soplo">
       <Etiqueta variante="seccion">03 · Equipos {_temporada}</Etiqueta>
@@ -73,6 +60,19 @@ const tarjetas = equipos.map((e) => ({
       <p class="equipos__bajada" data-bajada-js hidden>
         Toca la edad que cumple en {_temporada}. El equipo final lo define la evaluación.
       </p>
+    </div>
+
+    <div class="equipos__foto-caja soplo-der" aria-hidden="true">
+      <Image
+        class="equipos__foto"
+        src={fotoEquipos}
+        alt=""
+        widths={[400, 640, 1024]}
+        sizes="(min-width: 72rem) 36vw, 288px"
+        format="webp"
+        loading="lazy"
+        decoding="async"
+      />
     </div>
 
     <div class="equipos__edades" role="group" aria-label={`Edad cumplida en ${_temporada}`} hidden data-edades>
@@ -134,32 +134,21 @@ const tarjetas = equipos.map((e) => ({
     overflow: clip;
   }
 
-  /* Foto del equipo, integrada al amarillo. El velo protege la lectura y
-     desvanece la imagen antes de las tarjetas, sin intervenir el buscador. */
+  /* Recorte transparente sobre el amarillo, con sombra de marca.
+     En pantallas pequeñas ocupa su propio espacio: nunca tapa el buscador. */
   .equipos__foto-caja {
-    position: absolute;
-    inset: 0 0 auto auto;
-    width: 100%;
-    height: min(27rem, 100%);
-    overflow: clip;
+    position: relative;
+    width: min(18rem, 86%);
+    align-self: center;
     pointer-events: none;
   }
 
   .equipos :global(.equipos__foto) {
     display: block;
     width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center 66%;
-    opacity: 0.16;
-  }
-
-  .equipos__velo {
-    position: absolute;
-    inset: 0;
-    background:
-      linear-gradient(to top, var(--amarillo), transparent 38%),
-      linear-gradient(to right, var(--amarillo), transparent 80%);
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(9px 9px 0 var(--negro));
   }
 
   .equipos__cuerpo {
@@ -442,24 +431,23 @@ const tarjetas = equipos.map((e) => ({
 
   @media (min-width: 72rem) {
     .equipos__foto-caja {
-      width: 44%;
-      height: clamp(30rem, 48vw, 42rem);
+      position: absolute;
+      top: calc(var(--corte-diagonal) + var(--seccion-y));
+      right: var(--margen);
+      width: min(36%, 32rem);
+      margin-right: 12px;
     }
 
     .equipos :global(.equipos__foto) {
-      opacity: 0.94;
-      object-position: center 66%;
+      filter: drop-shadow(12px 12px 0 var(--negro));
     }
 
-    .equipos__velo {
-      background:
-        linear-gradient(to top, var(--amarillo), transparent 28%),
-        linear-gradient(to right, var(--amarillo), transparent 36%);
-    }
-
-    /* Deja libre el lado derecho para la foto. */
+    /* Reserva el lado derecho para los deportistas, sin alterar el filtrado. */
     .equipos__cabecera,
     .equipos__edades,
+    .equipos__resumen,
+    .equipos__accion,
+    .equipos__leyenda,
     .equipos__lista {
       max-width: min(56rem, 60%);
     }
