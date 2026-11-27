@@ -156,6 +156,24 @@ export async function crearRepositorioSupabase(url: string, clave: string): Prom
       throw new ErrorAdmin(MENSAJES_CREAR_USUARIO[cuerpo.error ?? ''] ?? 'No se pudo crear la cuenta. Inténtalo de nuevo; si persiste, avisa a quien administra el sitio.', cuerpo.error === 'correo_existente' ? 'duplicado' : 'otro');
     },
 
+    async editarDatosPostulacion(solicitud) {
+      const { data } = await db.auth.getSession();
+      const token = data.session?.access_token;
+      if (!token) throw new ErrorAdmin('Tu sesión venció. Vuelve a iniciar sesión.', 'permisos');
+      const r = await fetch('/api/admin/editar-postulacion', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify(solicitud),
+      });
+      const c = await r.json().catch(() => ({})) as { ok?: boolean; guardado: boolean; correoEnviado: boolean | null; jornadaPendiente: boolean; error?: string; campos?: string[] };
+      if (r.ok && c.ok) return c;
+      const etiquetas: Record<string, string> = { atletaNombre: 'nombre del atleta', atletaApellido: 'apellido del atleta', fechaNacimiento: 'fecha de nacimiento (mínimo 4 años en 2027)', sexo: 'sexo', comuna: 'comuna', contactoNombre: 'nombre del contacto', contactoParentesco: 'parentesco', contactoTelefono: 'teléfono', contactoCorreo: 'correo' };
+      if (c.error === 'conflicto') throw new ErrorAdmin(MENSAJE_CONFLICTO, 'conflicto');
+      if (c.error === 'datos_invalidos') throw new ErrorAdmin('Revisa los datos: ' + (c.campos ?? []).map(x => etiquetas[x] ?? x).join(', ') + '.', 'otro');
+      if (c.error === 'equipo_incompatible') throw new ErrorAdmin('La corrección no coincide con el equipo ya asignado. Revisa la asignación en Gestión del coach antes de continuar.', 'otro');
+      if (c.error === 'cancelada') throw new ErrorAdmin('No se envían correos de confirmación de postulaciones canceladas. Puedes guardar sin enviar.', 'otro');
+      if (r.status === 401 || r.status === 403) throw new ErrorAdmin('No tienes permiso o tu sesión venció.', 'permisos');
+      throw new ErrorAdmin('No se pudo completar la operación. Recarga la ficha antes de reintentar.', 'otro');
+    },
+
     async eliminarPostulacion(id) {
       /* `select` devuelve las filas borradas: si no hay ninguna, RLS no lo permitió o ya no existía. */
       const r = await db.from('postulaciones').delete().eq('id', id).select('id');
