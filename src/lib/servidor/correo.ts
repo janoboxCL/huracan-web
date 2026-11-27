@@ -21,12 +21,16 @@ export interface DatosCorreo {
   correoPagos?: string;
   /** Copias ocultas adicionales a las de `CORREO_COACH` (p. ej. desde `ajustes_privados`). */
   copiasOcultas?: string[];
+  actualizada?: boolean;
+  sinInstruccionesPago?: boolean;
+  evaluacionPendiente?: boolean;
 }
 
 const escapar = (s: string) =>
   s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
 
 function lineaJornada(d: DatosCorreo): string {
+  if (d.evaluacionPendiente) return 'Tu evaluación está por confirmar. El head coach te contactará para coordinarla.';
   const j = d.evaluacion.jornada;
   if (j.tipo === 'sin-evaluacion' && j.motivo === 'sin-equipo') return 'El head coach te contactará por WhatsApp para orientarte y coordinar tu evaluación.';
   if (j.tipo === 'sin-evaluacion') return 'Los equipos Tiny no tienen evaluación: pasan directo a su primera práctica. El head coach te indicará día y hora.';
@@ -72,7 +76,7 @@ function tablaMontos(filas: FilaMonto[]): string {
 }
 
 function htmlCorreo(d: DatosCorreo, p: { equipos: string; filas: FilaMonto[]; notasMontos: string[]; diferido: boolean; sinEquipo: boolean; transferencia: string | undefined; cierre: string }): string {
-  const intro = `<tr><td style="padding:28px 28px 20px 28px">${parrafo(`Recibimos la preinscripción de ${d.atleta} para la temporada 2027.`, 'font-size:17px;line-height:24px;font-weight:bold;margin:0')}</td></tr>`;
+  const intro = `<tr><td style="padding:28px 28px 20px 28px">${parrafo(d.actualizada ? `Información actualizada de la preinscripción de ${d.atleta} para la temporada 2027. Este correo reemplaza al anterior; no es una nueva inscripción.` : `Recibimos la preinscripción de ${d.atleta} para la temporada 2027.`, 'font-size:17px;line-height:24px;font-weight:bold;margin:0')}</td></tr>`;
   const codigo = `<tr><td style="padding:0 28px 24px 28px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="background-color:${AMARILLO};padding:16px 12px;font-family:${FUENTE};color:${NEGRO}"><div style="font-size:12px;line-height:16px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;color:${NEGRO}">Código de postulación</div><div style="padding-top:4px;font-size:28px;line-height:34px;font-weight:bold;letter-spacing:2px;color:${NEGRO}">${escapar(d.codigo)}</div></td></tr></table></td></tr>`;
   const equipos = p.sinEquipo
     ? bloque('Equipos sugeridos', parrafo('Por ahora no tenemos un equipo sugerido para estos datos. El head coach te orientará por WhatsApp.', 'margin:0'))
@@ -110,7 +114,7 @@ export function construirCorreo(d: DatosCorreo, transferencia: string | undefine
   const diferido = d.evaluacion.jornada.tipo === 'inicio-diferido';
   const sinEquipo = d.evaluacion.equipos.length === 0;
   /* Sin pago por ahora: inicio diferido o sin equipo sugerido (el head coach orienta). */
-  const sinPago = diferido || sinEquipo;
+  const sinPago = diferido || sinEquipo || d.sinInstruccionesPago === true;
   const filas: FilaMonto[] = [];
   const notasMontos: string[] = [];
   if (i && diferido) {
@@ -121,10 +125,11 @@ export function construirCorreo(d: DatosCorreo, transferencia: string | undefine
     filas.push({ etiqueta: i.mensualidadEnEfectivo ? 'Mensualidad (en efectivo al head coach en la primera clase)' : 'Mensualidad', valor: formatoPeso(i.mensualidad) });
     filas.push({ etiqueta: 'Primera cuota de vestimenta de entrenamiento', valor: formatoPeso(i.ropaPrimeraCuota) });
     if (i.cinta > 0) filas.push({ etiqueta: 'Cinta de entrenamiento', valor: formatoPeso(i.cinta) });
-    filas.push({ etiqueta: 'Total a transferir (estimado)', valor: formatoPeso(i.total), total: true });
+    filas.push({ etiqueta: d.sinInstruccionesPago ? 'Total estimado de ingreso (no es saldo pendiente)' : 'Total a transferir (estimado)', valor: formatoPeso(i.total), total: true });
   }
   /* El orden de notas y filas es el del texto plano: en inicio diferido la nota va tras la fila. */
-  const montos = [...filas.map((f) => `${f.etiqueta}: ${f.valor}`), ...notasMontos];
+  
+  if (d.sinInstruccionesPago) notasMontos.push('Los pagos que ya registraste se conservan. No realices un nuevo pago por este correo; consulta el saldo con el head coach.');
   const cierre = sinPago
     ? `Si tienes dudas, escribe al head coach por WhatsApp (${d.whatsappTexto}) indicando tu código ${d.codigo}.`
     : `Después de pagar, envía el comprobante al head coach por WhatsApp (${d.whatsappTexto}) indicando tu código ${d.codigo}.${
@@ -133,8 +138,9 @@ export function construirCorreo(d: DatosCorreo, transferencia: string | undefine
           : ''
       }`;
   if (!sinPago) notasMontos.push('El monto es una estimación sin promociones. El head coach confirma equipo, promoción y monto final.');
+  const montos = [...filas.map((f) => `${f.etiqueta}: ${f.valor}`), ...notasMontos];
   const lineas = [
-    `Recibimos la preinscripción de ${d.atleta} para la temporada 2027.`,
+    d.actualizada ? `Información actualizada de la preinscripción de ${d.atleta} para la temporada 2027. Este correo reemplaza al anterior; no es una nueva inscripción.` : `Recibimos la preinscripción de ${d.atleta} para la temporada 2027.`,
     `Código de postulación: ${d.codigo}`,
     '',
     sinEquipo
@@ -160,7 +166,7 @@ export function construirCorreo(d: DatosCorreo, transferencia: string | undefine
   ];
   const texto = lineas.join('\n');
   const html = htmlCorreo(d, { equipos, filas, notasMontos, diferido: sinPago, sinEquipo, transferencia, cierre });
-  return { asunto: `Postulación ${d.codigo} · Huracán All Stars 2027`, texto, html };
+  return { asunto: d.actualizada ? `Huracán All Stars | Preinscripción actualizada ${d.codigo}` : `Postulación ${d.codigo} · Huracán All Stars 2027`, texto, html };
 }
 
 export async function enviarCorreo(env: Entorno, d: DatosCorreo): Promise<boolean> {
