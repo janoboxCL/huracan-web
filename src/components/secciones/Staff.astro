@@ -1,12 +1,14 @@
 ---
 /* 10 · 08 Staff (amarillo, corte diagonal superior como Equipos).
    Datos solo del JSON: `staff.direccion`, `staff.coaches`, `staff.asistentes`.
-   Fotos del staff: PENDIENTES. No se usan fotos ni recortes de personas; las
-   tarjetas de dirección llevan un medallón con las iniciales del nombre.
+   Las fotos del staff siguen pendientes; las tarjetas conservan sus medallones.
+   La cabecera incorpora un recorte decorativo de una deportista del club.
    Pendiente interno (no se publica): `staff._notaCoaches` advierte que en el PDF las
    columnas de detalle de los coaches no están alineadas con certeza a cada nombre;
    se publican tal como el JSON las asigna y debe confirmarse con el club.
    Reveal: `.soplo` en el contenedor; el skew vive en el hijo. */
+import { Image } from 'astro:assets';
+import fotoStaff from '../../assets/img/cut-staff.png';
 import { contenido } from '../../data/contenido';
 import Etiqueta from '../ui/Etiqueta.astro';
 
@@ -25,9 +27,23 @@ const iniciales = (nombre: string) =>
   <div class="staff__fondo disp" aria-hidden="true">Staff</div>
 
   <div class="staff__cuerpo contenedor">
-    <div class="staff__cabecera soplo">
-      <Etiqueta variante="seccion">09 · Staff</Etiqueta>
-      <h2 id="staff-titulo" class="disp staff__titulo">Quién entrena<br />a tus hijos</h2>
+    <div class="staff__cabecera">
+      <div class="staff__titulos soplo">
+        <Etiqueta variante="seccion">09 · Staff</Etiqueta>
+        <h2 id="staff-titulo" class="disp staff__titulo">Quién entrena<br />a tus hijos</h2>
+      </div>
+      <div class="staff__recorte soplo-der" aria-hidden="true">
+        <Image
+          class="staff__atleta"
+          src={fotoStaff}
+          alt=""
+          widths={[320, 640, 960]}
+          sizes="(min-width: 64rem) 256px, (min-width: 40rem) 192px, 144px"
+          format="webp"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
     </div>
 
     <ul role="list" class="direccion">
@@ -111,10 +127,59 @@ const iniciales = (nombre: string) =>
   }
 
   .staff__cabecera {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: var(--esp-5);
+  }
+
+  .staff__titulos {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: var(--esp-4);
+    min-width: 0;
+  }
+
+  /* Imagen decorativa separada de las tarjetas de entrenadores. */
+  .staff__recorte {
+    width: min(9rem, 65%);
+    justify-self: center;
+    pointer-events: none;
+  }
+
+  .staff :global(.staff__atleta) {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(7px 7px 0 var(--negro));
+  }
+
+  @media (min-width: 40rem) {
+    .staff__cabecera {
+      grid-template-columns: minmax(0, 1fr) minmax(0, 27%);
+      gap: var(--esp-6);
+    }
+
+    .staff__recorte {
+      width: min(12rem, 100%);
+    }
+
+    .staff__cabecera .staff__titulo {
+      font-size: clamp(3.5rem, 6.8vw, 7.5rem);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .staff__recorte {
+      width: min(16rem, 100%);
+      margin-right: 10px;
+    }
+
+    .staff :global(.staff__atleta) {
+      filter: drop-shadow(10px 10px 0 var(--negro));
+    }
   }
 
   .staff__titulo {
