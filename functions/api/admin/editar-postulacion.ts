@@ -1,6 +1,6 @@
 /* Edición administrativa: la sesión y el rol se comprueban en servidor.
    Nunca crea otra postulación ni modifica pagos. */
-import contenido from '../../../docs/contenido/huracan-2027.json' with { type: 'json' };
+import contenido from '../../../docs/contenido/huracan-2027.json';
 import type { Postulacion, JornadaAdmin } from '../../../src/lib/admin/tipos.ts';
 import type { ContextoFuncion, Entorno } from '../../../src/lib/servidor/entorno.ts';
 import { validarPostulacion } from '../../../src/lib/servidor/validar.ts';
