@@ -76,7 +76,7 @@ function tablaMontos(filas: FilaMonto[]): string {
 }
 
 function htmlCorreo(d: DatosCorreo, p: { equipos: string; filas: FilaMonto[]; notasMontos: string[]; diferido: boolean; sinEquipo: boolean; transferencia: string | undefined; cierre: string }): string {
-  const intro = `<tr><td style="padding:28px 28px 20px 28px">${parrafo(d.actualizada ? `Información actualizada de la preinscripción de ${d.atleta} para la temporada 2027. Este correo reemplaza al anterior; no es una nueva inscripción.` : `Recibimos la preinscripción de ${d.atleta} para la temporada 2027.`, 'font-size:17px;line-height:24px;font-weight:bold;margin:0')}</td></tr>`;
+  const intro = `<tr><td style="padding:28px 28px 20px 28px">${parrafo(d.actualizada ? `Información actualizada de la preinscripción de ${d.atleta} para la temporada 2027. Este correo reemplaza al anterior; no es una nueva inscripción. Edad durante 2027: ${d.evaluacion.edad} años.` : `Recibimos la preinscripción de ${d.atleta} para la temporada 2027.`, 'font-size:17px;line-height:24px;font-weight:bold;margin:0')}</td></tr>`;
   const codigo = `<tr><td style="padding:0 28px 24px 28px"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td align="center" style="background-color:${AMARILLO};padding:16px 12px;font-family:${FUENTE};color:${NEGRO}"><div style="font-size:12px;line-height:16px;font-weight:bold;letter-spacing:1.5px;text-transform:uppercase;color:${NEGRO}">Código de postulación</div><div style="padding-top:4px;font-size:28px;line-height:34px;font-weight:bold;letter-spacing:2px;color:${NEGRO}">${escapar(d.codigo)}</div></td></tr></table></td></tr>`;
   const equipos = p.sinEquipo
     ? bloque('Equipos sugeridos', parrafo('Por ahora no tenemos un equipo sugerido para estos datos. El head coach te orientará por WhatsApp.', 'margin:0'))
@@ -139,7 +139,7 @@ export function construirCorreo(d: DatosCorreo, transferencia: string | undefine
   const montos = [...filas.map((f) => `${f.etiqueta}: ${f.valor}`), ...notasMontos];
   if (!sinPago) notasMontos.push('El monto es una estimación sin promociones. El head coach confirma equipo, promoción y monto final.');
   const lineas = [
-    d.actualizada ? `Información actualizada de la preinscripción de ${d.atleta} para la temporada 2027. Este correo reemplaza al anterior; no es una nueva inscripción.` : `Recibimos la preinscripción de ${d.atleta} para la temporada 2027.`,
+    d.actualizada ? `Información actualizada de la preinscripción de ${d.atleta} para la temporada 2027. Este correo reemplaza al anterior; no es una nueva inscripción. Edad durante 2027: ${d.evaluacion.edad} años.` : `Recibimos la preinscripción de ${d.atleta} para la temporada 2027.`,
     `Código de postulación: ${d.codigo}`,
     '',
     sinEquipo
