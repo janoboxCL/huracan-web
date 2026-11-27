@@ -3,6 +3,7 @@
    Textos desde el JSON: historia, fundación y hitos. */
 import { Image } from 'astro:assets';
 import duo from '../../assets/img/cut-duo2.png';
+import fotoHitos from '../../assets/img/bg-hitos.jpg';
 import { contenido } from '../../data/contenido';
 import { enlaces } from '../../data/enlaces';
 import Boton from '../ui/Boton.astro';
@@ -49,6 +50,18 @@ const corrienteHitos = [
   </div>
 
   <div class="hitos">
+    <div class="hitos__foto-caja" aria-hidden="true">
+      <Image
+        class="hitos__foto parallax"
+        src={fotoHitos}
+        alt=""
+        widths={[640, 1120]}
+        sizes="100vw"
+        loading="lazy"
+        decoding="async"
+      />
+    </div>
+    <div class="hitos__velo" aria-hidden="true"></div>
     <div class="hitos__viento" aria-hidden="true">
       <Corrientes trazos={corrienteHitos} viewBox="0 0 1440 120" />
     </div>
@@ -134,11 +147,38 @@ const corrienteHitos = [
     padding-block: calc(var(--corte-diagonal) + 3.5rem) 4.5rem;
   }
 
+  /* Fondo fotográfico: mismo tratamiento que Programas y Viajes. */
+  .hitos__foto-caja {
+    position: absolute;
+    inset: 0;
+    overflow: clip;
+    pointer-events: none;
+  }
+
+  .hitos :global(.hitos__foto) {
+    position: absolute;
+    left: 0;
+    top: -10%;
+    width: 100%;
+    height: 120%;
+    object-fit: cover;
+    object-position: 55% 45%;
+    filter: grayscale(1) contrast(1.2) brightness(0.6);
+  }
+
+  .hitos__velo {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgb(10 10 10 / 0.78), rgb(10 10 10 / 0.46));
+    pointer-events: none;
+  }
+
   .hitos__viento {
     display: none;
     position: absolute;
     inset: calc(var(--corte-diagonal) + 3.5rem) 0 auto 0;
     height: 7.5rem;
+    pointer-events: none;
   }
 
   .hitos__lista {
@@ -166,6 +206,12 @@ const corrienteHitos = [
     font-size: var(--t-base);
     line-height: 1.45;
     color: var(--texto-2);
+  }
+
+  @media (max-width: 40rem) {
+    .hitos__velo {
+      background: rgb(10 10 10 / 0.62);
+    }
   }
 
   @media (min-width: 54rem) {
