@@ -1,6 +1,6 @@
 /* Edición administrativa: la sesión y el rol se comprueban en servidor.
    Nunca crea otra postulación ni modifica pagos. */
-import contenido from '../../../docs/contenido/huracan-2027.json';
+import contenido from '../../../docs/contenido/huracan-2027.json' with { type: 'json' };
 import type { Postulacion, JornadaAdmin } from '../../../src/lib/admin/tipos.ts';
 import type { ContextoFuncion, Entorno } from '../../../src/lib/servidor/entorno.ts';
 import { validarPostulacion } from '../../../src/lib/servidor/validar.ts';
@@ -24,7 +24,7 @@ const columnas = 'id,codigo,estado,atleta_nombre,atleta_apellido,fecha_nacimient
 
 export const onRequestPost = async ({ request, env }: ContextoFuncion): Promise<Response> => {
   try {
-    const token = /^Bearer\\s+(\\S+)$/i.exec(request.headers.get('authorization') ?? '')?.[1];
+    const token = /^Bearer\s+(\S+)$/i.exec(request.headers.get('authorization') ?? '')?.[1];
     if (!token) return error(401, 'sin_sesion');
     const auth = await fetch(env.SUPABASE_URL + '/auth/v1/user', { headers: { apikey: env.SUPABASE_SERVICE_ROLE_KEY, Authorization: 'Bearer ' + token } });
     if (!auth.ok) return error(401, 'sin_sesion');
