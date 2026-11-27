@@ -132,3 +132,15 @@ test('comunaEfectiva envía la lista o el texto de «¿Cuál?»', () => {
   assert.equal(comunaEfectiva({ comuna: 'Maipú', comunaOtra: 'ignorado' }), 'Maipú');
   assert.equal(comunaEfectiva({ comuna: COMUNA_OTRA, comunaOtra: ' Rancagua, O’Higgins ' }), 'Rancagua, O’Higgins');
 });
+
+test('edad mínima: rechaza de 0 a 3 años en 2027 y acepta desde 4, sin límite superior nuevo', () => {
+  const d = datosVacios();
+  for (const fechaNacimiento of ['2026-01-01', '2025-01-01', '2024-01-01', '2024-12-31']) {
+    const datos = { ...d, fechaNacimiento };
+    assert.match(validarCampo('fechaNacimiento', datos, '2026-11-27') ?? '', /edad mínima.*4 años.*2027/);
+    assert.ok(validarTodo(datos, '2026-11-27').fechaNacimiento);
+  }
+  for (const fechaNacimiento of ['2023-12-31', '2023-01-01', '1985-01-01']) {
+    assert.equal(validarCampo('fechaNacimiento', { ...d, fechaNacimiento }, '2026-11-27'), null);
+  }
+});
