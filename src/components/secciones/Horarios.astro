@@ -7,6 +7,8 @@
    La rejilla va en un riel con `overflow-x: auto`, foco accesible por teclado.
    Aviso: se publican las frases de `_notaHorarios` salvo la que empieza por
    «Verificar…» (pendiente interno: asignación de Pink Ladies del viernes). */
+import { Image } from 'astro:assets';
+import fotoHorarios from '../../assets/img/cut-horarios.png';
 import { contenido } from '../../data/contenido';
 import Etiqueta from '../ui/Etiqueta.astro';
 
@@ -21,12 +23,24 @@ const tipos = { equipo: 'Equipo', extra: 'Clase extra', gimnasia: 'Gimnasia' } a
 
 <section class="horarios sobre-amarillo" id="horarios" aria-labelledby="horarios-titulo">
   <div class="horarios__cuerpo contenedor">
-    <div class="horarios__cabecera soplo">
-      <div class="horarios__titulos">
+    <div class="horarios__cabecera">
+      <div class="horarios__titulos soplo">
         <Etiqueta variante="seccion">06 · Horarios {_temporada}</Etiqueta>
         <h2 id="horarios-titulo" class="disp horarios__titulo">Tu semana<br />Huracán</h2>
       </div>
-      <div class="horarios__nota">
+      <div class="horarios__recorte soplo-der" aria-hidden="true">
+        <Image
+          class="horarios__atletas"
+          src={fotoHorarios}
+          alt=""
+          widths={[320, 640, 1024]}
+          sizes="(min-width: 64rem) 24vw, 176px"
+          format="webp"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <div class="horarios__nota soplo">
         <p class="horarios__tentativo">{aviso}</p>
         <p>{resto}</p>
       </div>
@@ -100,10 +114,59 @@ const tipos = { equipo: 'Equipo', extra: 'Clase extra', gimnasia: 'Gimnasia' } a
   }
 
   .horarios__cabecera {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: flex-end;
-    gap: var(--esp-4) var(--esp-8);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: var(--esp-5);
+  }
+
+  /* Recorte decorativo: independiente de la tabla y de sus controles. */
+  .horarios__recorte {
+    width: min(11rem, 60%);
+    justify-self: center;
+    pointer-events: none;
+  }
+
+  .horarios :global(.horarios__atletas) {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(7px 7px 0 var(--negro));
+  }
+
+  @media (min-width: 48rem) {
+    .horarios__cabecera {
+      grid-template-columns: minmax(0, 1fr) minmax(10rem, 25%);
+      grid-template-areas: "titulo foto" "nota foto";
+      gap: var(--esp-4) var(--esp-6);
+    }
+
+    .horarios__titulos { grid-area: titulo; }
+    .horarios__nota { grid-area: nota; }
+
+    .horarios__recorte {
+      grid-area: foto;
+      width: min(100%, 14rem);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .horarios__cabecera {
+      grid-template-columns: minmax(0, 1.15fr) minmax(12rem, 25%) minmax(0, 1fr);
+      grid-template-areas: "titulo foto nota";
+      align-items: end;
+    }
+
+    .horarios__recorte {
+      width: min(100%, 17rem);
+      padding-right: 10px;
+      align-self: center;
+    }
+
+    .horarios :global(.horarios__atletas) {
+      filter: drop-shadow(10px 10px 0 var(--negro));
+    }
   }
 
   .horarios__titulos {
