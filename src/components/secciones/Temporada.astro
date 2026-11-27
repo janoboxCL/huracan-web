@@ -10,12 +10,8 @@
    - `porConfirmar` se muestra como marcador visible `[por confirmar]`; su texto es una
      nota interna de trabajo y NO se publica (ni visible ni para lectores de pantalla). */
 import { Image } from 'astro:assets';
-import type { ImageMetadata } from 'astro';
+import fotoTemporada from '../../assets/img/cut-temporada.png';
 import { contenido } from '../../data/contenido';
-
-/* La rama de vista previa puede compilar antes de que se suba el PNG. */
-const fotos = import.meta.glob<{ default: ImageMetadata }>('../../assets/img/cut-temporada.png', { eager: true });
-const fotoTemporada = fotos['../../assets/img/cut-temporada.png']?.default;
 import Corrientes from '../ui/Corrientes.astro';
 import Etiqueta from '../ui/Etiqueta.astro';
 
@@ -36,13 +32,12 @@ const corrientes = [
   </div>
 
   <div class="temporada__cuerpo contenedor">
-    <div class:list={['temporada__cabecera', { 'temporada__cabecera--con-foto': fotoTemporada }]}>
+    <div class="temporada__cabecera temporada__cabecera--con-foto">
       <div class="temporada__titulos soplo">
         <Etiqueta variante="seccion" class="temporada__etiqueta">05 · Temporada {_temporada}</Etiqueta>
         <h2 id="temporada-titulo" class="disp temporada__titulo">Un año<br />a <span>toda velocidad</span></h2>
       </div>
-      {fotoTemporada && (
-        <div class="temporada__recorte soplo-der" aria-hidden="true">
+      <div class="temporada__recorte soplo-der" aria-hidden="true">
           <Image
             class="temporada__atletas"
             src={fotoTemporada}
@@ -53,8 +48,7 @@ const corrientes = [
             loading="lazy"
             decoding="async"
           />
-        </div>
-      )}
+      </div>
       <ul role="list" class="leyenda" aria-label="Leyenda del calendario">
         <li><span class="leyenda__muestra leyenda__muestra--evento" aria-hidden="true"></span>Evento con público o competencia</li>
         <li><span class="leyenda__muestra leyenda__muestra--entreno" aria-hidden="true"></span>Entrenamiento y montaje</li>
