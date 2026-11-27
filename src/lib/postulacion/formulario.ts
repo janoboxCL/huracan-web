@@ -3,7 +3,7 @@
    Se prueba con `npm test` y la usa la isla `src/components/postula/postula.ts`. */
 
 import { COMUNA_OTRA, esComunaDeLista } from './comunas.ts';
-import { edadEnTemporada } from './reglas.ts';
+import { edadEnTemporada, EDAD_MIN_INGRESO, MENSAJE_EDAD_MINIMA } from './reglas.ts';
 
 /** Fecha de la primera jornada de evaluación: referencia para saber si hay que pedir apoderado. */
 export const FECHA_EVALUACION = '2026-12-05';
@@ -169,6 +169,7 @@ export function validarCampo(campo: keyof DatosPostulacion, d: DatosPostulacion,
       if (!leerFecha(d.fechaNacimiento)) return 'La fecha no es válida. Usa el formato día/mes/año.';
       if (d.fechaNacimiento > hoy) return 'La fecha de nacimiento no puede ser futura.';
       if (d.fechaNacimiento < MIN_NACIMIENTO) return 'Revisa el año de nacimiento.';
+      if (edadEnTemporada(d.fechaNacimiento) < EDAD_MIN_INGRESO) return MENSAJE_EDAD_MINIMA;
       return null;
     }
     case 'sexo':
