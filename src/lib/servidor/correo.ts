@@ -119,7 +119,7 @@ export function construirCorreo(d: DatosCorreo, transferencia: string | undefine
   const notasMontos: string[] = [];
   if (i && diferido) {
     filas.push({ etiqueta: 'Mensualidad Recreativo (en efectivo al head coach en la primera clase)', valor: formatoPeso(i.mensualidad) });
-    notasMontos.push(`Por transferencia pagarás ${conceptosInicioDiferido(d.evaluacion.equipos)}. Esos valores se informarán más adelante; el head coach te los confirmará antes del inicio.`);
+    if (!d.sinInstruccionesPago) notasMontos.push(`Por transferencia pagarás ${conceptosInicioDiferido(d.evaluacion.equipos)}. Esos valores se informarán más adelante; el head coach te los confirmará antes del inicio.`);
   } else if (i) {
     filas.push({ etiqueta: 'Inscripción', valor: formatoPeso(i.inscripcion) });
     filas.push({ etiqueta: i.mensualidadEnEfectivo ? 'Mensualidad (en efectivo al head coach en la primera clase)' : 'Mensualidad', valor: formatoPeso(i.mensualidad) });
@@ -128,8 +128,7 @@ export function construirCorreo(d: DatosCorreo, transferencia: string | undefine
     filas.push({ etiqueta: d.sinInstruccionesPago ? 'Total estimado de ingreso (no es saldo pendiente)' : 'Total a transferir (estimado)', valor: formatoPeso(i.total), total: true });
   }
   /* El orden de notas y filas es el del texto plano: en inicio diferido la nota va tras la fila. */
-  
-  if (d.sinInstruccionesPago) notasMontos.push('Los pagos que ya registraste se conservan. No realices un nuevo pago por este correo; consulta el saldo con el head coach.');
+  if (d.sinInstruccionesPago) notasMontos.push('Si ya realizaste pagos, se conservan. No realices un nuevo pago por este correo; consulta el saldo con el head coach.');
   const cierre = sinPago
     ? `Si tienes dudas, escribe al head coach por WhatsApp (${d.whatsappTexto}) indicando tu código ${d.codigo}.`
     : `Después de pagar, envía el comprobante al head coach por WhatsApp (${d.whatsappTexto}) indicando tu código ${d.codigo}.${
@@ -137,8 +136,8 @@ export function construirCorreo(d: DatosCorreo, transferencia: string | undefine
           ? ` También puedes enviarlo al correo ${d.correoPagos}, indicando en el asunto el nombre del atleta, quién paga y qué pagas.`
           : ''
       }`;
-  if (!sinPago) notasMontos.push('El monto es una estimación sin promociones. El head coach confirma equipo, promoción y monto final.');
   const montos = [...filas.map((f) => `${f.etiqueta}: ${f.valor}`), ...notasMontos];
+  if (!sinPago) notasMontos.push('El monto es una estimación sin promociones. El head coach confirma equipo, promoción y monto final.');
   const lineas = [
     d.actualizada ? `Información actualizada de la preinscripción de ${d.atleta} para la temporada 2027. Este correo reemplaza al anterior; no es una nueva inscripción.` : `Recibimos la preinscripción de ${d.atleta} para la temporada 2027.`,
     `Código de postulación: ${d.codigo}`,
