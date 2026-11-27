@@ -2,6 +2,8 @@
 /* 07 Checklist de entrenamiento (negro). Contenido: `checklistEntrenamiento` del JSON
    (pieza enviada por el club). Seis hexágonos con ícono y un panel blanco con la
    presentación personal obligatoria. Íconos decorativos (aria-hidden); el texto lleva el sentido. */
+import { Image } from 'astro:assets';
+import fotoChecklist from '../../assets/img/cut-checklist.png';
 import { contenido } from '../../data/contenido';
 import Etiqueta from '../ui/Etiqueta.astro';
 
@@ -20,11 +22,25 @@ const iconos: Record<string, string> = {
 
 <section class="checklist" id="checklist" aria-labelledby="checklist-titulo">
   <div class="checklist__cuerpo contenedor">
-    <div class="checklist__cabecera soplo">
-      <Etiqueta variante="seccion">07 · Entrenamiento</Etiqueta>
-      <h2 id="checklist-titulo" class="disp checklist__titulo">
-        Checklist<span>para tu próximo entrenamiento</span>
-      </h2>
+    <div class="checklist__cabecera">
+      <div class="checklist__titulos soplo">
+        <Etiqueta variante="seccion">07 · Entrenamiento</Etiqueta>
+        <h2 id="checklist-titulo" class="disp checklist__titulo">
+          Checklist<span>para tu próximo entrenamiento</span>
+        </h2>
+      </div>
+      <div class="checklist__recorte soplo-der" aria-hidden="true">
+        <Image
+          class="checklist__atletas"
+          src={fotoChecklist}
+          alt=""
+          widths={[320, 640, 900]}
+          sizes="(min-width: 64rem) 240px, (min-width: 40rem) 176px, 144px"
+          format="webp"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
     </div>
 
     <div class="checklist__rejilla">
@@ -68,9 +84,54 @@ const iconos: Record<string, string> = {
   }
 
   .checklist__cabecera {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    align-items: center;
+    gap: var(--esp-4);
+  }
+
+  .checklist__titulos {
     display: flex;
     flex-direction: column;
     gap: var(--esp-4);
+    min-width: 0;
+  }
+
+  /* Recorte independiente del contenido: no cubre los íconos ni el panel. */
+  .checklist__recorte {
+    width: min(9rem, 60%);
+    justify-self: center;
+    pointer-events: none;
+  }
+
+  .checklist :global(.checklist__atletas) {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(6px 6px 0 var(--amarillo));
+  }
+
+  @media (min-width: 40rem) {
+    .checklist__cabecera {
+      grid-template-columns: minmax(0, 1fr) minmax(11rem, 28%);
+      gap: var(--esp-6);
+    }
+
+    .checklist__recorte {
+      width: min(11rem, 100%);
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .checklist__recorte {
+      width: min(15rem, 100%);
+      justify-self: center;
+    }
+
+    .checklist :global(.checklist__atletas) {
+      filter: drop-shadow(10px 10px 0 var(--amarillo));
+    }
   }
 
   .checklist__titulo {
